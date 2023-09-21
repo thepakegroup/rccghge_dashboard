@@ -9,10 +9,21 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        "side-bar-bg": "linear-gradient(180deg, #084386 0%, #072E5A 100%)",
       },
+      colors: {
+        secondary: '#052A53',
+        "secondary-01": "#EA7C7C",
+        'secondary-02': '#1064C6',
+        "fade-ash": "#717171",
+        'ash-100': '#9E9E9E',
+        'ash-200': "#464646",
+        'ash-300':'#686868',
+        'blue-100':'#1064C6'
+      },
+      boxShadow: {
+        modalShadow:'0px 4px 25px 0px rgba(0, 0, 0, 0.15)',
+      }
     },
   },
   plugins: [],

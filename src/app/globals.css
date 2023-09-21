@@ -2,26 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  body {
+    background-color: #e5e8ed;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+  .flex-center {
+    @apply flex items-center;
+  }
+  .modal-wrapper {
+    @apply fixed inset-0 z-50 bg-black/50 flex-center justify-center px-4;
+  }
+
+  .modal {
+    @apply bg-white rounded-lg px-9 pt-6 pb-12 md:min-w-[29rem];
+  }
+
+  .modal-content {
+    @apply h-[600px] overflow-y-scroll relative;
+  }
+
+  .card-wrapper {
+    @apply grid grid-cols-2 gap-2 mt-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .card-one-grid {
+    @apply grid grid-cols-1 gap-2 mt-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .input-field {
+    @apply flex flex-col [&>span]:text-sm [&>span]:font-medium [&>span]:text-gray-900;
+  }
+
+  .input {
+    @apply p-4 w-full rounded-md border border-[#D0D5DD] bg-white;
+  }
 }

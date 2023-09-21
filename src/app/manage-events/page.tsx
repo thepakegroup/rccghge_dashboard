@@ -1,14 +1,13 @@
 'use client';
 
-import Card from '@/components/Home/Card';
-import ScrollModalToTop from '@/components/Home/ScrollModal';
-import Image from 'next/image';
-import DeleteModal from '@/components/DeleteModal';
-import ModifyModal from '@/components/Home/ModifyModal';
 import AddItemButton from '@/components/AddItemButton';
+import DeleteModal from '@/components/DeleteModal';
+import Card from '@/components/Home/Card';
+import ModifyModal from '@/components/ManageEvents/ModifyModal';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import Image from 'next/image';
 
-export default function Home() {
+const ManageEvents = () => {
   const type = useGetTypeOfModal();
 
   return (
@@ -31,11 +30,6 @@ export default function Home() {
           <Card />
           <Card />
           <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
         </div>
       </section>
       <section className="mt-6">
@@ -51,17 +45,13 @@ export default function Home() {
           <Card />
           <Card />
           <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
         </div>
       </section>
-      <ScrollModalToTop />
       {type == 'modify' && <ModifyModal buttonText="Update" />}
       {/* delete modal */}
       {type == 'delete' && <DeleteModal />}
     </section>
   );
-}
+};
+
+export default ManageEvents;
