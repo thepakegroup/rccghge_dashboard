@@ -1,5 +1,4 @@
 import Nav from '@/components/Nav';
-import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AppProvider } from '@/components/Provider';
@@ -20,7 +19,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>{children}</body>
+      <body className={`${inter.className}`}>
+        <AppProvider>
+          <div className="md:flex">
+            <Sidebar />
+            <main className="w-full relative h-[100vh] overflow-y-auto overflow-x-hidden pb-8">
+              <Nav />
+              <section className="mt-[4.5em] px-3">{children}</section>
+            </main>
+            <Toaster />
+          </div>
+        </AppProvider>
+      </body>
     </html>
   );
 }

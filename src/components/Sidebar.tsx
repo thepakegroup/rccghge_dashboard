@@ -102,7 +102,7 @@ const Sidebar = () => {
         onClick={(e) => e.stopPropagation()}
         className="px-2 py-3 min-h-screen w-[17rem] bg-side-bar-bg relative"
       >
-        <div className="bg-white rounded-md p-[0.465] max-w-max">
+        <div className="bg-white rounded-md p-[0.465rem] max-w-max">
           <Image src="/images/logo.png" alt="" width={54} height={40} />
         </div>
         <ul className="mt-20">

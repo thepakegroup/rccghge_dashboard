@@ -10,6 +10,8 @@ const config: Config = {
     extend: {
       backgroundImage: {
         "side-bar-bg": "linear-gradient(180deg, #084386 0%, #072E5A 100%)",
+        'bg-mobile': "url('/images/bg-mobile.svg')",
+        'bg-desktop':"url('/images/bg-desktop.svg')",
       },
       colors: {
         secondary: '#052A53',
