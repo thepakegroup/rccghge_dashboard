@@ -40,7 +40,11 @@ const Nav = () => {
   }, [isSidebarOpen]);
 
   return (
-    <nav className="flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full">
+    <nav
+      className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full ${
+        isSidebarOpen ? 'md:calc-width-50' : ''
+      }`}
+    >
       <div className="flex-center gap-5">
         <Image
           src="icons/hamburger.svg"

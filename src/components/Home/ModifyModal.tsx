@@ -7,22 +7,39 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToast } from '../../store/slice/toast';
 import DragDrop from '../DragDrop';
 import useCloseModal from '@/hooks/closeModal';
+import { labels } from '@/util/constants';
+import { useState } from 'react';
 
 interface modalI {
-  handleSubmit?: () => void;
+  handleSubmit?: (mediaInfo: any) => void;
   buttonText: string;
 }
 
-const ModifyModal = ({ buttonText }: modalI) => {
+const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
 
-  const handleSubmit = () => {
+  const [name, setName] = useState('');
+  const [mediaLink, setMediaLink] = useState('');
+  const [description, setDescription] = useState('');
+  const [mediaType, setMediaType] = useState('');
+
+  const handleSubmitForm = () => {
+    const mediaInfo = {
+      name,
+      link: mediaLink,
+      short_description: description,
+      media_type: mediaType,
+    };
+
+    handleSubmit && handleSubmit(mediaInfo);
+    handleCloseModal();
+
     dispatch(
       setToast({
         isToast: true,
         title: 'Item Added',
-        info: 'Insstagram have been added',
+        info: `${name} have been added`,
       })
     );
   };
@@ -72,29 +89,54 @@ const ModifyModal = ({ buttonText }: modalI) => {
           <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
             <label htmlFor="type" className="input-field">
               <span>Media type</span>
-              <select name="type" className="input">
+              <select
+                onChange={(e) => setMediaType(e.target.value)}
+                value={mediaType}
+                name="type"
+                className="input"
+              >
                 <option value=""></option>
+                {labels.map((label) => {
+                  return (
+                    <option key={label.value} value={label.value}>
+                      {label.label}
+                    </option>
+                  );
+                })}
               </select>
             </label>
             <label htmlFor="name" className="input-field">
               <span>Media name</span>
-              <select name="type" className="input">
-                <option value=""></option>
-              </select>
+              <input
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                type="text"
+                className="input"
+              />
             </label>
             <label htmlFor="link" className="input-field">
               <span>Media link</span>
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => setMediaLink(e.target.value)}
+                value={mediaLink}
+                type="text"
+                className="input"
+              />
             </label>
             <label htmlFor="description" className="input-field">
               <span>Short description</span>
-              <textarea rows={10} className="input" />
+              <textarea
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+                rows={10}
+                className="input"
+              />
             </label>
           </form>
         </div>
         <div className="absolute bottom-4 left-0 w-full px-9 flex justify-center">
           <button
-            onClick={handleSubmit}
+            onClick={handleSubmitForm}
             className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
           >
             {buttonText}

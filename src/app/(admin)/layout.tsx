@@ -23,9 +23,11 @@ export default function RootLayout({
         <AppProvider>
           <div className="md:flex">
             <Sidebar />
-            <main className="w-full relative h-[100vh] overflow-y-auto overflow-x-hidden pb-8">
+            <main className="w-full relative">
               <Nav />
-              <section className="mt-[4.5em] px-3">{children}</section>
+              <section className="mt-[3.8rem] [&>section]:pb-28 [&>section]:px-3 [&>section]:h-[100vh] [&>section]:overflow-y-auto [&>section]:overflow-x-hidden">
+                {children}
+              </section>
             </main>
             <Toaster />
           </div>

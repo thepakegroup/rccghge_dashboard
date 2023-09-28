@@ -2,12 +2,31 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const Login = () => {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const fetchData = async () => {
+    const login = {
+      email,
+      password,
+    };
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(login),
+    });
+
+    const data = await res.json();
+    data.error === false && router.push('/');
+  };
+
   const handleLogin = (e: any) => {
     e.preventDefault();
-    router.push('/');
+    fetchData();
   };
 
   return (
@@ -24,7 +43,12 @@ const Login = () => {
             <label htmlFor="email" className="input-field relative">
               <span>Admin email</span>
               <div className="relative">
-                <input type="text" className="input" />
+                <input
+                  type="text"
+                  value={email}
+                  className="input"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
                 <Image
                   src="icons/mail.svg"
                   alt=""
@@ -37,7 +61,12 @@ const Login = () => {
             <label htmlFor="password" className="input-field flex-1 relative">
               <span>Admin password</span>
               <div className="relative">
-                <input type="password" className="input" />
+                <input
+                  type="password"
+                  value={password}
+                  className="input"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
                 <Image
                   src="icons/eye.svg"
                   alt=""

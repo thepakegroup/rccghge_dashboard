@@ -2,18 +2,73 @@
 
 import AddItemButton from '@/components/AddItemButton';
 import DeleteModal from '@/components/DeleteModal';
+import Loader from '@/components/Loader';
 import Card from '@/components/Testimonies/Card';
 import TestimonyModal from '@/components/Testimonies/TestimonyModal';
+import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import { useAppSelector } from '@/store/hooks';
+import { testimonyI } from '@/util/interface/testimony';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 const Testimonials = () => {
   const type = useGetTypeOfModal();
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  const { id } = useAppSelector((state) => state.testimony);
+
+  const { data, loading, fetchData } = useFetchData('/api/getTestimony');
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  const testimonies: testimonyI[] = data?.message.data;
+
+  const deleteTestimony = async () => {
+    const res = await fetch(`/api/deleteTestimony/${id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await res.json();
+
+    if (data.error === false) {
+      fetchData();
+    }
+  };
+
+  const updateTestimony = async ({
+    title,
+    content,
+  }: {
+    title: string;
+    content: string;
+  }) => {
+    const updateData = {
+      title,
+      content,
+      id,
+    };
+
+    const res = await fetch(`/api/updateTestimony`, {
+      method: 'POST',
+      body: JSON.stringify(updateData),
+    });
+
+    const data = await res.json();
+
+    // console.log(data);
+
+    if (data.error === false) {
+      fetchData();
+    }
+  };
 
   return (
     <section>
-      <div className="flex justify-end">
-        <AddItemButton />
+      <div className="flex justify-end mt-2">
+        <AddItemButton sectionRef={sectionRef} />
       </div>
       <section className="mt-4">
         <div className="text-ash-100 flex flex-col gap-3 md:flex-row">
@@ -50,17 +105,28 @@ const Testimonials = () => {
           </label>
         </div>
         <section className="mt-4 card-one-grid">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          {testimonies.map((testimony: any) => {
+            const { title, published, content, created_at } = testimony;
+            return (
+              <Card
+                key={testimony.id}
+                title={title}
+                published={published}
+                content={content}
+                createdAt={created_at}
+                id={testimony.id}
+              />
+            );
+          })}
         </section>
       </section>
-      {type === 'modify' && <TestimonyModal />}
-      {type == 'delete' && <DeleteModal />}
+      {type === 'modify' && (
+        <TestimonyModal handleSubmit={updateTestimony} buttonText="Update" />
+      )}
+      {type === 'add' && (
+        <TestimonyModal handleSubmit={updateTestimony} buttonText="Add media" />
+      )}
+      {type == 'delete' && <DeleteModal deleteFunc={deleteTestimony} />}
     </section>
   );
 };

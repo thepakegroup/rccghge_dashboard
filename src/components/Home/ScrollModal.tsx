@@ -1,6 +1,8 @@
 'use client';
 
+import { labels } from '@/util/constants';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 const ScrollModal = () => {
@@ -20,10 +22,13 @@ const ScrollModal = () => {
           </span>
         </div>
         <ul className="capitalize [&>li]:px-4 [&>li]:py-2 [&>li]:cursor-pointer [&>li:hover]:bg-[#E5E8ED] text-gray-900 text-sm">
-          <li>Social media</li>
-          <li>Media</li>
-          <li>resources</li>
-          <li>Events</li>
+          {labels.map((label) => {
+            return (
+              <li key={label.value}>
+                <Link href={`#${label.value}`}>{label.label}</Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
       <div className="flex justify-end">

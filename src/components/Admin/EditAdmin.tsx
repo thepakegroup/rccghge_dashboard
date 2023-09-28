@@ -1,9 +1,26 @@
+'use client';
+
 import Image from 'next/image';
 import ModalWrapper from '../ModalWrapper';
 import useCloseModal from '@/hooks/closeModal';
+import { useState } from 'react';
 
-const EditAdmin = () => {
+interface editAdminI {
+  handleSubmit: (mediaInfo: any) => void;
+}
+
+const EditAdmin = ({ handleSubmit }: editAdminI) => {
   const handleCloseModal = useCloseModal();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [level, setLevel] = useState('admin');
+
+  const submitForm = () => {
+    const adminLevel = level === 'admin' ? '1' : '2';
+    handleSubmit({ email, password, level: adminLevel });
+    handleCloseModal();
+  };
 
   return (
     <ModalWrapper>
@@ -22,10 +39,15 @@ const EditAdmin = () => {
           />
         </div>
         <form className="flex flex-col gap-[1.19rem]">
-          <label htmlFor="email" className="input-field relative">
+          <label htmlFor="email" className="input-field flex-1 relative">
             <span>Admin email</span>
             <div className="relative">
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                type="email"
+                className="input"
+              />
               <Image
                 src="icons/mail.svg"
                 alt=""
@@ -35,10 +57,15 @@ const EditAdmin = () => {
               />
             </div>
           </label>
-          <label htmlFor="password" className="input-field flex-1 relative">
+          <label htmlFor="password" className="input-field relative">
             <span>Admin password</span>
             <div className="relative">
-              <input type="password" className="input" />
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type="password"
+                className="input"
+              />
               <Image
                 src="icons/eye.svg"
                 alt=""
@@ -48,15 +75,23 @@ const EditAdmin = () => {
               />
             </div>
           </label>
-          <label htmlFor="type" className="input-field">
+          <label htmlFor="level" className="input-field flex-1">
             <span>Admin level</span>
-            <select name="type" className="input">
+            <select
+              onChange={(e) => setLevel(e.target.value)}
+              value={level}
+              name="level"
+              className="input"
+            >
               <option value=""></option>
               <option value="admin">Admin</option>
               <option value="super admin">Super admin</option>
             </select>
           </label>
-          <button className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md">
+          <button
+            onClick={submitForm}
+            className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+          >
             Update
           </button>
         </form>

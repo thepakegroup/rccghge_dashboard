@@ -1,9 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { EnumMember } from 'typescript';
 
 interface modalI{
   isModalOpen: boolean;
-  type?:"modify" | "delete"
+  type?:"modify" | "delete" | 'add'
 }
 
 const modalSlice = createSlice({

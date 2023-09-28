@@ -3,11 +3,71 @@
 import AdminInfo from '@/components/Admin/AdminInfo';
 import EditAdmin from '@/components/Admin/EditAdmin';
 import DeleteModal from '@/components/DeleteModal';
+import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import { useAppSelector } from '@/store/hooks';
+import { adminI } from '@/util/interface/admin';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const Admin = () => {
   const type = useGetTypeOfModal();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [level, setLevel] = useState('admin');
+
+  const { id } = useAppSelector((state) => state.mediaItems);
+  const { data, loading, fetchData } = useFetchData('/api/getAllAdmin');
+  const admins: adminI[] = data?.message;
+
+  const createAdmin = async (e: any) => {
+    e.preventDefault();
+    const adminLevel = level === 'admin' ? '1' : '2';
+
+    const res = await fetch('/api/createAdmin', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, level: adminLevel }),
+    });
+
+    const data = await res.json();
+
+    if (data.error === false) {
+      fetchData();
+      setPassword('');
+      setLevel('');
+      setEmail('');
+    }
+  };
+
+  const deleteAdmin = async () => {
+    const res = await fetch(`/api/deleteAdmin/${id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await res.json();
+
+    if (data.error === false) {
+      fetchData();
+    }
+  };
+
+  const updateMedia = async (adminInfo: any) => {
+    const adminData = {
+      ...adminInfo,
+      id,
+    };
+
+    const res = await fetch(`/api/updateAdmin`, {
+      method: 'POST',
+      body: JSON.stringify(adminData),
+    });
+
+    const data = await res.json();
+
+    if (data.error === false) {
+      fetchData();
+    }
+  };
 
   return (
     <section className=" md:max-w-[70vw]">
@@ -16,7 +76,12 @@ const Admin = () => {
         <label htmlFor="email" className="input-field flex-1 relative">
           <span>Admin email</span>
           <div className="relative">
-            <input type="text" className="input" />
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              type="email"
+              className="input"
+            />
             <Image
               src="icons/mail.svg"
               alt=""
@@ -29,7 +94,12 @@ const Admin = () => {
         <label htmlFor="password" className="input-field relative">
           <span>Admin password</span>
           <div className="relative">
-            <input type="password" className="input" />
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type="password"
+              className="input"
+            />
             <Image
               src="icons/eye.svg"
               alt=""
@@ -39,16 +109,24 @@ const Admin = () => {
             />
           </div>
         </label>
-        <label htmlFor="type" className="input-field flex-1">
+        <label htmlFor="level" className="input-field flex-1">
           <span>Admin level</span>
-          <select name="type" className="input">
+          <select
+            onChange={(e) => setLevel(e.target.value)}
+            value={level}
+            name="level"
+            className="input"
+          >
             <option value=""></option>
             <option value="admin">Admin</option>
             <option value="super admin">Super admin</option>
           </select>
         </label>
         <div className="md:pt-5">
-          <button className="w-full bg-[#052A53] text-white rounded-md px-6 py-4">
+          <button
+            onClick={createAdmin}
+            className="w-full bg-[#052A53] text-white rounded-md px-6 py-4"
+          >
             Register
           </button>
         </div>
@@ -59,13 +137,20 @@ const Admin = () => {
             <p className="col-span-2">Email</p>
             <p>Password</p>
           </div>
-          <AdminInfo />
-          <AdminInfo />
-          <AdminInfo />
+          {admins?.map((admin) => {
+            return (
+              <AdminInfo
+                key={admin.id}
+                email={admin.email}
+                id={admin.id}
+                level={admin.level}
+              />
+            );
+          })}
         </div>
       </div>
-      {type == 'modify' && <EditAdmin />}
-      {type == 'delete' && <DeleteModal />}
+      {type == 'modify' && <EditAdmin handleSubmit={updateMedia} />}
+      {type == 'delete' && <DeleteModal deleteFunc={deleteAdmin} />}
     </section>
   );
 };

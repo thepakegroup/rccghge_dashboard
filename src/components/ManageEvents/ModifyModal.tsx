@@ -7,22 +7,48 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToast } from '../../store/slice/toast';
 import DragDrop from '../DragDrop';
 import useCloseModal from '@/hooks/closeModal';
+import { useState } from 'react';
 
 interface modalI {
-  handleSubmit?: () => void;
+  handleSubmit?: (mediaInfo: any) => void;
   buttonText: string;
 }
 
-const ModifyModal = ({ buttonText }: modalI) => {
+const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
 
-  const handleSubmit = () => {
+  const [title, setTitle] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [location, setLocation] = useState('');
+  const [description, setDescription] = useState('');
+
+  const toIsoStringDate = (dateString: string) => {
+    const dateObject = new Date(dateString);
+    const isoDateString = dateObject?.toISOString();
+    return isoDateString;
+  };
+
+  const handleSubmitForm = () => {
+    const mediaInfo = {
+      title,
+      ...(buttonText === 'Update' && location !== undefined
+        ? { location }
+        : {}),
+      short_description: description,
+      start_date: toIsoStringDate(startDate),
+      end_date: endDate !== '' && toIsoStringDate(endDate),
+    };
+
+    handleSubmit && handleSubmit(mediaInfo);
+    handleCloseModal();
+
     dispatch(
       setToast({
         isToast: true,
         title: 'Item Added',
-        info: 'Insstagram have been added',
+        info: `${title} have been added`,
       })
     );
   };
@@ -83,34 +109,69 @@ const ModifyModal = ({ buttonText }: modalI) => {
             </DragDrop>
           </div>
           <form className="flex flex-col gap-[1.19rem] min-h-[200px]">
-            <label htmlFor="type" className="input-field">
+            <label htmlFor="title" className="input-field">
               <span>Event title</span>
-              <select name="type" className="input">
-                <option value=""></option>
-              </select>
+              <input
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
+                type="text"
+                name="title"
+                id="title"
+                className="input"
+              />
             </label>
             <label htmlFor="start" className="input-field">
               <span>Start Date</span>
-              <input type="date" name="start" id="start" className="input" />
+              <input
+                onChange={(e) => setStartDate(e.target.value)}
+                value={startDate}
+                type="date"
+                name="start"
+                id="start"
+                className="input"
+              />
             </label>
-            <label htmlFor="end" className="input-field">
-              <span>End Date</span>
-              <input type="date" name="end" id="end" className="input" />
-            </label>
+            {buttonText === 'Update' && (
+              <label htmlFor="end" className="input-field">
+                <span>End Date</span>
+                <input
+                  onChange={(e) => setEndDate(e.target.value)}
+                  value={endDate}
+                  type="date"
+                  name="end"
+                  id="end"
+                  className="input"
+                />
+              </label>
+            )}
 
-            <label htmlFor="location" className="input-field">
-              <span>Event Location</span>
-              <input type="text" name="location" className="input" />
-            </label>
+            {buttonText === 'Update' && (
+              <label htmlFor="location" className="input-field">
+                <span>Event Location</span>
+                <input
+                  onChange={(e) => setLocation(e.target.value)}
+                  value={location}
+                  type="text"
+                  name="location"
+                  className="input"
+                />
+              </label>
+            )}
+
             <label htmlFor="type" className="input-field">
               <span>Short description</span>
-              <textarea rows={10} className="input" />
+              <textarea
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
+                rows={10}
+                className="input"
+              />
             </label>
           </form>
         </div>
         <div className="absolute bottom-4 left-0 w-full px-9 flex justify-center">
           <button
-            onClick={handleSubmit}
+            onClick={handleSubmitForm}
             className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
           >
             {buttonText}

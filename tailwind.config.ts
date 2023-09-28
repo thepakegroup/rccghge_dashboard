@@ -28,6 +28,14 @@ const config: Config = {
       }
     },
   },
-  plugins: [],
+  plugins: [
+     function ({ addUtilities }:{addUtilities:any}) {
+      addUtilities({
+        '.calc-width-50': {
+          width: 'calc(100% - 271px)',
+        },
+      }, ['responsive']);
+    },
+  ],
 }
 export default config

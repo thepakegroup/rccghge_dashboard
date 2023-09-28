@@ -1,13 +1,21 @@
 'use client';
 
+import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
 import { setButtonVisibility } from '@/store/slice/ButtonVisibility';
 import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
 
-const AddItemButton = () => {
-  const elementRef = useRef(null);
+const AddItemButton = ({
+  sectionRef,
+}: {
+  sectionRef: React.RefObject<HTMLElement>;
+}) => {
+  const elementRef = useRef<HTMLButtonElement | null>(null);
   const dispatch = useAppDispatch();
+
+  const handleButton = useModalType();
+
   const handleScroll = () => {
     const element: any = elementRef.current;
     if (element) {
@@ -18,17 +26,21 @@ const AddItemButton = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
+    if (!sectionRef.current) return;
+
+    sectionRef.current.addEventListener('scroll', handleScroll);
     handleScroll();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      if (!sectionRef.current) return;
+      sectionRef.current.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  });
 
   return (
     <button
       ref={elementRef}
+      onClick={() => handleButton('add')}
       className="py-2 px-3 text-sm font-semibold bg-secondary flex-center gap-[0.3rem] text-white rounded-md"
     >
       <span>Add media</span>

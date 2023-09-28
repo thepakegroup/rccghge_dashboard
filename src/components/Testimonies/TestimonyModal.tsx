@@ -3,9 +3,23 @@ import ModalWrapper from '../ModalWrapper';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setModalToggle } from '@/store/slice/Modal';
 import useCloseModal from '@/hooks/closeModal';
+import { useState } from 'react';
 
-const TestimonyModal = () => {
+interface testimoneyModalI {
+  buttonText: string;
+  handleSubmit: any;
+}
+
+const TestimonyModal = ({ buttonText, handleSubmit }: testimoneyModalI) => {
   const handleCloseModal = useCloseModal();
+
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleSubmitTestimony = () => {
+    handleSubmit({ title, content });
+    handleCloseModal();
+  };
 
   return (
     <ModalWrapper>
@@ -38,19 +52,29 @@ const TestimonyModal = () => {
         <div className="mt-6 flex flex-col gap-6">
           <label htmlFor="type" className="input-field">
             <span>Title</span>
-            <textarea rows={2} className="input" />
+            <textarea
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+              rows={2}
+              className="input"
+            />
           </label>
           <label htmlFor="type" className="input-field">
             <span>Body</span>
-            <textarea rows={5} className="input" />
+            <textarea
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+              rows={5}
+              className="input"
+            />
           </label>
         </div>
         <div className="flex justify-center mt-6">
           <button
-            // onClick={handleSubmit}
+            onClick={handleSubmitTestimony}
             className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
           >
-            update
+            {buttonText}
           </button>
         </div>
       </div>

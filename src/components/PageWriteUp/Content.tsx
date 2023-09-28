@@ -1,21 +1,42 @@
 import useModalType from '@/hooks/modalType';
+import { useAppDispatch } from '@/store/hooks';
+import { setContent, setDeleteFunc } from '@/store/slice/content';
+import { setEditMediaId } from '@/store/slice/mediaItems';
+import { writeupI } from '@/util/interface/writeup';
 import Image from 'next/image';
 
-const Content = () => {
+const Content = ({ id, page_title, content, heading }: writeupI) => {
   const handleButton = useModalType();
+
+  const dispatch = useAppDispatch();
+
+  const handleEditContent = () => {
+    handleButton('modify');
+    dispatch(
+      setContent({
+        title: page_title,
+        content,
+        header: heading,
+        id,
+        btnType: 'edit',
+      })
+    );
+  };
+
+  const handleDeleteContent = () => {
+    handleButton('delete');
+    dispatch(setEditMediaId(id));
+    dispatch(setDeleteFunc('edit content'));
+  };
+
   return (
     <div className="bg-[#F2F2F2] rounded-lg p-6 text-sm flex flex-col gap-[0.69rem]">
-      <div className="font-bold [&>span]:font-normal">
-        Donate: <span>Giving via checks</span>
+      <div className="">
+        <span className="capitalize font-bold">{page_title}</span>:{' '}
+        <span>{heading}</span>
       </div>
       <p>
-        Please make checks payable to Heaven’s Glorious Embassy. By contributing
-        via check, you authorize the church to use information from your check
-        to process your payment electronically. These checks may be dropped off
-        in the offering boxes at the exits of the Worship Center or in person at
-        the church offices. They may also be mailed to our Finance department at
-        the address below: HEAVEN’S GLORIOUS EMBASSY Finance Department 3800 E.
-        Parker Road, Plano, Texas 75074
+        <div dangerouslySetInnerHTML={{ __html: content }}></div>
       </p>
       <div className="flex-center gap-6">
         <button className="flex-center gap-1 text-sm text-ash-300 font-semibold rounded-md px-3 py-2 bg-[#D0D5DD]">
@@ -28,10 +49,10 @@ const Content = () => {
             className="cursor-pointer"
           />
         </button>
-        <button onClick={() => handleButton('modify')}>
+        <button onClick={handleEditContent}>
           <Image src="icons/edit.svg" alt="" width={24} height={24} />
         </button>
-        <button onClick={() => handleButton('delete')}>
+        <button onClick={handleDeleteContent}>
           <Image src="icons/delete.svg" alt="" width={24} height={24} />
         </button>
       </div>

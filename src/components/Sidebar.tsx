@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { setIsSidebarToggle } from '../store/slice/sidbar';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -28,10 +28,16 @@ const Sidebar = () => {
     setScreenWidth(windowSize);
   };
 
-  // console.log(screenWidth);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout');
+
+    router.push('/login');
+  };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // if (typeof window === 'undefined') return;
 
     window.addEventListener('resize', updateScreenSize);
     updateScreenSize();
@@ -145,7 +151,7 @@ const Sidebar = () => {
               height={24}
               className="cursor-pointer"
             />
-            <div className="capitalize">
+            <div onClick={handleLogout} className="capitalize">
               <p className="text-sm font-bold text-secondary-01">Logout</p>
               <span className="text-xs font-medium">
                 smart.okolichiaza@gmail.com
