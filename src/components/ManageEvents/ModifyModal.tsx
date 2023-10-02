@@ -8,9 +8,10 @@ import { setToast } from '../../store/slice/toast';
 import DragDrop from '../DragDrop';
 import useCloseModal from '@/hooks/closeModal';
 import { useState } from 'react';
+import useUpdateToast from '@/hooks/updateToast';
 
 interface modalI {
-  handleSubmit?: (mediaInfo: any) => void;
+  handleSubmit: (mediaInfo: any) => void;
   buttonText: string;
 }
 
@@ -41,16 +42,8 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
       end_date: endDate !== '' && toIsoStringDate(endDate),
     };
 
-    handleSubmit && handleSubmit(mediaInfo);
+    handleSubmit(mediaInfo);
     handleCloseModal();
-
-    dispatch(
-      setToast({
-        isToast: true,
-        title: 'Item Added',
-        info: `${title} have been added`,
-      })
-    );
   };
 
   return (

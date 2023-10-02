@@ -3,7 +3,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 interface toastI{
   isToast: boolean;
   title: string;
-  info: string;
+  info?: string;
+  type?:'delete' | 'update' | 'add'
 }
 
 const toastSlice = createSlice({
@@ -11,13 +12,15 @@ const toastSlice = createSlice({
   initialState: {
     isToast: false,
     title: "",
-    info:""
+    info: "",
+    type:"add"
   } as toastI,
   reducers: {
     setToast: (state, action:PayloadAction<toastI>) => {
       state.isToast = action.payload.isToast
       state.title = action.payload.title
       state.info = action.payload.info
+      state.type = action.payload.type
     }
   },
 });

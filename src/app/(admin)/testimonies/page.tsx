@@ -7,6 +7,7 @@ import Card from '@/components/Testimonies/Card';
 import TestimonyModal from '@/components/Testimonies/TestimonyModal';
 import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
 import { testimonyI } from '@/util/interface/testimony';
 import Image from 'next/image';
@@ -20,11 +21,9 @@ const Testimonials = () => {
 
   const { data, loading, fetchData } = useFetchData('/api/getTestimony');
 
-  if (loading) {
-    return <Loader />;
-  }
-
   const testimonies: testimonyI[] = data?.message.data;
+
+  const updateToast = useUpdateToast();
 
   const deleteTestimony = async () => {
     const res = await fetch(`/api/deleteTestimony/${id}`, {
@@ -35,6 +34,9 @@ const Testimonials = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -58,10 +60,12 @@ const Testimonials = () => {
 
     const data = await res.json();
 
-    // console.log(data);
-
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Testimony updated!`,
+        info: title,
+      });
     }
   };
 
@@ -104,21 +108,25 @@ const Testimonials = () => {
             </select>
           </label>
         </div>
-        <section className="mt-4 card-one-grid">
-          {testimonies.map((testimony: any) => {
-            const { title, published, content, created_at } = testimony;
-            return (
-              <Card
-                key={testimony.id}
-                title={title}
-                published={published}
-                content={content}
-                createdAt={created_at}
-                id={testimony.id}
-              />
-            );
-          })}
-        </section>
+        {loading ? (
+          <Loader />
+        ) : (
+          <section className="mt-4 card-one-grid">
+            {testimonies.map((testimony: any) => {
+              const { title, published, content, created_at } = testimony;
+              return (
+                <Card
+                  key={testimony.id}
+                  title={title}
+                  published={published}
+                  content={content}
+                  createdAt={created_at}
+                  id={testimony.id}
+                />
+              );
+            })}
+          </section>
+        )}
       </section>
       {type === 'modify' && (
         <TestimonyModal handleSubmit={updateTestimony} buttonText="Update" />

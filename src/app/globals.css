@@ -39,6 +39,10 @@
   .input {
     @apply p-4 w-full rounded-md border border-[#D0D5DD] bg-white;
   }
+
+  .loaderWrapper {
+    @apply mt-7 flex-center justify-center w-full h-full;
+  }
 }
 
 .loader {

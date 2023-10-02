@@ -41,7 +41,10 @@ const Card = ({ title, content, published, createdAt, id }: cardI) => {
 
     const data = await res.json();
 
-    console.log(data);
+    // updateToast({
+    //   name,
+    //   type: '',
+    // });
 
     if (data.error === false) {
       fetchData();

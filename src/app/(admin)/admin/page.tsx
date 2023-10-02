@@ -3,8 +3,10 @@
 import AdminInfo from '@/components/Admin/AdminInfo';
 import EditAdmin from '@/components/Admin/EditAdmin';
 import DeleteModal from '@/components/DeleteModal';
+import Loader from '@/components/Loader';
 import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
 import { adminI } from '@/util/interface/admin';
 import Image from 'next/image';
@@ -20,6 +22,8 @@ const Admin = () => {
   const { data, loading, fetchData } = useFetchData('/api/getAllAdmin');
   const admins: adminI[] = data?.message;
 
+  const updateToast = useUpdateToast();
+
   const createAdmin = async (e: any) => {
     e.preventDefault();
     const adminLevel = level === 'admin' ? '1' : '2';
@@ -33,6 +37,10 @@ const Admin = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: 'Admin added!',
+        info: email,
+      });
       setPassword('');
       setLevel('');
       setEmail('');
@@ -48,6 +56,9 @@ const Admin = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -66,6 +77,10 @@ const Admin = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: 'Admin updated!',
+        info: adminInfo.email,
+      });
     }
   };
 
@@ -137,16 +152,20 @@ const Admin = () => {
             <p className="col-span-2">Email</p>
             <p>Password</p>
           </div>
-          {admins?.map((admin) => {
-            return (
-              <AdminInfo
-                key={admin.id}
-                email={admin.email}
-                id={admin.id}
-                level={admin.level}
-              />
-            );
-          })}
+          {loading ? (
+            <Loader />
+          ) : (
+            admins?.map((admin) => {
+              return (
+                <AdminInfo
+                  key={admin.id}
+                  email={admin.email}
+                  id={admin.id}
+                  level={admin.level}
+                />
+              );
+            })
+          )}
         </div>
       </div>
       {type == 'modify' && <EditAdmin handleSubmit={updateMedia} />}

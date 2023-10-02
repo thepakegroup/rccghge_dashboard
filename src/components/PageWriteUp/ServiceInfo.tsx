@@ -10,9 +10,10 @@ interface infoI {
   name: string;
   serviceTime: string;
   id: number;
+  description: string;
 }
 
-const ServiceInfo = ({ name, serviceTime, id }: infoI) => {
+const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
@@ -25,7 +26,7 @@ const ServiceInfo = ({ name, serviceTime, id }: infoI) => {
 
   const handleEdit = () => {
     handleButton('modify');
-    dispatch(setService({ name, btnType: 'edit' }));
+    dispatch(setService({ name, description, id, btnType: 'edit' }));
   };
 
   return (

@@ -13,6 +13,8 @@ import {
   setHeader,
   setTitle,
 } from '@/store/slice/content';
+import Loader from '../Loader';
+import useUpdateToast from '@/hooks/updateToast';
 
 const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -30,6 +32,8 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
 
   const writeups: writeupI[] = data?.message;
 
+  const updateToast = useUpdateToast();
+
   const deleteContent = async () => {
     const res = await fetch(`/api/deleteContent/${id}`, {
       method: 'DELETE',
@@ -39,6 +43,9 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -62,6 +69,10 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Content ${btnType === 'edit' ? 'updated' : 'added!'}`,
+        info: title,
+      });
       dispatch(
         setContent({
           title: '',
@@ -119,21 +130,24 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
         >
           {btnType === 'add' ? 'Create Post' : 'Edit Post'}
         </button>
-
-        <div className="flex flex-col gap-2">
-          {writeups?.map((writeup) => {
-            const { content, heading, id, page_title } = writeup;
-            return (
-              <Content
-                key={writeup.id}
-                page_title={page_title}
-                heading={heading}
-                content={content}
-                id={id}
-              />
-            );
-          })}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {writeups?.map((writeup) => {
+              const { content, heading, id, page_title } = writeup;
+              return (
+                <Content
+                  key={writeup.id}
+                  page_title={page_title}
+                  heading={heading}
+                  content={content}
+                  id={id}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
       {type == 'delete' && section == 'edit content' && (
         <DeleteModal deleteFunc={deleteContent} />

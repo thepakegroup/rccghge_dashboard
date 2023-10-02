@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface itemI{
   items: number[];
-  file: any;
+  file: Blob | null | string;
   id: number | null;
 }
 
@@ -10,7 +10,7 @@ const itemsSlice = createSlice({
   name: 'items',
   initialState: {
     items: [],
-    file: File,
+    file: null,
     id:null,
   } as itemI,
   reducers: {

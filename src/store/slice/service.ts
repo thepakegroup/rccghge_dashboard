@@ -10,7 +10,7 @@ interface serviceI{
 }
 
 const serviceSlice = createSlice({
-  name: 'content',
+  name: 'service',
   initialState: {
     name: "",
     startTime: "",
@@ -38,11 +38,17 @@ const serviceSlice = createSlice({
       state.endTime = action.payload
     },
     setDiscriptionService: (state, action) => {
-      state.startTime = action.payload
+      state.description = action.payload
     },
   },
 });
 
-export const {setService,setName,setStartTime,setEndTime,setDiscriptionService} = serviceSlice.actions;
+export const {
+  setService,
+  setName,
+  setStartTime,
+  setEndTime,
+  setDiscriptionService
+} = serviceSlice.actions;
 
 export default serviceSlice.reducer;

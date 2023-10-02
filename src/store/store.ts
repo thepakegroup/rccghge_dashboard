@@ -7,6 +7,9 @@ import mediaItems from './slice/mediaItems'
 import testimony from './slice/testimony'
 import content from './slice/content'
 import service from './slice/service'
+import leader from './slice/leader'
+import churchGroup from './slice/churchGroup'
+import mission from './slice/mission'
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +20,10 @@ export const store = configureStore({
     mediaItems,
     testimony,
     content,
-    service
+    service,
+    leader,
+    churchGroup,
+    mission
   },
 })
 

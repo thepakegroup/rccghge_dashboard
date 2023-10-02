@@ -7,13 +7,14 @@ import DeleteModal from '@/components/DeleteModal';
 import ModifyModal from '@/components/Home/ModifyModal';
 import AddItemButton from '@/components/AddItemButton';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { mediaI } from '@/util/interface/media';
 import { useFetchData } from '@/hooks/fetchData';
 import Loader from '@/components/Loader';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearItems } from '@/store/slice/mediaItems';
 import { labels } from '@/util/constants';
+import useUpdateToast from '@/hooks/updateToast';
 
 export default function Home() {
   const type = useGetTypeOfModal();
@@ -23,6 +24,8 @@ export default function Home() {
 
   const { data, loading, fetchData } = useFetchData('/api/getAllMedia');
   const dispatch = useAppDispatch();
+
+  const updateToast = useUpdateToast();
 
   if (loading) {
     return <Loader />;
@@ -39,6 +42,9 @@ export default function Home() {
     if (data.error === false) {
       fetchData();
       dispatch(clearItems());
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -61,6 +67,10 @@ export default function Home() {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Media ${type === 'modify' ? 'updated!' : 'added!'}`,
+        info: mediaInfo.name,
+      });
       dispatch(clearItems());
     }
   };
@@ -82,13 +92,15 @@ export default function Home() {
             <div className="card-wrapper">
               {mediaData?.map((media) => {
                 return (
-                  <Card
-                    title={media.name}
-                    img={media.image_url}
-                    id={media.id}
-                    link={media.link}
-                    key={media.id}
-                  />
+                  label.value === media.type && (
+                    <Card
+                      title={media.name}
+                      img={media.image_url}
+                      id={media.id}
+                      link={media.link}
+                      key={media.id}
+                    />
+                  )
                 );
               })}
             </div>
@@ -98,11 +110,11 @@ export default function Home() {
 
       <ScrollModalToTop />
       {type == 'modify' && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="Update" />
+        <ModifyModal handleSubmit={updateMedia} buttonText="update" />
       )}
 
       {type == 'add' && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="Add media" />
+        <ModifyModal handleSubmit={updateMedia} buttonText="add media" />
       )}
 
       {type == 'delete' && (

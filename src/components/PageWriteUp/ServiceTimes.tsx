@@ -13,6 +13,8 @@ import {
   setService,
   setStartTime,
 } from '@/store/slice/service';
+import Loader from '../Loader';
+import useUpdateToast from '@/hooks/updateToast';
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -21,6 +23,8 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const { section } = useAppSelector((state) => state.content);
 
   const services: serviceTime[] = data?.message;
+
+  const updateToast = useUpdateToast();
 
   const deleteService = async () => {
     const res = await fetch(`/api/deleteService/${id}`, {
@@ -31,6 +35,9 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -66,6 +73,10 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Service time ${btnType === 'edit' ? 'updated' : 'added!'}`,
+        info: name,
+      });
       dispatch(
         setService({
           name: '',
@@ -147,18 +158,23 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
             </svg>
           </span>
         </button>
-        <div className="flex flex-col gap-2">
-          {services?.map((service) => {
-            return (
-              <ServiceInfo
-                key={service.id}
-                id={service.id}
-                name={service.service_name}
-                serviceTime={service.service_period}
-              />
-            );
-          })}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {services?.map((service) => {
+              return (
+                <ServiceInfo
+                  key={service.id}
+                  id={service.id}
+                  name={service.service_name}
+                  serviceTime={service.service_period}
+                  description={service.service_description}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
       {type == 'delete' && section === 'service times' && (
         <DeleteModal deleteFunc={deleteService} />

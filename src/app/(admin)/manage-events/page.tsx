@@ -7,10 +7,10 @@ import Loader from '@/components/Loader';
 import ModifyModal from '@/components/ManageEvents/ModifyModal';
 import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import useUpdateToast from '@/hooks/updateToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearItems } from '@/store/slice/mediaItems';
 import { eventI } from '@/util/interface/events';
-import Image from 'next/image';
 import { useRef } from 'react';
 
 const ManageEvents = () => {
@@ -21,13 +21,7 @@ const ManageEvents = () => {
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
   const dispatch = useAppDispatch();
 
-  // console.log(items);
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  const events: eventI[] = data.message.data;
+  const events: eventI[] = data?.message.data;
 
   const handleRemoveEvents = async () => {
     const res = await fetch('/api/removeEvents', {
@@ -39,9 +33,14 @@ const ManageEvents = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
       dispatch(clearItems());
     }
   };
+
+  const updateToast = useUpdateToast();
 
   const updateMedia = async (mediaInfo: any) => {
     const mediaData = {
@@ -49,8 +48,6 @@ const ManageEvents = () => {
       banner: file,
       ...(type == 'modify' && id !== undefined ? { id } : {}),
     };
-
-    // console.log(mediaData);
 
     const res = await fetch(
       `/api/${type == 'modify' ? 'updateEvent' : 'addEvent'}`,
@@ -62,10 +59,12 @@ const ManageEvents = () => {
 
     const data = await res.json();
 
-    console.log(data);
-
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Event ${type === 'modify' ? 'updated!' : 'added!'}`,
+        info: mediaInfo.name,
+      });
       dispatch(clearItems());
     }
   };
@@ -76,11 +75,15 @@ const ManageEvents = () => {
         <AddItemButton sectionRef={sectionRef} />
       </div>
       <section className="mt-3">
-        <div className="card-wrapper">
-          {events.map((event) => {
-            return <Card key={event.id} id={event.id} img={event.banner} />;
-          })}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="card-wrapper">
+            {events.map((event) => {
+              return <Card key={event.id} id={event.id} img={event.banner} />;
+            })}
+          </div>
+        )}
       </section>
       {type == 'modify' && (
         <ModifyModal handleSubmit={updateMedia} buttonText="Update" />

@@ -2,21 +2,19 @@
 
 import Image from 'next/image';
 import ModalWrapper from '../ModalWrapper';
-import { setModalToggle } from '../../store/slice/Modal';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToast } from '../../store/slice/toast';
+
 import DragDrop from '../DragDrop';
 import useCloseModal from '@/hooks/closeModal';
 import { labels } from '@/util/constants';
 import { useState } from 'react';
+import useUpdateToast from '@/hooks/updateToast';
 
 interface modalI {
-  handleSubmit?: (mediaInfo: any) => void;
+  handleSubmit: (mediaInfo: any) => void;
   buttonText: string;
 }
 
 const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
-  const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
 
   const [name, setName] = useState('');
@@ -32,16 +30,8 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
       media_type: mediaType,
     };
 
-    handleSubmit && handleSubmit(mediaInfo);
+    handleSubmit(mediaInfo);
     handleCloseModal();
-
-    dispatch(
-      setToast({
-        isToast: true,
-        title: 'Item Added',
-        info: `${name} have been added`,
-      })
-    );
   };
 
   return (
@@ -137,7 +127,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
         <div className="absolute bottom-4 left-0 w-full px-9 flex justify-center">
           <button
             onClick={handleSubmitForm}
-            className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+            className="capitalize px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
           >
             {buttonText}
           </button>

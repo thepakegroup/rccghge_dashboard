@@ -1,10 +1,12 @@
 'use client';
 
 import DeleteModal from '@/components/DeleteModal';
+import Loader from '@/components/Loader';
 import EditSettings from '@/components/Settings/EditSettings';
 import SettingsInfo from '@/components/Settings/SettingsInfo';
 import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
 import { settingI } from '@/util/interface/settings';
 import { useState } from 'react';
@@ -21,6 +23,7 @@ const Settings = () => {
   // console.log(id);
 
   const settings: settingI[] = data?.message;
+  const updateToast = useUpdateToast();
 
   const updateSettings = async (settingInfo: any) => {
     const settingData = {
@@ -37,6 +40,10 @@ const Settings = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Setting updated!`,
+        info: settingInfo.name,
+      });
     }
   };
 
@@ -49,6 +56,9 @@ const Settings = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        type: 'delete',
+      });
     }
   };
 
@@ -64,6 +74,10 @@ const Settings = () => {
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `Setting added!`,
+        info: name,
+      });
       setName('');
       setValue('');
     }
@@ -105,12 +119,16 @@ const Settings = () => {
       <button className=" rounded-lg border border-[#D0D5DD] px-3 py-[0.375rem] my-4">
         A-Z
       </button>
-      <div className="text-base font-medium flex flex-col gap-2">
-        {settings?.map((setting) => {
-          const { id, value, name } = setting;
-          return <SettingsInfo key={id} id={id} value={value} name={name} />;
-        })}
-      </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="text-base font-medium flex flex-col gap-2">
+          {settings?.map((setting) => {
+            const { id, value, name } = setting;
+            return <SettingsInfo key={id} id={id} value={value} name={name} />;
+          })}
+        </div>
+      )}
       {type == 'modify' && <EditSettings handleSubmit={updateSettings} />}
       {type == 'delete' && <DeleteModal deleteFunc={deleteSetting} />}
     </section>

@@ -7,24 +7,38 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToast } from '../../store/slice/toast';
 import DragDrop from '../DragDrop';
 import useCloseModal from '@/hooks/closeModal';
+import {
+  setFullStory,
+  setName,
+  setPosition,
+  setQualification,
+  setTitle,
+} from '@/store/slice/leader';
+import { setDescription } from '@/store/slice/content';
+import { leadersI } from '@/util/interface/ministry';
+import useUpdateToast from '@/hooks/updateToast';
 
 interface modalI {
-  handleSubmit?: () => void;
-  buttonText: string;
+  handleSubmit: (mediaInfo: any) => void;
 }
 
-const ProfileModification = ({ buttonText }: modalI) => {
+const ProfileModification = ({ handleSubmit }: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
+  const { name, title, qualification, position, description, fullStory } =
+    useAppSelector((state) => state.leader);
 
-  const handleSubmit = () => {
-    dispatch(
-      setToast({
-        isToast: true,
-        title: 'Item Added',
-        info: 'Insstagram have been added',
-      })
-    );
+  const handleSubmitForm = () => {
+    const leaderInfo: leadersI = {
+      name,
+      title,
+      qualification,
+      position,
+      short_description: description,
+      full_story_about: fullStory,
+    };
+    handleSubmit(leaderInfo);
+    handleCloseModal();
   };
 
   return (
@@ -69,34 +83,74 @@ const ProfileModification = ({ buttonText }: modalI) => {
           </div>
 
           <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
-            <label htmlFor="type" className="input-field">
-              <span>Name</span>
-              <input type="text" className="input" />
-            </label>
             <label htmlFor="name" className="input-field">
+              <span>Name</span>
+              <input
+                onChange={(e) => dispatch(setName(e.target.value))}
+                value={name}
+                name="name"
+                type="text"
+                className="input"
+              />
+            </label>
+            <label htmlFor="title" className="input-field">
               <span>Title</span>
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => dispatch(setTitle(e.target.value))}
+                value={title}
+                name="title"
+                type="text"
+                className="input"
+              />
             </label>
-            <label htmlFor="link" className="input-field">
+            <label htmlFor="qualification" className="input-field">
               <span>Qualification</span>
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => dispatch(setQualification(e.target.value))}
+                value={qualification}
+                name="qualification"
+                type="text"
+                className="input"
+              />
             </label>
-            <label htmlFor="link" className="input-field">
+            <label htmlFor="position" className="input-field">
               <span>Position</span>
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => dispatch(setPosition(e.target.value))}
+                value={position}
+                name="position"
+                type="text"
+                className="input"
+              />
             </label>
-            <label htmlFor="link" className="input-field">
+            <label htmlFor="description" className="input-field">
               <span>Short description</span>
-              <input type="text" className="input" />
+              <input
+                onChange={(e) => dispatch(setDescription(e.target.value))}
+                value={description}
+                name="description"
+                type="text"
+                className="input"
+              />
+            </label>
+            <label htmlFor="fullStory" className="input-field">
+              <span>Full story</span>
+              <textarea
+                onChange={(e) => dispatch(setFullStory(e.target.value))}
+                value={fullStory}
+                name="fullStory"
+                rows={5}
+                className="input"
+              />
             </label>
           </form>
         </div>
         <div className="absolute bottom-4 left-0 w-full px-9 flex justify-center">
           <button
-            onClick={handleSubmit}
-            className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+            onClick={handleSubmitForm}
+            className="capitalize px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
           >
-            {buttonText}
+            update
           </button>
         </div>
       </>

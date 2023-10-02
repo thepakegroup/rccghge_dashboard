@@ -5,8 +5,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json()
   const cookie = req.cookies.get('token')
 
-  console.log(body)
-
   try {
     const res = await fetch(`${baseUrl}testimonies/publish`,{
       method: 'POST',
