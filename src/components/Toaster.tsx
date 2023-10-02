@@ -40,7 +40,7 @@ const Toaster = () => {
             />
             <div className="text-sm">
               <p className="text-gray-900 font-medium">
-                {type === 'delete' && info === '' ? 'Deleted!' : title}
+                {type === 'delete' ? 'Deleted!' : title}
               </p>
               {info !== '' && <span className="text-gray-500">{info}</span>}
             </div>
