@@ -28,8 +28,9 @@ function DragDrop({ children }: { children: ReactElement }) {
     reader.readAsDataURL(file);
     reader.onload = () => {
       setImgFile(reader.result as string);
-      dispatch(setMediaFile(reader.result as string));
+      // dispatch(setMediaFile(reader.result as string));
     };
+    dispatch(setMediaFile(file));
   };
   // console.log(typeof imgFile);
 
