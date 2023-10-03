@@ -9,13 +9,15 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setloading] = useState(true);
+  const [loading, setloading] = useState(false);
 
   const fetchData = async () => {
     const login = {
       email,
       password,
     };
+
+    setloading(true);
 
     const res = await fetch('/api/auth/login', {
       method: 'POST',

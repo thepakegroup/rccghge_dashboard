@@ -7,6 +7,7 @@ export interface leadersI{
   qualification: string;
   short_description: string;
   title: string;
+  slug?: string;
 }
 
 export interface churchGroupI{

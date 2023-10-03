@@ -6,8 +6,6 @@ export async function GET(req: NextRequest) {
     const res = await fetch(`${adminBaseUrl}logout`)
     const data = await res.json()
 
-    console.log(data)
-
     const response = new NextResponse(data)
     response.cookies.delete('token')
     

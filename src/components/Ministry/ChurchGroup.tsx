@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import ProfileCard from './ProfileCard';
-import DragDrop from '../DragDrop';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useEffect, useState } from 'react';
 import { churchGroupI } from '@/util/interface/ministry';
@@ -15,6 +14,11 @@ import {
 import GroupProfileModal from './GroupProfileModal';
 import Loader from '../Loader';
 import useUpdateToast from '@/hooks/updateToast';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { baseUrl } from '@/util/constants';
+import ImageUpload from '../ImageUpload';
+import { setMediaFile } from '@/store/slice/mediaItems';
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const { id, file } = useAppSelector((state) => state.mediaItems);
@@ -65,21 +69,30 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const updateToast = useUpdateToast();
 
   const updateGroup = async (groupInfo: any) => {
-    const groupData = {
-      ...groupInfo,
-      profile_picture: file,
-      ...(action == 'edit' && id !== undefined ? { id } : {}),
-    };
-    const res = await fetch(
-      `/api/${action == 'edit' ? 'updateGroup' : 'createGroup'}`,
+    const form = new FormData();
+
+    form.append('banner', file as Blob, file?.name);
+    form.append('name', groupInfo.name);
+    form.append('category', groupInfo.category);
+    form.append('description', groupInfo.qualification);
+    action === 'edit' && form.append('id', `${id}`);
+
+    const token = Cookies.get('token');
+
+    const res = await axios.post(
+      `${
+        action == 'edit' ? `${baseUrl}update-group` : `${baseUrl}create-group`
+      }`,
+      form,
       {
-        method: 'POST',
-        body: JSON.stringify(groupData),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    const data = await res.json();
-    console.log(data);
+    const data = res.data;
 
     if (data.error === false) {
       getGroupByCategory(category);
@@ -105,6 +118,10 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     description,
   };
 
+  // useEffect(() => {
+  //   section === 'group' && dispatch(setMediaFile(null));
+  // }, [file]);
+
   return (
     <div
       className={`${
@@ -113,41 +130,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
-        <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-          <DragDrop>
-            <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
-              <div className="flex justify-center">
-                <Image
-                  src="icons/upload.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="cursor-pointer"
-                />
-              </div>
-              <div className="hidden md:block text-center">
-                <p className="text-gray-600 text-sm">
-                  <span className="text-secondary-01">Click to upload</span>{' '}
-                  <span>or drag and drop</span>
-                </p>
-                <p className="text-xs text-gray-400">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-              <div className="md:hidden mt-4 text-center">
-                <p className="text-gray-600 text-sm">
-                  <span className="text-secondary-01">Tap upload</span>
-                </p>
-                <p className="text-xs text-gray-400">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-              <button className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md">
-                Upload
-              </button>
-            </div>
-          </DragDrop>
-        </div>
+        <ImageUpload />
         <div className="flex flex-col gap-[1.19rem] min-h-[200px]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>

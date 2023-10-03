@@ -32,7 +32,6 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout');
-
     router.push('/login');
   };
 

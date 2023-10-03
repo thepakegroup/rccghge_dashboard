@@ -4,7 +4,7 @@ import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
 import { setButtonVisibility } from '@/store/slice/ButtonVisibility';
 import Image from 'next/image';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const AddItemButton = ({
   sectionRef,
@@ -35,7 +35,7 @@ const AddItemButton = ({
       if (!sectionRef.current) return;
       sectionRef.current.removeEventListener('scroll', handleScroll);
     };
-  });
+  }, []);
 
   return (
     <button

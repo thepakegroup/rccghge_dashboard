@@ -25,6 +25,9 @@ export const store = configureStore({
     churchGroup,
     mission
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false
+  }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

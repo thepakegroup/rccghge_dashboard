@@ -4,7 +4,7 @@ import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
 import { setDeleteFunc } from '@/store/slice/content';
 import { setAction } from '@/store/slice/leader';
-import { setItems } from '@/store/slice/mediaItems';
+import { setEditMediaId } from '@/store/slice/mediaItems';
 import { baseUrl } from '@/util/constants';
 import Image from 'next/image';
 
@@ -17,6 +17,7 @@ interface profileI {
   category?: string;
   type: string;
   id: number;
+  slug?: string;
 }
 
 const ProfileCard = ({
@@ -28,6 +29,7 @@ const ProfileCard = ({
   category,
   type,
   id,
+  slug,
 }: profileI) => {
   const handleButton = useModalType();
 
@@ -36,14 +38,14 @@ const ProfileCard = ({
   const handleDelete = () => {
     handleButton('delete');
     dispatch(setDeleteFunc(type));
-    dispatch(setItems(id));
+    dispatch(setEditMediaId(slug as string));
   };
 
   const handleEdit = () => {
     handleButton('modify');
     dispatch(setAction('edit'));
     dispatch(setDeleteFunc(type));
-    dispatch(setItems(id));
+    dispatch(setEditMediaId(id));
   };
 
   return (
@@ -64,7 +66,7 @@ const ProfileCard = ({
           <Image
             src={`${baseUrl}load-media/${img}`}
             alt=""
-            height={553}
+            height={220}
             width={400}
             className="md:my-4"
           />

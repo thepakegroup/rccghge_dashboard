@@ -7,6 +7,7 @@ import { setIsSidebarToggle } from '../store/slice/sidbar';
 import { RootState } from '../store/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { usePathname } from 'next/navigation';
+import useModalType from '@/hooks/modalType';
 
 const Nav = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
@@ -14,6 +15,8 @@ const Nav = () => {
   const isButtonVisible = useAppSelector(
     (state) => state.buttonVisible.isButtonViible
   );
+
+  const handleButton = useModalType();
 
   const pathname = usePathname();
 
@@ -57,6 +60,7 @@ const Nav = () => {
         <div className="font-bold text-lg capitalize">{section[pathname]}</div>
       </div>
       <button
+        onClick={() => handleButton('add')}
         className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
           isButtonVisible ? 'hidden' : 'flex-center'
         }`}

@@ -13,8 +13,10 @@ import { useFetchData } from '@/hooks/fetchData';
 import Loader from '@/components/Loader';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearItems } from '@/store/slice/mediaItems';
-import { labels } from '@/util/constants';
+import { baseUrl, labels } from '@/util/constants';
 import useUpdateToast from '@/hooks/updateToast';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const type = useGetTypeOfModal();
@@ -48,6 +50,8 @@ export default function Home() {
     }
   };
 
+  // console.log();
+  7;
   const updateMedia = async (mediaInfo: any) => {
     const mediaData = {
       ...mediaInfo,
@@ -55,15 +59,33 @@ export default function Home() {
       ...(type == 'modify' && id !== undefined ? { id } : {}),
     };
 
-    const res = await fetch(
-      `/api/${type == 'modify' ? 'updateMedia' : 'addMedia'}`,
+    const form = new FormData();
+
+    form.append('media', file as Blob, file?.name);
+    form.append('name', mediaInfo.name);
+    form.append('media_type', mediaInfo.media_type);
+    form.append('short_description', mediaInfo.short_description);
+    form.append('link', mediaInfo.mediaLink);
+    type === 'modify' && form.append('id', `${id}`);
+
+    const token = Cookies.get('token');
+
+    const res = await axios.post(
+      `${
+        type == 'modify' ? `${baseUrl}update-media` : `${baseUrl}upload-media`
+      }`,
+      form,
       {
-        method: 'POST',
-        body: JSON.stringify(mediaData),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    const data = await res.json();
+    const data = res.data;
+
+    console.log(data);
 
     if (data.error === false) {
       fetchData();

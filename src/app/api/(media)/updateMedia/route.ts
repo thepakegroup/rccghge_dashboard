@@ -12,7 +12,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         'content-Type': 'application/json',
         'Authorization': `Bearer ${cookie?.value}`
       },
-      body:JSON.stringify(body)
+      body:body
     })
 
     const data = await res.json()

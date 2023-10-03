@@ -17,6 +17,8 @@ import {
 import { setDescription } from '@/store/slice/content';
 import { leadersI } from '@/util/interface/ministry';
 import useUpdateToast from '@/hooks/updateToast';
+import { useEffect } from 'react';
+import { setMediaFile } from '@/store/slice/mediaItems';
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -40,6 +42,10 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
     handleSubmit(leaderInfo);
     handleCloseModal();
   };
+
+  useEffect(() => {
+    dispatch(setMediaFile(null));
+  }, []);
 
   return (
     <ModalWrappeer>

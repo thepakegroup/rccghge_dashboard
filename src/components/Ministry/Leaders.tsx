@@ -18,6 +18,12 @@ import {
 import ProfileModification from './ProfileModification';
 import Loader from '../Loader';
 import useUpdateToast from '@/hooks/updateToast';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { baseUrl } from '@/util/constants';
+import ImageUpload from '../ImageUpload';
+import { useEffect } from 'react';
+import { setMediaFile } from '@/store/slice/mediaItems';
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const { data, loading, fetchData } = useFetchData('/api/getAllLeaders');
@@ -39,12 +45,17 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   const leaders: leadersI[] = data?.message;
 
   const updateToast = useUpdateToast();
+
   const removeLeader = async () => {
     const res = await fetch(`/api/removeLeader/${id}`, {
       method: 'DELETE',
     });
 
+    console.log(id);
+
     const data = await res.json();
+
+    console.log(data);
 
     if (data.error === false) {
       fetchData();
@@ -54,26 +65,36 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     }
   };
 
-  const updateLeader = async (leaderInfo: any) => {
-    const formData = new FormData();
-    formData.append('file', file as Blob);
-    // console.log(formData);
+  // console.log(leaders);
 
-    const leaderData = {
-      ...leaderInfo,
-      profile_picture: file,
-      ...(action == 'edit' && id !== undefined ? { id } : {}),
-    };
-    const res = await fetch(
-      `/api/${action == 'edit' ? 'updateLeader' : 'leader'}`,
+  const updateLeader = async (leaderInfo: any) => {
+    const form = new FormData();
+
+    form.append('profile_picture', file as Blob, file?.name);
+    form.append('name', leaderInfo.name);
+    form.append('title', leaderInfo.title);
+    form.append('qualification', leaderInfo.qualification);
+    form.append('position', leaderInfo.position);
+    form.append('short_description', leaderInfo.short_description);
+    form.append('full_story_about', leaderInfo.full_story_about);
+    action === 'edit' && form.append('id', `${id}`);
+
+    const token = Cookies.get('token');
+
+    const res = await axios.post(
+      `${
+        action == 'edit' ? `${baseUrl}update-leader` : `${baseUrl}create-leader`
+      }`,
+      form,
       {
-        method: 'POST',
-        body: JSON.stringify(leaderData),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    const data = await res.json();
-    console.log(data);
+    const data = res.data;
 
     if (data.error === false) {
       fetchData();
@@ -104,6 +125,10 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     full_story_about: fullStory,
   };
 
+  // useEffect(() => {
+  //   section !== 'leader' && dispatch(setMediaFile(null));
+  // }, [file]);
+
   return (
     <div
       className={`${
@@ -112,41 +137,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg py-6 px-7 md:h-[40rem] md:overflow-y-auto overflow-x-hidden">
         <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
-        <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-          <DragDrop>
-            <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
-              <div className="flex justify-center">
-                <Image
-                  src="icons/upload.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="cursor-pointer"
-                />
-              </div>
-              <div className="hidden md:block text-center">
-                <p className="text-gray-600 text-sm">
-                  <span className="text-secondary-01">Click to upload</span>{' '}
-                  <span>or drag and drop</span>
-                </p>
-                <p className="text-xs text-gray-400">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-              <div className="md:hidden mt-4 text-center">
-                <p className="text-gray-600 text-sm">
-                  <span className="text-secondary-01">Tap upload</span>
-                </p>
-                <p className="text-xs text-gray-400">
-                  SVG, PNG, JPG or GIF (max. 800x400px)
-                </p>
-              </div>
-              <button className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md">
-                Upload
-              </button>
-            </div>
-          </DragDrop>
-        </div>
+        <ImageUpload />
         <div className="flex flex-col gap-[1.19rem]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>
@@ -209,6 +200,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               className="input"
             />
           </label>
+
           <button
             onClick={() => updateLeader(leaderInfo)}
             className="flex-center gap-2 bg-secondary-02 rounded-md max-w-max text-white text-sm px-4 py-2"
@@ -239,6 +231,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
                 id={leader.id as number}
                 img={leader.profile_picture as string}
                 type="leader"
+                slug={leader.slug as string}
               />
             );
           })}

@@ -12,6 +12,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearItems } from '@/store/slice/mediaItems';
 import { eventI } from '@/util/interface/events';
 import { useRef } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { baseUrl } from '@/util/constants';
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
@@ -49,15 +52,41 @@ const ManageEvents = () => {
       ...(type == 'modify' && id !== undefined ? { id } : {}),
     };
 
-    const res = await fetch(
-      `/api/${type == 'modify' ? 'updateEvent' : 'addEvent'}`,
+    const form = new FormData();
+
+    form.append('banner', file as Blob, file?.name);
+    form.append('title', mediaInfo.title);
+    form.append('short_description', mediaInfo.short_description);
+    form.append('start_date', mediaInfo.start_date);
+    form.append('end_date', mediaInfo.end_date);
+    type === 'modify' && form.append('id', `${id}`);
+
+    const token = Cookies.get('token');
+
+    const res = await axios.post(
+      `${
+        type == 'modify' ? `${baseUrl}update-event` : `${baseUrl}create-event`
+      }`,
+      form,
       {
-        method: 'POST',
-        body: JSON.stringify(mediaData),
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
-    const data = await res.json();
+    const data = res.data;
+
+    // const res = await fetch(
+    //   `/api/${type == 'modify' ? 'updateEvent' : 'addEvent'}`,
+    //   {
+    //     method: 'POST',
+    //     body: JSON.stringify(mediaData),
+    //   }
+    // );
+
+    // const data = await res.json();
 
     if (data.error === false) {
       fetchData();

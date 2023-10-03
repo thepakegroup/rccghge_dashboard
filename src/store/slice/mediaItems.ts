@@ -2,8 +2,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface itemI{
   items: number[];
-  file: Blob | null | string;
-  id: number | null;
+  file: File | null;
+  id: number | null | string;
 }
 
 const itemsSlice = createSlice({
@@ -28,7 +28,7 @@ const itemsSlice = createSlice({
     setMediaFile: (state, action) => {
       state.file = action.payload
     },
-    setEditMediaId: (state, action: PayloadAction<number>) => {
+    setEditMediaId: (state, action: PayloadAction<number| string>) => {
       state.id = action.payload
     }
   },

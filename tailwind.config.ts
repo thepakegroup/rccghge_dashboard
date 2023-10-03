@@ -21,7 +21,9 @@ const config: Config = {
         'ash-100': '#9E9E9E',
         'ash-200': "#464646",
         'ash-300':'#686868',
-        'blue-100':'#1064C6'
+        'blue-100': '#1064C6',
+        'warning-400': "#FEF6E7",
+        'error-400':'#D42620'
       },
       boxShadow: {
         modalShadow:'0px 4px 25px 0px rgba(0, 0, 0, 0.15)',

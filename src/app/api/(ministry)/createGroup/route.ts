@@ -8,7 +8,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   console.log(body)
 
   try {
-    const res = await fetch(`${baseUrl}create-leader`,{
+    const res = await fetch(`${baseUrl}create-group`,{
       method: 'POST',
       headers: {
         'content-Type': 'application/json',
