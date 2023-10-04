@@ -4,7 +4,7 @@ import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
 import { setDeleteFunc } from '@/store/slice/content';
 import { setAction } from '@/store/slice/leader';
-import { setEditMediaId } from '@/store/slice/mediaItems';
+import { setEditMediaId, setFileName } from '@/store/slice/mediaItems';
 import { baseUrl } from '@/util/constants';
 import Image from 'next/image';
 
@@ -38,13 +38,16 @@ const ProfileCard = ({
   const handleDelete = () => {
     handleButton('delete');
     dispatch(setDeleteFunc(type));
-    dispatch(setEditMediaId(slug as string));
+    title
+      ? dispatch(setEditMediaId(slug as string))
+      : dispatch(setEditMediaId(id));
   };
 
   const handleEdit = () => {
     handleButton('modify');
     dispatch(setAction('edit'));
     dispatch(setDeleteFunc(type));
+    dispatch(setFileName(img));
     dispatch(setEditMediaId(id));
   };
 

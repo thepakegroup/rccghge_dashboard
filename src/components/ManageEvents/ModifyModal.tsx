@@ -7,7 +7,7 @@ import useCloseModal from '@/hooks/closeModal';
 import { useEffect, useState } from 'react';
 import ImageUpload from '../ImageUpload';
 import { useAppDispatch } from '@/store/hooks';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -48,6 +48,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
 
   useEffect(() => {
     dispatch(setMediaFile(null));
+    // dispatch(setFileName(''));
   }, []);
 
   return (

@@ -2,15 +2,14 @@
 
 import Image from 'next/image';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { setIsSidebarToggle } from '../store/slice/sidbar';
-import { RootState } from '../store/store';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { usePathname } from 'next/navigation';
 import useModalType from '@/hooks/modalType';
 
 const Nav = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
+  const { items } = useAppSelector((state) => state.mediaItems);
 
   const isButtonVisible = useAppSelector(
     (state) => state.buttonVisible.isButtonViible
@@ -45,7 +44,7 @@ const Nav = () => {
   return (
     <nav
       className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full ${
-        isSidebarOpen ? 'md:calc-width-50' : ''
+        isSidebarOpen ? 'md:calc-width-50 ml-[271px]' : 'md:w-full ml-0'
       }`}
     >
       <div className="flex-center gap-5">
@@ -59,21 +58,24 @@ const Nav = () => {
         />
         <div className="font-bold text-lg capitalize">{section[pathname]}</div>
       </div>
-      <button
-        onClick={() => handleButton('add')}
-        className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
-          isButtonVisible ? 'hidden' : 'flex-center'
-        }`}
-      >
-        <span>Add media</span>
-        <Image
-          src="icons/plus.svg"
-          alt=""
-          width={18}
-          height={18}
-          className="cursor-pointer"
-        />
-      </button>
+      <div className="text-base flex-center gap-9">
+        <button
+          onClick={() => handleButton('delete')}
+          className={`gap-1 ${items.length > 0 ? 'flex-center' : 'hidden'}`}
+        >
+          <Image src="icons/delete.svg" alt="" width={18} height={18} />
+          <span>Delete all</span>
+        </button>
+        <button
+          onClick={() => handleButton('add')}
+          className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
+            isButtonVisible ? 'hidden' : 'flex-center'
+          }`}
+        >
+          <span>Add media</span>
+          <Image src="icons/plus.svg" alt="" width={18} height={18} />
+        </button>
+      </div>
     </nav>
   );
 };

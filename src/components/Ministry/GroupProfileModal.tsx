@@ -15,7 +15,7 @@ import {
   setGroupInfo,
 } from '@/store/slice/churchGroup';
 import useUpdateToast from '@/hooks/updateToast';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 import { useEffect } from 'react';
 
 interface modalI {
@@ -52,6 +52,7 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
 
   useEffect(() => {
     dispatch(setMediaFile(null));
+    // dispatch(setFileName(''));
   }, []);
 
   return (

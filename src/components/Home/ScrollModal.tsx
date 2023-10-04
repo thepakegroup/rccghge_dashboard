@@ -8,6 +8,14 @@ import { useState } from 'react';
 const ScrollModal = () => {
   const [toggleModal, setToggleModal] = useState(false);
 
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="fixed right-4 bottom-12 z-30">
       <div
@@ -24,8 +32,11 @@ const ScrollModal = () => {
         <ul className="capitalize [&>li]:px-4 [&>li]:py-2 [&>li]:cursor-pointer [&>li:hover]:bg-[#E5E8ED] text-gray-900 text-sm">
           {labels.map((label) => {
             return (
-              <li key={label.value}>
-                <Link href={`#${label.value}`}>{label.label}</Link>
+              <li
+                key={label.value}
+                onClick={() => scrollToSection(label.value)}
+              >
+                {label.label}
               </li>
             );
           })}

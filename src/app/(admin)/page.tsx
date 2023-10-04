@@ -7,12 +7,11 @@ import DeleteModal from '@/components/DeleteModal';
 import ModifyModal from '@/components/Home/ModifyModal';
 import AddItemButton from '@/components/AddItemButton';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
-import { useRef } from 'react';
 import { mediaI } from '@/util/interface/media';
 import { useFetchData } from '@/hooks/fetchData';
 import Loader from '@/components/Loader';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { clearItems } from '@/store/slice/mediaItems';
+import { clearItems, setFileName } from '@/store/slice/mediaItems';
 import { baseUrl, labels } from '@/util/constants';
 import useUpdateToast from '@/hooks/updateToast';
 import axios from 'axios';
@@ -20,7 +19,6 @@ import Cookies from 'js-cookie';
 
 export default function Home() {
   const type = useGetTypeOfModal();
-  const sectionRef = useRef<HTMLElement | null>(null);
 
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
@@ -50,18 +48,10 @@ export default function Home() {
     }
   };
 
-  // console.log();
-  7;
   const updateMedia = async (mediaInfo: any) => {
-    const mediaData = {
-      ...mediaInfo,
-      media: file,
-      ...(type == 'modify' && id !== undefined ? { id } : {}),
-    };
-
     const form = new FormData();
 
-    form.append('media', file as Blob, file?.name);
+    file && form.append('media', file as Blob, file?.name);
     form.append('name', mediaInfo.name);
     form.append('media_type', mediaInfo.media_type);
     form.append('short_description', mediaInfo.short_description);
@@ -94,19 +84,20 @@ export default function Home() {
         info: mediaInfo.name,
       });
       dispatch(clearItems());
+      dispatch(setFileName(''));
     }
   };
 
   const mediaData: mediaI[] = data?.message;
 
   return (
-    <section ref={sectionRef}>
+    <section>
       <div className="flex justify-end mt-2">
-        <AddItemButton sectionRef={sectionRef} />
+        <AddItemButton />
       </div>
       {labels.map((label) => {
         return (
-          <section key={label.value} className="mt-6" id={label.label}>
+          <section key={label.value} className="mt-6" id={label.value}>
             <div className="flex-center gap-1">
               <Image src="icons/img.svg" alt="" width={18} height={18} />
               <p className="text-base text-fade-ash font-bold">{label.label}</p>
@@ -131,6 +122,7 @@ export default function Home() {
       })}
 
       <ScrollModalToTop />
+
       {type == 'modify' && (
         <ModifyModal handleSubmit={updateMedia} buttonText="update" />
       )}

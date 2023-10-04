@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppDispatch } from '@/store/hooks';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 import React, { ReactElement, useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 
@@ -12,6 +12,7 @@ function DragDrop({ children }: { children: ReactElement }) {
 
   const handleChange = (file: File) => {
     dispatch(setMediaFile(file));
+    dispatch(setFileName(file.name));
   };
 
   return (

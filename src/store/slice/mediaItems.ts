@@ -3,6 +3,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 interface itemI{
   items: number[];
   file: File | null;
+  fileName: string;
   id: number | null | string;
 }
 
@@ -11,6 +12,7 @@ const itemsSlice = createSlice({
   initialState: {
     items: [],
     file: null,
+    fileName:"",
     id:null,
   } as itemI,
   reducers: {
@@ -28,12 +30,22 @@ const itemsSlice = createSlice({
     setMediaFile: (state, action) => {
       state.file = action.payload
     },
+    setFileName: (state, action) => {
+      state.fileName = action.payload
+    },
     setEditMediaId: (state, action: PayloadAction<number| string>) => {
       state.id = action.payload
     }
   },
 });
 
-export const {setItems,removeItem,clearItems,setMediaFile,setEditMediaId} = itemsSlice.actions;
+export const {
+  setItems,
+  removeItem,
+  clearItems,
+  setMediaFile,
+  setEditMediaId,
+  setFileName
+} = itemsSlice.actions;
 
 export default itemsSlice.reducer;

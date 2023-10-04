@@ -11,11 +11,9 @@ import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
 import { testimonyI } from '@/util/interface/testimony';
 import Image from 'next/image';
-import { useRef } from 'react';
 
 const Testimonials = () => {
   const type = useGetTypeOfModal();
-  const sectionRef = useRef<HTMLElement | null>(null);
 
   const { id } = useAppSelector((state) => state.testimony);
 
@@ -72,7 +70,7 @@ const Testimonials = () => {
   return (
     <section>
       <div className="flex justify-end mt-2">
-        <AddItemButton sectionRef={sectionRef} />
+        <AddItemButton />
       </div>
       <section className="mt-4">
         <div className="text-ash-100 flex flex-col gap-3 md:flex-row">

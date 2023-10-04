@@ -3,7 +3,12 @@
 import Image from 'next/image';
 import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
-import { removeItem, setEditMediaId, setItems } from '@/store/slice/mediaItems';
+import {
+  removeItem,
+  setEditMediaId,
+  setFileName,
+  setItems,
+} from '@/store/slice/mediaItems';
 import { baseUrl } from '@/util/constants';
 
 interface cardI {
@@ -31,6 +36,7 @@ const Card = ({ title, img, id, link }: cardI) => {
 
   const handleEdit = () => {
     dispatch(setEditMediaId(id));
+    dispatch(setFileName(img));
     handleButton('modify');
   };
 

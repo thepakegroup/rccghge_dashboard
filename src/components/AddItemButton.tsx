@@ -6,11 +6,7 @@ import { setButtonVisibility } from '@/store/slice/ButtonVisibility';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
-const AddItemButton = ({
-  sectionRef,
-}: {
-  sectionRef: React.RefObject<HTMLElement>;
-}) => {
+const AddItemButton = () => {
   const elementRef = useRef<HTMLButtonElement | null>(null);
   const dispatch = useAppDispatch();
 
@@ -26,14 +22,11 @@ const AddItemButton = ({
   };
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-
-    sectionRef.current.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);
     handleScroll();
 
     return () => {
-      if (!sectionRef.current) return;
-      sectionRef.current.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 

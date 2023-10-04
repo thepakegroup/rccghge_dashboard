@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import DragDrop from './DragDrop';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 const ImageUpload = () => {
-  const { file } = useAppSelector((state) => state.mediaItems);
+  const { file, fileName } = useAppSelector((state) => state.mediaItems);
   const dispatch = useAppDispatch();
 
   const kb = file && file?.size / 1024;
   // const mb = kb && kb / 1024;
 
-  // console.log(file?.mtime);
+  // console.log(fileName);
 
   const upload = (
     <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
@@ -79,6 +79,7 @@ const ImageUpload = () => {
   const removeFile = (e: any) => {
     e.stopPropagation();
     dispatch(setMediaFile(null));
+    dispatch(setFileName(''));
   };
 
   const fileAvailable = (
@@ -96,7 +97,7 @@ const ImageUpload = () => {
         <div>
           <p className="text-sm font-medium text-gray-800">Upload Successful</p>
           <span className="text-gray-400 text-[0.6875rem]">
-            {file?.name} | {Math.ceil(kb as number)} KB
+            {fileName} | {kb && Math.ceil(kb)} KB
           </span>
         </div>
       </div>
@@ -114,11 +115,11 @@ const ImageUpload = () => {
   return (
     <DragDrop>
       <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-        {!file
+        {!file && fileName === ''
           ? upload
           : file && kb && kb >= 3000
           ? fileTooLarge
-          : fileAvailable}
+          : fileName && fileAvailable}
       </div>
     </DragDrop>
   );

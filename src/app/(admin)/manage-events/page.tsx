@@ -9,16 +9,14 @@ import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
 import useUpdateToast from '@/hooks/updateToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { clearItems } from '@/store/slice/mediaItems';
+import { clearItems, setFileName } from '@/store/slice/mediaItems';
 import { eventI } from '@/util/interface/events';
-import { useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { baseUrl } from '@/util/constants';
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
-  const sectionRef = useRef<HTMLElement | null>(null);
 
   const { data, loading, fetchData } = useFetchData('/api/getAllEvents');
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
@@ -46,15 +44,9 @@ const ManageEvents = () => {
   const updateToast = useUpdateToast();
 
   const updateMedia = async (mediaInfo: any) => {
-    const mediaData = {
-      ...mediaInfo,
-      banner: file,
-      ...(type == 'modify' && id !== undefined ? { id } : {}),
-    };
-
     const form = new FormData();
 
-    form.append('banner', file as Blob, file?.name);
+    file && form.append('banner', file as Blob, file?.name);
     form.append('title', mediaInfo.title);
     form.append('short_description', mediaInfo.short_description);
     form.append('start_date', mediaInfo.start_date);
@@ -78,16 +70,6 @@ const ManageEvents = () => {
 
     const data = res.data;
 
-    // const res = await fetch(
-    //   `/api/${type == 'modify' ? 'updateEvent' : 'addEvent'}`,
-    //   {
-    //     method: 'POST',
-    //     body: JSON.stringify(mediaData),
-    //   }
-    // );
-
-    // const data = await res.json();
-
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -95,13 +77,14 @@ const ManageEvents = () => {
         info: mediaInfo.name,
       });
       dispatch(clearItems());
+      dispatch(setFileName(''));
     }
   };
 
   return (
     <section>
       <div className="flex justify-end mt-2">
-        <AddItemButton sectionRef={sectionRef} />
+        <AddItemButton />
       </div>
       <section className="mt-3">
         {loading ? (

@@ -1,9 +1,9 @@
 import Nav from '@/components/Nav';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { AppProvider } from '@/components/Provider';
 import Sidebar from '@/components/Sidebar';
 import Toaster from '@/components/Toaster';
+import SectionWrapper from '@/components/SectionWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,18 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <AppProvider>
-          <div className="md:flex">
-            <Sidebar />
-            <main className="w-full relative">
-              <Nav />
-              <section className="mt-[3.8rem] [&>section]:pb-28 [&>section]:px-3 [&>section]:h-[100vh] [&>section]:overflow-y-auto [&>section]:overflow-x-hidden">
-                {children}
-              </section>
-            </main>
-            <Toaster />
-          </div>
-        </AppProvider>
+        <div className="md:flex">
+          <Sidebar />
+          <main className="w-full relative">
+            <Nav />
+            <SectionWrapper>{children}</SectionWrapper>
+          </main>
+          <Toaster />
+        </div>
       </body>
     </html>
   );

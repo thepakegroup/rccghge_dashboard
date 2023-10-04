@@ -23,7 +23,7 @@ import Cookies from 'js-cookie';
 import { baseUrl } from '@/util/constants';
 import ImageUpload from '../ImageUpload';
 import { useEffect } from 'react';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const { data, loading, fetchData } = useFetchData('/api/getAllLeaders');
@@ -36,6 +36,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     description,
     fullStory,
     action,
+    leaderImg,
   } = useAppSelector((state) => state.leader);
   const { section } = useAppSelector((state) => state.content);
   const type = useGetTypeOfModal();
@@ -51,11 +52,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       method: 'DELETE',
     });
 
-    console.log(id);
-
     const data = await res.json();
-
-    console.log(data);
 
     if (data.error === false) {
       fetchData();
@@ -64,13 +61,12 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       });
     }
   };
-
-  // console.log(leaders);
+  // console.log(data);
 
   const updateLeader = async (leaderInfo: any) => {
     const form = new FormData();
 
-    form.append('profile_picture', file as Blob, file?.name);
+    file && form.append('profile_picture', file as Blob, file?.name);
     form.append('name', leaderInfo.name);
     form.append('title', leaderInfo.title);
     form.append('qualification', leaderInfo.qualification);
@@ -96,6 +92,8 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
     const data = res.data;
 
+    console.log(data);
+
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -113,6 +111,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           action: 'add',
         })
       );
+      dispatch(setFileName(''));
     }
   };
 

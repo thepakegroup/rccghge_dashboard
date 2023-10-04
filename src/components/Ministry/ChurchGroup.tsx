@@ -18,7 +18,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { baseUrl } from '@/util/constants';
 import ImageUpload from '../ImageUpload';
-import { setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const { id, file } = useAppSelector((state) => state.mediaItems);
@@ -71,7 +71,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const updateGroup = async (groupInfo: any) => {
     const form = new FormData();
 
-    form.append('banner', file as Blob, file?.name);
+    file && form.append('banner', file as Blob, file?.name);
     form.append('name', groupInfo.name);
     form.append('category', groupInfo.category);
     form.append('description', groupInfo.qualification);
@@ -109,6 +109,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           action: 'add',
         })
       );
+      dispatch(setFileName(''));
     }
   };
 
@@ -117,10 +118,6 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     category,
     description,
   };
-
-  // useEffect(() => {
-  //   section === 'group' && dispatch(setMediaFile(null));
-  // }, [file]);
 
   return (
     <div
