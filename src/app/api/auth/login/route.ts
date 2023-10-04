@@ -24,6 +24,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
         // httpOnly: true,
         sameSite: "strict",
     })
+
+    response.cookies.set({
+        name: "email",
+        value: data.email,
+        maxAge: 60*60*24,
+        // httpOnly: true,
+        sameSite: "strict",
+    })
+
+    response.cookies.set({
+        name: "access",
+        value: data.access,
+        maxAge: 60*60*24,
+        // httpOnly: true,
+        sameSite: "strict",
+    })
     
     return response
   } catch (error) {

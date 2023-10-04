@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { setIsSidebarToggle } from '../store/slice/sidbar';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import Cookies from 'js-cookie';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -13,6 +14,9 @@ const Sidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
+
+  const email = Cookies.get('email');
+  const access = Cookies.get('access');
 
   const windowSize = typeof window !== 'undefined' ? window.innerWidth : 0;
 
@@ -136,7 +140,7 @@ const Sidebar = () => {
             );
           })}
         </ul>
-        <div className="absolute bottom-0 max-w-max border-t-2 border-[#657596]">
+        <div className="absolute bottom-0 w-[250px] border-t-2 border-[#657596]">
           <div
             className="flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary"
             onClick={handleToggle}
@@ -150,9 +154,7 @@ const Sidebar = () => {
             />
             <div onClick={handleLogout} className="capitalize">
               <p className="text-sm font-bold text-secondary-01">Logout</p>
-              <span className="text-xs font-medium">
-                smart.okolichiaza@gmail.com
-              </span>
+              <span className="text-xs font-medium">{email}</span>
             </div>
           </div>
         </div>
