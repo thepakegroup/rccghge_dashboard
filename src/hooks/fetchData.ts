@@ -1,20 +1,34 @@
-import { useEffect, useState } from "react"
+'use client'
 
-interface dataI{
-  error: boolean;
-  message:[]
+import { useEffect, useState } from "react"
+import Cookies from 'js-cookie';
+
+interface fetchI{
+  url: string;
+  method?: string;
 }
 
-export const useFetchData = (url: string) => {
+export const useFetchData = ({url,method}:fetchI) => {
   const [data, setData] = useState<any>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState();
 
   const fetchData = async () => {
+    const token = Cookies.get('token');
       try {
-        const res = await fetch(url)
+        let res = await fetch(url)
 
-        const data = await res.json()
+        if (method === 'client') {
+          res = await fetch(url,{
+            method: 'GET',
+            headers: {
+              'content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          })
+        }
+
+        const data = await res?.json()
         setData(data)
         setLoading(false)
       } catch (error) {
@@ -22,7 +36,7 @@ export const useFetchData = (url: string) => {
         setLoading(false)
         setError(error as any)
       }
-    }
+  }
 
   useEffect(() => { 
     fetchData()

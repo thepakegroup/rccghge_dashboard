@@ -97,7 +97,7 @@ const Sidebar = () => {
   return (
     <aside
       onClick={handleToggle}
-      className={`absolute md:fixed md:max-w-max md:z-0 top-0 z-50 w-full text-white transition-all ease-in-out delay-150 ${
+      className={`absolute md:fixed md:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full hidden'
       }`}
     >

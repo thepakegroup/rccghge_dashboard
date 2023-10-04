@@ -19,7 +19,7 @@ const Card = ({ title, content, published, createdAt, id }: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
 
-  const { fetchData } = useFetchData('/api/getTestimony');
+  const { fetchData } = useFetchData({ url: '/api/getTestimony' });
 
   const { formattedDate, formattedTime } = formatDate(createdAt);
 

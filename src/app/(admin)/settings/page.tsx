@@ -17,7 +17,9 @@ const Settings = () => {
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
 
-  const { data, loading, fetchData } = useFetchData('/api/getAllSettings');
+  const { data, loading, fetchData } = useFetchData({
+    url: '/api/getAllSettings',
+  });
   const { id } = useAppSelector((state) => state.mediaItems);
 
   // console.log(id);

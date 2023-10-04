@@ -9,6 +9,7 @@ import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
 import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
+import { baseUrl } from '@/util/constants';
 import { testimonyI } from '@/util/interface/testimony';
 import Image from 'next/image';
 
@@ -17,7 +18,12 @@ const Testimonials = () => {
 
   const { id } = useAppSelector((state) => state.testimony);
 
-  const { data, loading, fetchData } = useFetchData('/api/getTestimony');
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}testimonies/{sort}/{page}`,
+    method: 'client',
+  });
+
+  console.log(data);
 
   const testimonies: testimonyI[] = data?.message.data;
 

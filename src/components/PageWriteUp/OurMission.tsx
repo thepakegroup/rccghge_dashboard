@@ -27,7 +27,9 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   const dispatch = useAppDispatch();
 
   const { id } = useAppSelector((state) => state.mediaItems);
-  const { data, loading, fetchData } = useFetchData(`/api/getOurMission/all`);
+  const { data, loading, fetchData } = useFetchData({
+    url: `/api/getOurMission/all`,
+  });
 
   const ourMissions: ourMissionI[] = data?.message;
   const updateToast = useUpdateToast();

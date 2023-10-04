@@ -18,7 +18,9 @@ import { baseUrl } from '@/util/constants';
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
 
-  const { data, loading, fetchData } = useFetchData('/api/getAllEvents');
+  const { data, loading, fetchData } = useFetchData({
+    url: '/api/getAllEvents',
+  });
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
   const dispatch = useAppDispatch();
 

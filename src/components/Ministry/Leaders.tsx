@@ -26,7 +26,9 @@ import { useEffect } from 'react';
 import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
-  const { data, loading, fetchData } = useFetchData('/api/getAllLeaders');
+  const { data, loading, fetchData } = useFetchData({
+    url: '/api/getAllLeaders',
+  });
   const { id, file } = useAppSelector((state) => state.mediaItems);
   const {
     name,

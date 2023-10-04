@@ -16,13 +16,17 @@ import { baseUrl, labels } from '@/util/constants';
 import useUpdateToast from '@/hooks/updateToast';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const type = useGetTypeOfModal();
 
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
-  const { data, loading, fetchData } = useFetchData('/api/getAllMedia');
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}load-all-media`,
+    method: 'client',
+  });
   const dispatch = useAppDispatch();
 
   const updateToast = useUpdateToast();

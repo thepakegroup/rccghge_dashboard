@@ -8,6 +8,7 @@ import { useFetchData } from '@/hooks/fetchData';
 import useGetTypeOfModal from '@/hooks/getTypeOfModal';
 import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
+import { baseUrl } from '@/util/constants';
 import { adminI } from '@/util/interface/admin';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -19,7 +20,10 @@ const Admin = () => {
   const [level, setLevel] = useState('admin');
 
   const { id } = useAppSelector((state) => state.mediaItems);
-  const { data, loading, fetchData } = useFetchData('/api/getAllAdmin');
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}admins`,
+    method: 'client',
+  });
   const admins: adminI[] = data?.message;
 
   const updateToast = useUpdateToast();

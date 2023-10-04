@@ -19,7 +19,9 @@ import useUpdateToast from '@/hooks/updateToast';
 const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
   const { id } = useAppSelector((state) => state.mediaItems);
-  const { data, loading, fetchData } = useFetchData('/api/getAllWriteup');
+  const { data, loading, fetchData } = useFetchData({
+    url: '/api/getAllWriteup',
+  });
   const {
     content,
     title,

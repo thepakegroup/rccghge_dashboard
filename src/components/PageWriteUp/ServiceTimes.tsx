@@ -18,7 +18,9 @@ import useUpdateToast from '@/hooks/updateToast';
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
-  const { data, loading, fetchData } = useFetchData('/api/getServices');
+  const { data, loading, fetchData } = useFetchData({
+    url: '/api/getServices',
+  });
   const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
 
