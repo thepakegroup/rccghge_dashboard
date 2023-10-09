@@ -21,13 +21,17 @@ import ImageUpload from '../ImageUpload';
 import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
-  const { id, file } = useAppSelector((state) => state.mediaItems);
+  const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
   const type = useGetTypeOfModal();
 
-  const { name, category, description, action } = useAppSelector(
-    (state) => state.churchGroup
-  );
+  const {
+    name,
+    category,
+    description,
+    action,
+    groupImg: file,
+  } = useAppSelector((state) => state.churchGroup);
 
   const dispatch = useAppDispatch();
 
@@ -107,6 +111,8 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           description: '',
           id: null,
           action: 'add',
+          groupImg: null,
+          groupImgName: '',
         })
       );
       dispatch(setFileName(''));
@@ -127,7 +133,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
-        <ImageUpload />
+        <ImageUpload section="group" />
         <div className="flex flex-col gap-[1.19rem] min-h-[200px]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>

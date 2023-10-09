@@ -86,7 +86,7 @@ const ManageEvents = () => {
   return (
     <section>
       <div className="flex justify-end mt-2">
-        <AddItemButton />
+        <AddItemButton title="Add event" />
       </div>
       <section className="mt-3">
         {loading ? (

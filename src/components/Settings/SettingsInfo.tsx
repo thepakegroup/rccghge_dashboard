@@ -22,7 +22,7 @@ const SettingsInfo = ({ name, id, value }: settingI) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 bg-white p-3 md:px-6 md:py-3 rounded-lg">
+    <div className="flex flex-col gap-3 bg-white p-4 md:px-6 md:py-5 rounded-lg">
       <div className="flex-center justify-between">
         <p>{name}</p>
         <p className="hidden md:block truncate">{value}</p>
@@ -35,7 +35,7 @@ const SettingsInfo = ({ name, id, value }: settingI) => {
           </button>
         </div>
       </div>
-      <p className="md:hidden">https://www/somerandomlink.com</p>
+      <p className="truncate md:hidden">{value}</p>
     </div>
   );
 };

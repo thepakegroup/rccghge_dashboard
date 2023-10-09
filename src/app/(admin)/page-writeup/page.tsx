@@ -6,7 +6,7 @@ import WriteUpSection from '@/components/PageWriteUp/WriteUpSection';
 import { useState } from 'react';
 
 const PageWriteUp = () => {
-  const [currentSection, setCurrentSection] = useState('our misssion/belief');
+  const [currentSection, setCurrentSection] = useState('mission');
 
   return (
     <section>
@@ -16,7 +16,7 @@ const PageWriteUp = () => {
           value={currentSection}
           className="p-4 rounded-md bg-white"
         >
-          <option value="our misssion/belief">Our Mission/Belief</option>
+          <option value="mission">Our Mission/Belief</option>
           <option value="service times">Service times</option>
           <option value="edit content">Edit content</option>
         </select>

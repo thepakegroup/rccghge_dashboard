@@ -26,7 +26,7 @@ const Toaster = () => {
   return (
     <>
       {isToast && (
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-6">
+        <div className="fixed left-1/2 -translate-x-1/2 bottom-6">
           <div
             className={`flex-center gap-2 p-4 bg-gray-50 border ${
               type === 'delete' ? 'border-[#DA2B2B]' : 'border-[#073364]'

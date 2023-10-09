@@ -8,6 +8,7 @@ export interface leaderI{
   description: string
   fullStory: string;
   leaderImg?: File | null;
+  leaderImgName?: string;
   id?: number | null;
   action?:'add' | 'edit';
 }
@@ -20,7 +21,8 @@ const leaderSlice = createSlice({
     qualification: "",
     position:"",
     description: "",
-    leaderImg:null,
+    leaderImg: null,
+    leaderImgName:'',
     fullStory: "",
     id: null,
     action:'add'
@@ -34,6 +36,8 @@ const leaderSlice = createSlice({
       state.description = action.payload.description
       state.fullStory = action.payload.fullStory
       state.id = action.payload.id
+      state.leaderImg = action.payload.leaderImg
+      state.leaderImgName = action.payload.leaderImgName
     },
     setName: (state, action) => {
       state.name = action.payload
@@ -58,6 +62,9 @@ const leaderSlice = createSlice({
     },
     setLeaderImg: (state, action) => {
       state.leaderImg = action.payload
+    },
+    setLeaderImgName: (state, action) => {
+      state.leaderImgName = action.payload
     }
   },
 });
@@ -71,7 +78,8 @@ export const {
   setQualification,
   setTitle,
   setAction,
-  setLeaderImg
+  setLeaderImg,
+  setLeaderImgName
 } = leaderSlice.actions;
 
 export default leaderSlice.reducer;

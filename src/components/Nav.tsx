@@ -44,7 +44,7 @@ const Nav = () => {
   return (
     <nav
       className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full ${
-        isSidebarOpen ? 'md:calc-width-50 ml-[271px]' : 'md:w-full ml-0'
+        isSidebarOpen ? 'md:calc-width-50 md:ml-[271px]' : 'md:w-full md:ml-0'
       }`}
     >
       <div className="flex-center gap-5">

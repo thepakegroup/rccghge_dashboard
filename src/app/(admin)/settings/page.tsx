@@ -9,7 +9,7 @@ import useGetTypeOfModal from '@/hooks/getTypeOfModal';
 import useUpdateToast from '@/hooks/updateToast';
 import { useAppSelector } from '@/store/hooks';
 import { settingI } from '@/util/interface/settings';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Settings = () => {
   const type = useGetTypeOfModal();
@@ -22,9 +22,10 @@ const Settings = () => {
   });
   const { id } = useAppSelector((state) => state.mediaItems);
 
-  // console.log(id);
-
   const settings: settingI[] = data?.message;
+
+  const [sortSettings, setSortSettings] = useState<settingI[]>(settings);
+
   const updateToast = useUpdateToast();
 
   const updateSettings = async (settingInfo: any) => {
@@ -85,6 +86,21 @@ const Settings = () => {
     }
   };
 
+  const sortedSettings = () => {
+    const newSettings = sortSettings;
+
+    const sortedItems = newSettings.slice().sort((a, b) => {
+      const titleA = a.name.toLowerCase();
+      const titleB = b.name.toLowerCase();
+      return titleA.localeCompare(titleB);
+    });
+    setSortSettings(sortedItems);
+  };
+
+  useEffect(() => {
+    setSortSettings(settings);
+  }, [settings]);
+
   return (
     <section className=" md:max-w-[70vw]">
       <h1 className="text-[#717171] text-lg font-bold">Create setting</h1>
@@ -118,14 +134,17 @@ const Settings = () => {
           </button>
         </div>
       </form>
-      <button className=" rounded-lg border border-[#D0D5DD] px-3 py-[0.375rem] my-4">
+      <button
+        onClick={sortedSettings}
+        className=" rounded-lg border border-[#D0D5DD] px-3 py-[0.375rem] my-4"
+      >
         A-Z
       </button>
       {loading ? (
         <Loader />
       ) : (
         <div className="text-base font-medium flex flex-col gap-2">
-          {settings?.map((setting) => {
+          {sortSettings?.map((setting) => {
             const { id, value, name } = setting;
             return <SettingsInfo key={id} id={id} value={value} name={name} />;
           })}

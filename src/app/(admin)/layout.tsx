@@ -26,8 +26,8 @@ export default function RootLayout({
             <Nav />
             <SectionWrapper>{children}</SectionWrapper>
           </main>
-          <Toaster />
         </div>
+        <Toaster />
       </body>
     </html>
   );

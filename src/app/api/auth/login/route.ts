@@ -15,6 +15,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const data = await res.json()
 
+    console.log(data)
+
     const response = NextResponse.json({error:data.error,email:data.email,access:data.access});
   
     response.cookies.set({
@@ -44,6 +46,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return response
   } catch (error) {
     console.log(error)
-    return NextResponse.json({message:"An error occur", status:"error"},{status:500})
+    return NextResponse.json({message:"user does not exist", error:true},{status:500})
   }
 }

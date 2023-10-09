@@ -1,7 +1,6 @@
 'use client';
 
 import { formatDate } from '@/helper/dateFormat';
-import { useFetchData } from '@/hooks/fetchData';
 import useModalType from '@/hooks/modalType';
 import { useAppDispatch } from '@/store/hooks';
 import { setTestimonyId } from '@/store/slice/testimony';
@@ -13,13 +12,19 @@ interface cardI {
   published: boolean;
   createdAt: string;
   id: number;
+  publishTestimony: (published: boolean, id: number) => void;
 }
 
-const Card = ({ title, content, published, createdAt, id }: cardI) => {
+const Card = ({
+  title,
+  content,
+  published,
+  createdAt,
+  id,
+  publishTestimony,
+}: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
-
-  const { fetchData } = useFetchData({ url: '/api/getTestimony' });
 
   const { formattedDate, formattedTime } = formatDate(createdAt);
 
@@ -33,29 +38,10 @@ const Card = ({ title, content, published, createdAt, id }: cardI) => {
     handleButton('modify');
   };
 
-  const publishTestimony = async () => {
-    const res = await fetch(`/api/publish`, {
-      method: 'POST',
-      body: JSON.stringify({ id, published: !published }),
-    });
-
-    const data = await res.json();
-
-    // updateToast({
-    //   name,
-    //   type: '',
-    // });
-
-    if (data.error === false) {
-      fetchData();
-    }
-  };
-
   return (
     <div className="bg-white border border-[#AEBCD1] rounded-lg p-3">
-      <div>
-        <span>{formattedDate}</span>
-        <span>{formattedTime.split(',')[1]}</span>
+      <div className="text-xs text-fade-ash">
+        <span>{formattedDate}</span> <span>{formattedTime.split(',')[1]}</span>
       </div>
       <div className="my-[1.38rem]">
         <p className="text-base font-semibold">{title}</p>
@@ -63,7 +49,7 @@ const Card = ({ title, content, published, createdAt, id }: cardI) => {
       </div>
       <div className="flex-center justify-between">
         <button
-          onClick={publishTestimony}
+          onClick={() => publishTestimony(published, id)}
           className={`text-sm font-semibold capitalize px-4 py-2 rounded-md ${
             published
               ? 'border border-blue-100 text-blue-100'

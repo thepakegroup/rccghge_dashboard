@@ -6,7 +6,7 @@ import { setButtonVisibility } from '@/store/slice/ButtonVisibility';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
-const AddItemButton = () => {
+const AddItemButton = ({ title }: { title: string }) => {
   const elementRef = useRef<HTMLButtonElement | null>(null);
   const dispatch = useAppDispatch();
 
@@ -36,7 +36,7 @@ const AddItemButton = () => {
       onClick={() => handleButton('add')}
       className="py-2 px-3 text-sm font-semibold bg-secondary flex-center gap-[0.3rem] text-white rounded-md"
     >
-      <span>Add media</span>
+      <span>{title}</span>
       <Image
         src="icons/plus.svg"
         alt=""

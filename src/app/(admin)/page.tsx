@@ -16,7 +16,6 @@ import { baseUrl, labels } from '@/util/constants';
 import useUpdateToast from '@/hooks/updateToast';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useEffect, useState } from 'react';
 
 export default function Home() {
   const type = useGetTypeOfModal();
@@ -79,8 +78,6 @@ export default function Home() {
 
     const data = res.data;
 
-    console.log(data);
-
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -95,35 +92,39 @@ export default function Home() {
   const mediaData: mediaI[] = data?.message;
 
   return (
-    <section>
+    <section className=" scroll-pt-16">
       <div className="flex justify-end mt-2">
-        <AddItemButton />
+        <AddItemButton title="Add media" />
       </div>
-      {labels.map((label) => {
-        return (
-          <section key={label.value} className="mt-6" id={label.value}>
-            <div className="flex-center gap-1">
-              <Image src="icons/img.svg" alt="" width={18} height={18} />
-              <p className="text-base text-fade-ash font-bold">{label.label}</p>
-            </div>
-            <div className="card-wrapper">
-              {mediaData?.map((media) => {
-                return (
-                  label.value === media.type && (
-                    <Card
-                      title={media.name}
-                      img={media.image_url}
-                      id={media.id}
-                      link={media.link}
-                      key={media.id}
-                    />
-                  )
-                );
-              })}
-            </div>
-          </section>
-        );
-      })}
+      <section className="flex flex-col gap-6">
+        {labels.map((label) => {
+          return (
+            <section key={label.value} className="" id={label.value}>
+              <div className="flex-center gap-1">
+                <Image src="icons/img.svg" alt="" width={18} height={18} />
+                <p className="text-base text-fade-ash font-bold">
+                  {label.label}
+                </p>
+              </div>
+              <div className="card-wrapper">
+                {mediaData?.map((media) => {
+                  return (
+                    label.value === media.type && (
+                      <Card
+                        title={media.name}
+                        img={media.image_url}
+                        id={media.id}
+                        key={media.id}
+                        home={true}
+                      />
+                    )
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </section>
 
       <ScrollModalToTop />
 

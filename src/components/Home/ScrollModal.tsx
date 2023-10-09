@@ -12,7 +12,11 @@ const ScrollModal = () => {
     const section = document.getElementById(id);
 
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+        inline: 'nearest',
+      });
     }
   };
 
@@ -45,7 +49,7 @@ const ScrollModal = () => {
       <div className="flex justify-end">
         <div
           onClick={() => setToggleModal((prev) => !prev)}
-          className="flex-center justify-center rounded-full border border-black w-8 h-8 cursor-pointer mt-5"
+          className="flex-center justify-center bg-white rounded-full border border-black w-8 h-8 cursor-pointer mt-5"
         >
           <Image src="icons/scroll.svg" alt="" width={24} height={24} />
         </div>

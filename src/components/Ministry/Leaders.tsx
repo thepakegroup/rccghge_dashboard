@@ -1,5 +1,6 @@
+'use client';
+
 import Image from 'next/image';
-import DragDrop from '../DragDrop';
 import { leadersI } from '@/util/interface/ministry';
 import { useFetchData } from '@/hooks/fetchData';
 import ProfileCard from './ProfileCard';
@@ -22,14 +23,13 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { baseUrl } from '@/util/constants';
 import ImageUpload from '../ImageUpload';
-import { useEffect } from 'react';
-import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
+import { setFileName } from '@/store/slice/mediaItems';
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const { data, loading, fetchData } = useFetchData({
     url: '/api/getAllLeaders',
   });
-  const { id, file } = useAppSelector((state) => state.mediaItems);
+  const { id } = useAppSelector((state) => state.mediaItems);
   const {
     name,
     title,
@@ -38,10 +38,12 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     description,
     fullStory,
     action,
-    leaderImg,
+    leaderImg: file,
   } = useAppSelector((state) => state.leader);
   const { section } = useAppSelector((state) => state.content);
   const type = useGetTypeOfModal();
+
+  // console.log(file);
 
   const dispatch = useAppDispatch();
 
@@ -94,8 +96,6 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
     const data = res.data;
 
-    console.log(data);
-
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -111,6 +111,8 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           description: '',
           fullStory: '',
           action: 'add',
+          leaderImg: null,
+          leaderImgName: '',
         })
       );
       dispatch(setFileName(''));
@@ -126,10 +128,6 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     full_story_about: fullStory,
   };
 
-  // useEffect(() => {
-  //   section !== 'leader' && dispatch(setMediaFile(null));
-  // }, [file]);
-
   return (
     <div
       className={`${
@@ -138,7 +136,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg py-6 px-7 md:h-[40rem] md:overflow-y-auto overflow-x-hidden">
         <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
-        <ImageUpload />
+        <ImageUpload section="leader" />
         <div className="flex flex-col gap-[1.19rem]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>

@@ -71,7 +71,7 @@ const ProfileCard = ({
             alt=""
             height={220}
             width={400}
-            className="md:my-4"
+            className="md:my-4 rounded-lg"
           />
           <div className="md:hidden flex gap-6">
             <button onClick={() => handleButton('modify')}>

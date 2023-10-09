@@ -6,8 +6,8 @@ const SectionWrapper = ({ children }: { children: React.ReactNode }) => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
   return (
     <section
-      className={`mt-[3.8rem] [&>section]:pb-28 [&>section]:px-3 ${
-        isSidebarOpen ? 'ml-[271px]' : 'ml-0'
+      className={`pt-[3.8rem] [&>section]:pb-28 [&>section]:px-3 ${
+        isSidebarOpen ? 'md:ml-[271px]' : 'md:ml-0'
       }`}
     >
       {children}

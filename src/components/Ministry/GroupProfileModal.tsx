@@ -52,7 +52,6 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
 
   useEffect(() => {
     dispatch(setMediaFile(null));
-    // dispatch(setFileName(''));
   }, []);
 
   return (
@@ -132,11 +131,8 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
             </label>
           </form>
         </div>
-        <div className="absolute bottom-4 left-0 w-full px-9 flex justify-center">
-          <button
-            onClick={handleSubmitForm}
-            className="capitalize px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
-          >
+        <div className="modal-btn-wrapper">
+          <button onClick={handleSubmitForm} className="modal-btn">
             update
           </button>
         </div>

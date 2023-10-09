@@ -7,7 +7,28 @@
     background-color: #e5e8ed;
     overflow-y: scroll !important;
     scroll-behavior: smooth;
-    scroll-padding-top: -14rem;
+    scroll-padding-top: 14rem;
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    cursor: pointer;
+
+    background-image: url('/icons/arrowdown.svg');
+    background-size: 1.5rem;
+    background-repeat: no-repeat;
+    background-position: 97% 50%;
+  }
+
+  select::-ms-expand {
+    display: none;
   }
 }
 
@@ -36,7 +57,7 @@
   }
 
   .input-field {
-    @apply flex flex-col [&>span]:text-sm [&>span]:font-medium [&>span]:text-gray-900;
+    @apply flex flex-col gap-1 [&>span]:text-sm [&>span]:font-medium [&>span]:text-gray-900;
   }
 
   .input {
@@ -45,6 +66,14 @@
 
   .loaderWrapper {
     @apply mt-7 flex-center justify-center w-full h-full;
+  }
+
+  .modal-btn-wrapper {
+    @apply absolute bottom-0 pb-4 left-0 w-full px-9 flex justify-center bg-white;
+  }
+
+  .modal-btn {
+    @apply capitalize px-6 py-4 bg-secondary-02 w-full text-white rounded-md;
   }
 }
 
@@ -66,4 +95,16 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb {
+  width: 24px;
+  border-radius: 13px;
+  background-clip: padding-box;
+  border: 10px solid transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 0 10px;
 }

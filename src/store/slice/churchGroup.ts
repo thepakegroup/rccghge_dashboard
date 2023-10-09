@@ -5,7 +5,9 @@ export interface groupI{
   category: string;
   description: string
   id?: number | null;
-  action?:'add' | 'edit';
+  action?: 'add' | 'edit';
+  groupImg?: File | null;
+  groupImgName?: string;
 }
 
 const groupSlice = createSlice({
@@ -15,7 +17,9 @@ const groupSlice = createSlice({
     category:"All",
     description: "",
     id: null,
-    action:'add'
+    action: 'add',
+    groupImg: null,
+    groupImgName:""
   } as groupI,
   reducers: {
     setGroupInfo: (state, action:PayloadAction<groupI>) => {
@@ -23,6 +27,8 @@ const groupSlice = createSlice({
       state.category = action.payload.category
       state.description = action.payload.description
       state.id = action.payload.id
+      state.groupImg = action.payload.groupImg
+      state.groupImgName = action.payload.groupImgName
     },
     setName: (state, action) => {
       state.name = action.payload
@@ -36,6 +42,12 @@ const groupSlice = createSlice({
     setAction:(state, action) => {
       state.action = action.payload
     },
+    setGroupImg: (state, action) => {
+      state.groupImg = action.payload
+    },
+    setGroupImgName: (state, action) => {
+      state.groupImgName = action.payload
+    },
   },
 });
 
@@ -44,7 +56,9 @@ export const {
   setName,
   setDescription,
   setCatgeory,
-  setAction
+  setAction,
+  setGroupImg,
+  setGroupImgName
 } = groupSlice.actions;
 
 export default groupSlice.reducer;

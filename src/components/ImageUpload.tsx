@@ -2,15 +2,22 @@ import Image from 'next/image';
 import DragDrop from './DragDrop';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
+import { setLeaderImg, setLeaderImgName } from '@/store/slice/leader';
+import { setGroupImg, setGroupImgName } from '@/store/slice/churchGroup';
 
-const ImageUpload = () => {
+interface uploadI {
+  section?: string;
+}
+
+const ImageUpload = ({ section }: uploadI) => {
   const { file, fileName } = useAppSelector((state) => state.mediaItems);
+  const { leaderImg, leaderImgName } = useAppSelector((state) => state.leader);
+  const { groupImg, groupImgName } = useAppSelector(
+    (state) => state.churchGroup
+  );
   const dispatch = useAppDispatch();
 
   const kb = file && file?.size / 1024;
-  // const mb = kb && kb / 1024;
-
-  // console.log(fileName);
 
   const upload = (
     <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
@@ -78,6 +85,19 @@ const ImageUpload = () => {
 
   const removeFile = (e: any) => {
     e.stopPropagation();
+
+    if (section === 'leader') {
+      dispatch(setLeaderImg(null));
+      dispatch(setLeaderImgName(''));
+      console.log(section);
+    }
+
+    if (section === 'group') {
+      dispatch(setGroupImg(null));
+      dispatch(setGroupImgName(''));
+      console.log(section);
+    }
+
     dispatch(setMediaFile(null));
     dispatch(setFileName(''));
   };
@@ -112,14 +132,27 @@ const ImageUpload = () => {
     </div>
   );
 
+  const content = (file: File, fileName: string) => {
+    if (!file && fileName === '') {
+      return upload;
+    }
+    if (file && kb && kb >= 3000) {
+      return fileTooLarge;
+    }
+
+    if (fileName) {
+      return fileAvailable;
+    }
+  };
+
   return (
-    <DragDrop>
+    <DragDrop section={section}>
       <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-        {!file && fileName === ''
-          ? upload
-          : file && kb && kb >= 3000
-          ? fileTooLarge
-          : fileName && fileAvailable}
+        {section === 'leader'
+          ? content(leaderImg as File, leaderImgName as string)
+          : section === 'group'
+          ? content(groupImg as File, groupImgName as string)
+          : content(file as File, fileName)}
       </div>
     </DragDrop>
   );

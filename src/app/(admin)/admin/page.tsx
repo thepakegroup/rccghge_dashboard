@@ -30,7 +30,7 @@ const Admin = () => {
 
   const createAdmin = async (e: any) => {
     e.preventDefault();
-    const adminLevel = level === 'admin' ? '1' : '2';
+    const adminLevel = level === 'admin' ? '2' : '1';
 
     const res = await fetch('/api/createAdmin', {
       method: 'POST',

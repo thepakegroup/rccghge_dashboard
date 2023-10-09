@@ -11,11 +11,13 @@ export async function GET(req: NextRequest) {
         'Authorization': `Bearer ${cookie?.value}`
       }
     })
-    
+
     const data = await res.json()
 
     const response = new NextResponse(data)
     response.cookies.delete('token')
+    response.cookies.delete('email')
+    response.cookies.delete('access')
     
     return response
   } catch (error) {

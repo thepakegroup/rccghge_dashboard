@@ -14,8 +14,8 @@ const Sidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
+  const [email, setEmail] = useState('');
 
-  const email = Cookies.get('email');
   const access = Cookies.get('access');
 
   const windowSize = typeof window !== 'undefined' ? window.innerWidth : 0;
@@ -48,6 +48,8 @@ const Sidebar = () => {
       document.body.classList.remove('overflow-hidden');
     }
 
+    setEmail(Cookies.get('email') as string);
+
     return () => {
       window.removeEventListener('resize', updateScreenSize);
     };
@@ -79,7 +81,7 @@ const Sidebar = () => {
       link: '/page-writeup',
     },
     {
-      title: 'minstry',
+      title: 'ministry',
       info: 'manage leaders & ministry',
       icon: 'icons/minister.svg',
       link: '/ministry',
@@ -96,29 +98,35 @@ const Sidebar = () => {
       icon: 'icons/admin.svg',
       link: '/admin',
     },
+    {
+      title: 'manage notification',
+      info: 'send push notifications',
+      icon: '/icons/notification.svg',
+      link: '/notification',
+    },
   ];
 
   return (
     <aside
       onClick={handleToggle}
-      className={`absolute md:fixed md:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 ${
+      className={`fixed md:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 overflow-auto ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full hidden'
       }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="px-2 py-3 min-h-screen w-[17rem] bg-side-bar-bg relative"
+        className="px-2 py-3 h-screen overflow-y-auto w-[17rem] bg-side-bar-bg relative flex flex-col justify-between gap-10"
       >
         <div className="bg-white rounded-md p-[0.465rem] max-w-max">
           <Image src="/images/logo.png" alt="" width={54} height={40} />
         </div>
-        <ul className="mt-20">
+        <ul className=" min-h-max">
           {navItems.map((navItem) => {
             const { title, icon, info, link } = navItem;
             return (
               <li key={title}>
                 <Link
-                  href={link}
+                  href={`${link}`}
                   className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary ${
                     pathname === link && 'bg-secondary'
                   }`}
@@ -140,7 +148,7 @@ const Sidebar = () => {
             );
           })}
         </ul>
-        <div className="absolute bottom-0 w-[250px] border-t-2 border-[#657596]">
+        <div className="border-t-2 border-[#657596]">
           <div
             className="flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary"
             onClick={handleToggle}

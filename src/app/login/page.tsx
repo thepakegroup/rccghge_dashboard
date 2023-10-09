@@ -1,6 +1,8 @@
 'use client';
 
 import Loader from '@/components/Loader';
+import Toaster from '@/components/Toaster';
+import useUpdateToast from '@/hooks/updateToast';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -9,15 +11,23 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [loading, setloading] = useState(false);
 
-  const fetchData = async () => {
+  const updateToast = useUpdateToast();
+
+  const logIn = async () => {
     const login = {
       email,
       password,
     };
 
-    setloading(true);
+    if (email !== '' && password !== '') {
+      setloading(true);
+    }
+
+    setSubmit(true);
 
     const res = await fetch('/api/auth/login', {
       method: 'POST',
@@ -25,19 +35,27 @@ const Login = () => {
     });
 
     const data = await res.json();
-    if (data.error === false) {
+
+    if (data.error === true) {
+      updateToast({
+        title: data.message,
+        info: 'Please provide valid credentials',
+      });
       setloading(false);
+    }
+
+    if (data.error === false) {
       router.push('/');
     }
   };
 
   const handleLogin = (e: any) => {
     e.preventDefault();
-    fetchData();
+    logIn();
   };
 
   return (
-    <section className="h-screen flex-center justify-center relative bg-bg-mobile md:bg-bg-desktop md:bg-cover bg-no-repeat">
+    <section className="h-screen flex-center justify-center relative bg-bg-mobile md:bg-bg-desktop bg-cover bg-no-repeat">
       {loading ? (
         <Loader />
       ) : (
@@ -54,9 +72,10 @@ const Login = () => {
                 <span>Admin email</span>
                 <div className="relative">
                   <input
-                    type="text"
+                    type="email"
                     value={email}
                     className="input"
+                    required
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <Image
@@ -67,14 +86,18 @@ const Login = () => {
                     className="absolute top-1/2 -translate-y-1/2 right-3"
                   />
                 </div>
+                {email === '' && submit && (
+                  <p className="text-xs text-error-400">Email is required</p>
+                )}
               </label>
               <label htmlFor="password" className="input-field flex-1 relative">
                 <span>Admin password</span>
                 <div className="relative">
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     value={password}
                     className="input"
+                    required
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <Image
@@ -83,8 +106,12 @@ const Login = () => {
                     width={20}
                     height={20}
                     className="absolute top-1/2 -translate-y-1/2 right-3"
+                    onClick={() => setShowPassword(!showPassword)}
                   />
                 </div>
+                {password === '' && submit && (
+                  <p className="text-xs text-error-400">Password is required</p>
+                )}
               </label>
               <button
                 onClick={handleLogin}
@@ -96,6 +123,7 @@ const Login = () => {
           </div>
         </div>
       )}
+      <Toaster />
     </section>
   );
 };

@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import ModalWrapper from '../ModalWrapper';
 import useCloseModal from '@/hooks/closeModal';
-import { useState } from 'react';
-import useUpdateToast from '@/hooks/updateToast';
+import { useEffect, useState } from 'react';
+import { useAppSelector } from '@/store/hooks';
+import { useFetchData } from '@/hooks/fetchData';
 
 interface testimoneyModalI {
   buttonText: string;
@@ -15,10 +16,24 @@ const TestimonyModal = ({ buttonText, handleSubmit }: testimoneyModalI) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
+  const { id } = useAppSelector((state) => state.testimony);
+  const { data } = useFetchData({
+    url: `/api/getTestimonyById/${id}`,
+  });
+
+  const testimony = data?.message;
+
   const handleSubmitTestimony = () => {
     handleSubmit({ title, content });
     handleCloseModal();
   };
+
+  useEffect(() => {
+    if (buttonText === 'Update') {
+      setTitle(testimony?.title);
+      setContent(testimony?.content);
+    }
+  }, [testimony]);
 
   return (
     <ModalWrapper>

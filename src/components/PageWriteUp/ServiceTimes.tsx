@@ -99,7 +99,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
       }`}
     >
       <h2 className="font-bold text-lg">Service time</h2>
-      <div className="flex flex-col gap-[1.12rem]">
+      <div className="flex flex-col gap-[1.12rem] mt-4">
         <label htmlFor="title" className="input-field">
           <span>Servic name</span>
           <input

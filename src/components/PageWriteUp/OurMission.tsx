@@ -94,11 +94,11 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   return (
     <div
       className={`bg-white rounded-lg py-6 px-7 md:overflow-y-scroll md:h-[34.75rem] ${
-        currentSection === 'service times' ? 'block' : 'hidden md:block'
+        currentSection === 'mission' ? 'block' : 'hidden md:block'
       }`}
     >
       <h2 className="font-bold text-lg">Our Mission/Belief</h2>
-      <div className="flex flex-col gap-[1.12rem]">
+      <div className="flex flex-col gap-[1.12rem] mt-4">
         <label htmlFor="title" className="input-field">
           <span>Event title</span>
           <input

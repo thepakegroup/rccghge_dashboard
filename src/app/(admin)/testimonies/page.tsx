@@ -12,6 +12,7 @@ import { useAppSelector } from '@/store/hooks';
 import { baseUrl } from '@/util/constants';
 import { testimonyI } from '@/util/interface/testimony';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 const Testimonials = () => {
   const type = useGetTypeOfModal();
@@ -23,9 +24,10 @@ const Testimonials = () => {
     method: 'client',
   });
 
-  console.log(data);
-
   const testimonies: testimonyI[] = data?.message.data;
+
+  const [testimoniesData, setTestimoniesData] =
+    useState<testimonyI[]>(testimonies);
 
   const updateToast = useUpdateToast();
 
@@ -73,10 +75,44 @@ const Testimonials = () => {
     }
   };
 
+  const publishTestimony = async (published: boolean, id: number) => {
+    const res = await fetch(`/api/publish`, {
+      method: 'POST',
+      body: JSON.stringify({ id, published: !published }),
+    });
+
+    const data = await res.json();
+
+    updateToast({
+      title: `${published ? 'Unpublished' : 'Published'}`,
+    });
+
+    if (data.error === false) {
+      fetchData();
+    }
+  };
+
+  const searchTestimonies = (title: string) => {
+    if (!title) {
+      setTestimoniesData(testimonies);
+      return;
+    }
+    const newTestimonies = testimoniesData;
+    const filteredTestimonies = newTestimonies.filter((item) => {
+      return item.title.toLowerCase().includes(title.toLowerCase());
+    });
+
+    setTestimoniesData(filteredTestimonies);
+  };
+
+  useEffect(() => {
+    setTestimoniesData(testimonies);
+  }, [testimonies]);
+
   return (
     <section>
       <div className="flex justify-end mt-2">
-        <AddItemButton />
+        <AddItemButton title="Add testimony" />
       </div>
       <section className="mt-4">
         <div className="text-ash-100 flex flex-col gap-3 md:flex-row">
@@ -94,6 +130,7 @@ const Testimonials = () => {
             <input
               type="text"
               name="search"
+              onChange={(e) => searchTestimonies(e.target.value)}
               id="search"
               placeholder="Search testimonies"
               className="pl-5 rounded-md border-none outline-none"
@@ -116,7 +153,7 @@ const Testimonials = () => {
           <Loader />
         ) : (
           <section className="mt-4 card-one-grid">
-            {testimonies.map((testimony: any) => {
+            {testimoniesData?.map((testimony) => {
               const { title, published, content, created_at } = testimony;
               return (
                 <Card
@@ -126,6 +163,7 @@ const Testimonials = () => {
                   content={content}
                   createdAt={created_at}
                   id={testimony.id}
+                  publishTestimony={publishTestimony}
                 />
               );
             })}
@@ -136,7 +174,10 @@ const Testimonials = () => {
         <TestimonyModal handleSubmit={updateTestimony} buttonText="Update" />
       )}
       {type === 'add' && (
-        <TestimonyModal handleSubmit={updateTestimony} buttonText="Add media" />
+        <TestimonyModal
+          handleSubmit={updateTestimony}
+          buttonText="Add testimony"
+        />
       )}
       {type == 'delete' && <DeleteModal deleteFunc={deleteTestimony} />}
     </section>

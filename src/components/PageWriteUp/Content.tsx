@@ -4,9 +4,11 @@ import { setContent, setDeleteFunc } from '@/store/slice/content';
 import { setEditMediaId } from '@/store/slice/mediaItems';
 import { writeupI } from '@/util/interface/writeup';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const Content = ({ id, page_title, content, heading }: writeupI) => {
   const handleButton = useModalType();
+  const [expanded, setExpanded] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -36,13 +38,19 @@ const Content = ({ id, page_title, content, heading }: writeupI) => {
         <span>{heading}</span>
       </div>
       <p>
-        <div dangerouslySetInnerHTML={{ __html: content }}></div>
+        <div
+          className={`${!expanded && 'line-clamp-6'}`}
+          dangerouslySetInnerHTML={{ __html: content }}
+        ></div>
       </p>
       <div className="flex-center gap-6">
-        <button className="flex-center gap-1 text-sm text-ash-300 font-semibold rounded-md px-3 py-2 bg-[#D0D5DD]">
-          <span>See more</span>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex-center gap-1 text-sm text-ash-300 font-semibold rounded-md px-3 py-2 bg-[#D0D5DD]"
+        >
+          <span>{expanded ? 'See less' : 'See more'}</span>
           <Image
-            src="icons/arrowdown.svg"
+            src={!expanded ? 'icons/arrowdown.svg' : 'icons/arrow-up.svg'}
             alt=""
             width={20}
             height={20}
