@@ -1,8 +1,8 @@
-import Image from 'next/image';
-import ModalWrapper from './ModalWrapper';
-import useCloseModal from '@/hooks/closeModal';
-import { useAppDispatch } from '@/store/hooks';
-import { clearItems } from '@/store/slice/mediaItems';
+import Image from "next/image";
+import ModalWrapper from "./ModalWrapper";
+import useCloseModal from "@/hooks/closeModal";
+import { useAppDispatch } from "@/store/hooks";
+import { clearItems } from "@/store/slice/mediaItems";
 
 interface deleteI {
   deleteFunc?: any;
@@ -29,12 +29,12 @@ const DeleteModal = ({ deleteFunc, itemsCount }: deleteI) => {
     <ModalWrapper>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="modal flex-center flex-col justify-center"
+        className="delete-modal flex-center flex-col justify-center"
       >
         <Image src="icons/delete.svg" alt="" width={24} height={24} />
         <div className="text-base font-medium text-center mt-3 mb-6">
-          Are you sure you want to delete {itemsCount === 0 ? 1 : itemsCount}{' '}
-          item{itemsCount && itemsCount > 1 && 's'}?
+          Are you sure you want to delete {itemsCount === 0 ? 1 : itemsCount}{" "}
+          item{itemsCount && itemsCount > 1 && "s"}?
         </div>
         <div className="flex-center gap-3 text-sm [&>button]:px-8 [&>button]:py-2 [&>button]:rounded-md">
           <button onClick={closeModal} className="border-2 border-[#D0D5DD]">
