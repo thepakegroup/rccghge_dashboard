@@ -18,10 +18,10 @@ interface cardI {
   img: string;
   id: number;
   home?: boolean;
-  onEditClick: () => void;
+  onEditClick?: () => void;
 }
 
-const Card = ({ title, img, id, home, onEditClick }: cardI) => {
+const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
 

@@ -41,6 +41,9 @@
   }
 
   .modal {
+    @apply bg-white rounded-lg px-9 pt-6 pb-12 md:min-w-[29rem];
+  }
+  .delete-modal {
     @apply bg-white rounded-lg px-9 pt-6 pb-12 md:max-w-[278px];
   }
 
