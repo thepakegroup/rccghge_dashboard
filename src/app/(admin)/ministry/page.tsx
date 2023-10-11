@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import ChurchGroup from '@/components/Ministry/ChurchGroup';
-import Leaders from '@/components/Ministry/Leaders';
-import { useState } from 'react';
+import ChurchGroup from "@/components/Ministry/ChurchGroup";
+import Leaders from "@/components/Ministry/Leaders";
+import { useState } from "react";
 
 const Ministry = () => {
-  const [currentSection, setCurrentSection] = useState('church leader');
+  const [currentSection, setCurrentSection] = useState("church leader");
 
   return (
-    <section>
+    <section className="">
       <div className="flex justify-center mb-3 md:hidden">
         <select
           onChange={(e) => setCurrentSection(e.target.value)}

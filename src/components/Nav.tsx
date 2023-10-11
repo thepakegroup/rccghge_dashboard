@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { setIsSidebarToggle } from '../store/slice/sidbar';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { usePathname } from 'next/navigation';
-import useModalType from '@/hooks/modalType';
+import Image from "next/image";
+import { useEffect } from "react";
+import { setIsSidebarToggle } from "../store/slice/sidbar";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { clearItems } from "@/store/slice/mediaItems";
+import { usePathname } from "next/navigation";
+import useModalType from "@/hooks/modalType";
 
 const Nav = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
@@ -20,13 +21,13 @@ const Nav = () => {
   const pathname = usePathname();
 
   const section: { [key: string]: string } = {
-    '/': 'home',
-    '/testimonies': 'testimonies',
-    '/manage-events': 'manage events',
-    '/page-writeup': 'page writeup',
-    '/ministry': 'ministry',
-    '/settings': 'page settings',
-    '/admin': 'admin',
+    "/": "home",
+    "/testimonies": "testimonies",
+    "/manage-events": "manage events",
+    "/page-writeup": "page writeup",
+    "/ministry": "ministry",
+    "/settings": "page settings",
+    "/admin": "admin",
   };
 
   const dispatch = useAppDispatch();
@@ -37,14 +38,14 @@ const Nav = () => {
 
   useEffect(() => {
     isSidebarOpen
-      ? document.body.classList.add('overflow-hidden')
-      : document.body.classList.remove('overflow-hidden');
+      ? document.body.classList.add("overflow-hidden")
+      : document.body.classList.remove("overflow-hidden");
   }, [isSidebarOpen]);
 
   return (
     <nav
       className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full ${
-        isSidebarOpen ? 'md:calc-width-50 md:ml-[271px]' : 'md:w-full md:ml-0'
+        isSidebarOpen ? "lg:calc-width-50 lg:ml-[271px]" : "lg:w-full md:ml-0"
       }`}
     >
       <div className="flex-center gap-5">
@@ -60,16 +61,23 @@ const Nav = () => {
       </div>
       <div className="text-base flex-center gap-9">
         <button
-          onClick={() => handleButton('delete')}
-          className={`gap-1 ${items.length > 0 ? 'flex-center' : 'hidden'}`}
+          onClick={() => handleButton("delete")}
+          className={`gap-1 ${items.length > 0 ? "flex-center" : "hidden"}`}
         >
           <Image src="icons/delete.svg" alt="" width={18} height={18} />
           <span>Delete all</span>
         </button>
         <button
-          onClick={() => handleButton('add')}
+          onClick={() => dispatch(clearItems())}
+          className={`gap-1 ${items.length > 0 ? "flex-center" : "hidden"}`}
+        >
+          <Image src="icons/edit.svg" alt="" width={18} height={18} />
+          <span>Uncheck all</span>
+        </button>
+        <button
+          onClick={() => handleButton("add")}
           className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
-            isButtonVisible ? 'hidden' : 'flex-center'
+            isButtonVisible ? "hidden" : "flex-center"
           }`}
         >
           <span>Add media</span>

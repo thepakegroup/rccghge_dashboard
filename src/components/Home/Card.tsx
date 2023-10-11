@@ -1,36 +1,39 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
+import Image from "next/image";
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   removeItem,
   setEditMediaId,
   setFileName,
   setItems,
-} from '@/store/slice/mediaItems';
-import { baseUrl } from '@/util/constants';
-import useUpdateToast from '@/hooks/updateToast';
-import { useState } from 'react';
+} from "@/store/slice/mediaItems";
+import { baseUrl } from "@/util/constants";
+import useUpdateToast from "@/hooks/updateToast";
+import { useState, useEffect } from "react";
 
 interface cardI {
   title?: string;
   img: string;
   id: number;
   home?: boolean;
+  onEditClick: () => void;
 }
 
-const Card = ({ title, img, id, home }: cardI) => {
+const Card = ({ title, img, id, home, onEditClick }: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
+
   const [check, setCheck] = useState(false);
+  const { items } = useAppSelector((state) => state.mediaItems);
 
   const handleCheck = (e: any) => {
     e.target.checked ? dispatch(setItems(id)) : dispatch(removeItem(id));
     setCheck(e.target.checked);
   };
   const handleDelete = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setItems(id));
   };
 
@@ -46,13 +49,19 @@ const Card = ({ title, img, id, home }: cardI) => {
   const handleEdit = () => {
     dispatch(setEditMediaId(id));
     dispatch(setFileName(img));
-    handleButton('modify');
+    handleButton("modify");
+
+    onEditClick();
   };
+
+  useEffect(() => {
+    items.length === 0 ? setCheck(false) : null;
+  }, [items.length]);
 
   return (
     <div
-      className={`flex flex-col gap-4 rounded-md p-2 bg-white ${
-        check && ' border-[3px] border-secondary-02'
+      className={`flex flex-col gap-4 rounded-md p-2 bg-white border-[3px] max-w-[269px]  ${
+        check ? " border-secondary-02" : "border-white"
       }`}
     >
       <div>
@@ -61,8 +70,9 @@ const Card = ({ title, img, id, home }: cardI) => {
           <input
             onChange={handleCheck}
             type="checkbox"
+            checked={items.length === 0 ? false : check}
             name=""
-            className=" h-5 w-5"
+            className=" h-5 w-5 cursor-pointer"
           />
         </div>
       </div>
