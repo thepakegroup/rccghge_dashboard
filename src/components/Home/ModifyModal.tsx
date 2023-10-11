@@ -1,17 +1,13 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import ModalWrapper from '../ModalWrapper';
-
-import DragDrop from '../DragDrop';
-import useCloseModal from '@/hooks/closeModal';
-import { baseUrl, labels } from '@/util/constants';
-import { useEffect, useState } from 'react';
-import useUpdateToast from '@/hooks/updateToast';
-import ImageUpload from '../ImageUpload';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
-import { useFetchData } from '@/hooks/fetchData';
+import Image from "next/image";
+import ModalWrapper from "../ModalWrapper";
+import useCloseModal from "@/hooks/closeModal";
+import { labels } from "@/util/constants";
+import { useEffect, useState } from "react";
+import ImageUpload from "../ImageUpload";
+import { useAppDispatch } from "@/store/hooks";
+import { setMediaFile } from "@/store/slice/mediaItems";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -21,17 +17,10 @@ interface modalI {
 const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const handleCloseModal = useCloseModal();
 
-  const [name, setName] = useState('');
-  const [mediaLink, setMediaLink] = useState('');
-  const [description, setDescription] = useState('');
-  const [mediaType, setMediaType] = useState('');
-
-  const { id } = useAppSelector((state) => state.mediaItems);
-  const { data } = useFetchData({
-    url: `/api/getMediaById/${id}`,
-  });
-
-  const media = data?.message;
+  const [name, setName] = useState("");
+  const [mediaLink, setMediaLink] = useState("");
+  const [description, setDescription] = useState("");
+  const [mediaType, setMediaType] = useState("");
 
   const handleSubmitForm = () => {
     const mediaInfo = {
@@ -49,13 +38,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
 
   useEffect(() => {
     dispatch(setMediaFile(null));
-    if (buttonText === 'update') {
-      setName(media?.name);
-      setMediaLink(media?.link);
-      setDescription(media?.short_description);
-      setMediaType(media?.type);
-    }
-  }, [media]);
+  }, [dispatch]);
 
   return (
     <ModalWrapper>

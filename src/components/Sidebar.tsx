@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { setIsSidebarToggle } from '../store/slice/sidbar';
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import Cookies from 'js-cookie';
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { setIsSidebarToggle } from "../store/slice/sidbar";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import Cookies from "js-cookie";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -14,103 +14,117 @@ const Sidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
-  const access = Cookies.get('access');
+  const access = Cookies.get("access");
 
-  const windowSize = typeof window !== 'undefined' ? window.innerWidth : 0;
+  // const windowSize = typeof window !== "undefined" ? window.innerWidth : 0;
+
+  // const [screenWidth, setScreenWidth] = useState<number>(windowSize);
+
+  // const updateScreenSize = () => {
+  //   if (typeof window === "undefined") return;
+
+  //   setScreenWidth(windowSize);
+  // };
 
   const handleToggle = () => {
-    window.innerWidth < 768 && dispatch(setIsSidebarToggle(!isSidebarOpen));
-  };
-
-  const [screenWidth, setScreenWidth] = useState<number>(windowSize);
-
-  const updateScreenSize = () => {
-    if (typeof window === 'undefined') return;
-
-    setScreenWidth(windowSize);
+    window.innerWidth < 1024 && dispatch(setIsSidebarToggle(false));
   };
 
   const router = useRouter();
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout');
-    router.push('/login');
+    await fetch("/api/auth/logout");
+    router.push("/login");
   };
 
+  // useEffect(() => {
+  //   window.addEventListener("resize", updateScreenSize);
+  //   updateScreenSize();
+
+  //   if (screenWidth > 1024) {
+  //     dispatch(setIsSidebarToggle(true));
+  //     document.body.classList.remove("overflow-hidden");
+  //   } else if (screenWidth <= 1024) {
+  //     dispatch(setIsSidebarToggle(false));
+  //   }
+
+  //   setEmail(Cookies.get("email") as string);
+
+  //   return () => {
+  //     window.removeEventListener("resize", updateScreenSize);
+  //   };
+  // }, [screenWidth]);
+
   useEffect(() => {
-    window.addEventListener('resize', updateScreenSize);
-    updateScreenSize();
+    dispatch(setIsSidebarToggle(true));
 
-    if (screenWidth > 768) {
-      dispatch(setIsSidebarToggle(true));
-      document.body.classList.remove('overflow-hidden');
-    }
+    window.addEventListener("resize", () => {
+      window && window.innerWidth < 1024
+        ? dispatch(setIsSidebarToggle(false))
+        : dispatch(setIsSidebarToggle(true));
+    });
 
-    setEmail(Cookies.get('email') as string);
-
-    return () => {
-      window.removeEventListener('resize', updateScreenSize);
-    };
-  }, []);
+    setEmail(Cookies.get("email") as string);
+  }, [dispatch]);
 
   const navItems = [
     {
-      title: 'Home',
-      info: 'Dashboard',
-      icon: 'icons/home.svg',
-      link: '/',
+      title: "Home",
+      info: "Dashboard",
+      icon: "icons/home.svg",
+      link: "/",
     },
     {
-      title: 'Testimonies',
-      info: 'Manage testimonies',
-      icon: 'icons/star.svg',
-      link: '/testimonies',
+      title: "Testimonies",
+      info: "Manage testimonies",
+      icon: "icons/star.svg",
+      link: "/testimonies",
     },
     {
-      title: 'manage events',
-      info: 'Add and remove events',
-      icon: 'icons/event.svg',
-      link: '/manage-events',
+      title: "manage events",
+      info: "Add and remove events",
+      icon: "icons/event.svg",
+      link: "/manage-events",
     },
     {
-      title: 'page writeup',
-      info: 'manage page text content',
-      icon: 'icons/write.svg',
-      link: '/page-writeup',
+      title: "page writeup",
+      info: "manage page text content",
+      icon: "icons/write.svg",
+      link: "/page-writeup",
     },
     {
-      title: 'ministry',
-      info: 'manage leaders & ministry',
-      icon: 'icons/minister.svg',
-      link: '/ministry',
+      title: "ministry",
+      info: "manage leaders & ministry",
+      icon: "icons/minister.svg",
+      link: "/ministry",
     },
     {
-      title: 'page settings',
-      info: 'manage site settings',
-      icon: 'icons/settings.svg',
-      link: '/settings',
+      title: "page settings",
+      info: "manage site settings",
+      icon: "icons/settings.svg",
+      link: "/settings",
     },
     {
-      title: 'admin',
-      info: 'add & remove admins',
-      icon: 'icons/admin.svg',
-      link: '/admin',
+      title: "admin",
+      info: "add & remove admins",
+      icon: "icons/admin.svg",
+      link: "/admin",
     },
     {
-      title: 'manage notification',
-      info: 'send push notifications',
-      icon: '/icons/notification.svg',
-      link: '/notification',
+      title: "manage notification",
+      info: "send push notifications",
+      icon: "/icons/notification.svg",
+      link: "/notification",
     },
   ];
 
   return (
     <aside
       onClick={handleToggle}
-      className={`fixed md:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 overflow-auto ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full hidden'
+      className={`fixed lg:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 overflow-auto ${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full hidden"
       }`}
     >
       <div
@@ -128,7 +142,7 @@ const Sidebar = () => {
                 <Link
                   href={`${link}`}
                   className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary ${
-                    pathname === link && 'bg-secondary'
+                    pathname === link && "bg-secondary"
                   }`}
                   onClick={handleToggle}
                 >

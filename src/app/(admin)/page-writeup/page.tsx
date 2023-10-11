@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import OurMission from '@/components/PageWriteUp/OurMission';
-import ServiceTimes from '@/components/PageWriteUp/ServiceTimes';
-import WriteUpSection from '@/components/PageWriteUp/WriteUpSection';
-import { useState } from 'react';
+import OurMission from "@/components/PageWriteUp/OurMission";
+import ServiceTimes from "@/components/PageWriteUp/ServiceTimes";
+import WriteUpSection from "@/components/PageWriteUp/WriteUpSection";
+import { useState } from "react";
 
 const PageWriteUp = () => {
-  const [currentSection, setCurrentSection] = useState('mission');
+  const [currentSection, setCurrentSection] = useState("mission");
 
   return (
-    <section>
+    <section className="">
       <div className="flex justify-center mb-3 md:hidden">
         <select
           onChange={(e) => setCurrentSection(e.target.value)}
