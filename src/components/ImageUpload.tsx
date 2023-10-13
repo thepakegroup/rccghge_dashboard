@@ -1,9 +1,9 @@
-import Image from 'next/image';
-import DragDrop from './DragDrop';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
-import { setLeaderImg, setLeaderImgName } from '@/store/slice/leader';
-import { setGroupImg, setGroupImgName } from '@/store/slice/churchGroup';
+import Image from "next/image";
+import DragDrop from "./DragDrop";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+import { setLeaderImg, setLeaderImgName } from "@/store/slice/leader";
+import { setGroupImg, setGroupImgName } from "@/store/slice/churchGroup";
 
 interface uploadI {
   section?: string;
@@ -20,31 +20,31 @@ const ImageUpload = ({ section }: uploadI) => {
   const kb = file && file?.size / 1024;
 
   const upload = (
-    <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
+    <div className="flex-center md:flex-col gap-2 relative cursor-pointer">
       <div className="flex justify-center">
         <Image
           src="icons/upload.svg"
           alt=""
-          width={24}
-          height={24}
-          className="cursor-pointer"
+          width={32}
+          height={32}
+          className="cursor-pointer w-8 h-8 md:w-6 md:h-6"
         />
       </div>
       <div className="hidden md:block text-center">
         <p className="text-gray-600 text-sm">
-          <span className="text-secondary-01">Click to upload</span>{' '}
+          <span className="text-orange">Click to upload</span>{" "}
           <span>or drag and drop</span>
         </p>
         <p className="text-xs text-gray-400">
           SVG, PNG, JPG or GIF (max. 800x400px)
         </p>
       </div>
-      <div className="md:hidden mt-4 text-center">
+      <div className="md:hidden mt-4 ">
         <p className="text-gray-600 text-sm">
-          <span className="text-secondary-01">Tap upload</span>
+          <span className="text-gray-1 font-medium">Tap to Upload</span>
         </p>
-        <p className="text-xs text-gray-400">
-          SVG, PNG, JPG or GIF (max. 800x400px)
+        <p className="text-[11px] text-gray-400 w-full">
+          SVG, PNG, JPG, GIF | 10MB max.
         </p>
       </div>
       <button className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md">
@@ -86,20 +86,20 @@ const ImageUpload = ({ section }: uploadI) => {
   const removeFile = (e: any) => {
     e.stopPropagation();
 
-    if (section === 'leader') {
+    if (section === "leader") {
       dispatch(setLeaderImg(null));
-      dispatch(setLeaderImgName(''));
+      dispatch(setLeaderImgName(""));
       console.log(section);
     }
 
-    if (section === 'group') {
+    if (section === "group") {
       dispatch(setGroupImg(null));
-      dispatch(setGroupImgName(''));
+      dispatch(setGroupImgName(""));
       console.log(section);
     }
 
     dispatch(setMediaFile(null));
-    dispatch(setFileName(''));
+    dispatch(setFileName(""));
   };
 
   const fileAvailable = (
@@ -133,7 +133,7 @@ const ImageUpload = ({ section }: uploadI) => {
   );
 
   const content = (file: File, fileName: string) => {
-    if (!file && fileName === '') {
+    if (!file && fileName === "") {
       return upload;
     }
     if (file && kb && kb >= 3000) {
@@ -148,9 +148,9 @@ const ImageUpload = ({ section }: uploadI) => {
   return (
     <DragDrop section={section}>
       <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-        {section === 'leader'
+        {section === "leader"
           ? content(leaderImg as File, leaderImgName as string)
-          : section === 'group'
+          : section === "group"
           ? content(groupImg as File, groupImgName as string)
           : content(file as File, fileName)}
       </div>

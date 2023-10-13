@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { labels } from '@/util/constants';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+import { labels } from "@/util/constants";
+import Image from "next/image";
+import Link from "next/link";
+import { useClickAway } from "react-use";
+import { useState, useRef } from "react";
 
 const ScrollModal = () => {
   const [toggleModal, setToggleModal] = useState(false);
@@ -13,18 +14,23 @@ const ScrollModal = () => {
 
     if (section) {
       section.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-        inline: 'nearest',
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
       });
     }
   };
 
+  const ref = useRef(null);
+  useClickAway(ref, () => {
+    setToggleModal(false);
+  });
+
   return (
-    <div className="fixed right-4 bottom-12 z-30">
+    <div ref={ref} className="fixed right-4 bottom-12 z-30">
       <div
         className={`bg-white rounded-lg px-2 py-4 shadow-modalShadow ${
-          toggleModal ? 'block' : 'hidden'
+          toggleModal ? "block" : "hidden"
         }`}
       >
         <div className="px-4">

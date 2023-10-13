@@ -69,17 +69,23 @@ const UpdateModal = ({
   return (
     <>
       {isModalOpen && (
-        <div onClick={handleCloseModal} className="modal-wrapper">
-          <div onClick={(e) => e.stopPropagation()} className="relative bg-red">
+        <div
+          onClick={handleCloseModal}
+          className="modal-wrapper w-full max-w-[467px]"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative bg-red w-full "
+          >
             <>
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="modal modal-content"
+                className="modal modal-content overflow-x-hidden max-h-[500px] md:max-h-[561px]"
               >
-                <div className="flex-center justify-end font-semibold text-base text-secondary-01">
+                <div className="flex-center justify-end font-semibold text-base text-orange">
                   <button
                     onClick={handleCloseModal}
-                    className="flex-center gap-2"
+                    className="flex-center gap-2 "
                   >
                     <span>Close</span>
                     <Image

@@ -9,13 +9,13 @@ import { useState } from "react";
 
 const Login = () => {
   const router = useRouter();
+  const updateToast = useUpdateToast();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [loading, setloading] = useState(false);
-
-  const updateToast = useUpdateToast();
 
   const logIn = async () => {
     const login = {
@@ -23,10 +23,23 @@ const Login = () => {
       password,
     };
 
-    if (email !== "" && password !== "") {
-      setloading(true);
+    if (email === "") {
+      updateToast({
+        title: "Email cannot be empty!",
+        info: "Please provide your email address",
+      });
+
+      return;
+    } else if (password === "") {
+      updateToast({
+        title: "Password cannot be empty!",
+        info: "Please provide your password",
+      });
+
+      return;
     }
 
+    setloading(true);
     setSubmit(true);
 
     const res = await fetch("/api/auth/login", {
