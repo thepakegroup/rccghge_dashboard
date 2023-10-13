@@ -1,28 +1,52 @@
 import Image from "next/image";
-import { setModalToggle } from "@/store/slice/Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { useFetchData } from "@/hooks/fetchData";
+import { setModalToggle } from "@/store/slice/Modal";
 
 interface testimoneyModalI {
   buttonText: string;
   handleSubmit: any;
+  editItemId: number | null;
+  onResetEditId: () => void;
 }
 
-const TestimonyModal = ({ buttonText, handleSubmit }: testimoneyModalI) => {
+const UpdateTestimonyModal = ({
+  buttonText,
+  handleSubmit,
+  editItemId,
+  onResetEditId,
+}: testimoneyModalI) => {
+  // const handleCloseModal = useCloseModal();
+  const dispatch = useAppDispatch();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const dispatch = useAppDispatch();
 
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
 
   const handleCloseModal = () => {
     dispatch(setModalToggle({ isModalOpen: !isModalOpen }));
+    onResetEditId();
   };
+
+  const { data } = useFetchData({
+    url: `/api/getTestimonyById/${editItemId}`,
+  });
+
+  const testimony = data?.message;
 
   const handleSubmitTestimony = () => {
     handleSubmit({ title, content });
     handleCloseModal();
   };
+
+  useEffect(() => {
+    if (testimony) {
+      setTitle(testimony?.title);
+      setContent(testimony?.content);
+    }
+  }, [testimony]);
 
   return (
     <>
@@ -97,4 +121,4 @@ const TestimonyModal = ({ buttonText, handleSubmit }: testimoneyModalI) => {
   );
 };
 
-export default TestimonyModal;
+export default UpdateTestimonyModal;

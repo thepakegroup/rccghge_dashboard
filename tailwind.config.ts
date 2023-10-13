@@ -24,6 +24,9 @@ const config: Config = {
         "blue-100": "#1064C6",
         "warning-400": "#FEF6E7",
         "error-400": "#D42620",
+        orange: "#EA5017",
+        "gray-1": "#101928",
+        "gray-2": "#D2D9E1",
       },
       boxShadow: {
         modalShadow: "0px 4px 25px 0px rgba(0, 0, 0, 0.15)",
