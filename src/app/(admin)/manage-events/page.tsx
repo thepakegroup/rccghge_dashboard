@@ -1,25 +1,28 @@
-'use client';
+"use client";
 
-import AddItemButton from '@/components/AddItemButton';
-import DeleteModal from '@/components/DeleteModal';
-import Card from '@/components/Home/Card';
-import Loader from '@/components/Loader';
-import ModifyModal from '@/components/ManageEvents/ModifyModal';
-import { useFetchData } from '@/hooks/fetchData';
-import useGetTypeOfModal from '@/hooks/getTypeOfModal';
-import useUpdateToast from '@/hooks/updateToast';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { clearItems, setFileName } from '@/store/slice/mediaItems';
-import { eventI } from '@/util/interface/events';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { baseUrl } from '@/util/constants';
+import AddItemButton from "@/components/AddItemButton";
+import DeleteModal from "@/components/DeleteModal";
+import Card from "@/components/Home/Card";
+import Loader from "@/components/Loader";
+import ModifyModal from "@/components/ManageEvents/ModifyModal";
+import { useFetchData } from "@/hooks/fetchData";
+import useGetTypeOfModal from "@/hooks/getTypeOfModal";
+import useUpdateToast from "@/hooks/updateToast";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { clearItems, setFileName } from "@/store/slice/mediaItems";
+import { eventI } from "@/util/interface/events";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
+import { useState } from "react";
+import UpdateModal from "@/components/ManageEvents/UpdateModal";
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
+  const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
 
   const { data, loading, fetchData } = useFetchData({
-    url: '/api/getAllEvents',
+    url: "/api/getAllEvents",
   });
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
   const dispatch = useAppDispatch();
@@ -27,8 +30,8 @@ const ManageEvents = () => {
   const events: eventI[] = data?.message.data;
 
   const handleRemoveEvents = async () => {
-    const res = await fetch('/api/removeEvents', {
-      method: 'POST',
+    const res = await fetch("/api/removeEvents", {
+      method: "POST",
       body: JSON.stringify(items),
     });
 
@@ -37,7 +40,7 @@ const ManageEvents = () => {
     if (data.error === false) {
       fetchData();
       updateToast({
-        type: 'delete',
+        type: "delete",
       });
       dispatch(clearItems());
     }
@@ -48,23 +51,23 @@ const ManageEvents = () => {
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
-    file && form.append('banner', file as Blob, file?.name);
-    form.append('title', mediaInfo.title);
-    form.append('short_description', mediaInfo.short_description);
-    form.append('start_date', mediaInfo.start_date);
-    form.append('end_date', mediaInfo.end_date);
-    type === 'modify' && form.append('id', `${id}`);
+    file && form.append("banner", file as Blob, file?.name);
+    form.append("title", mediaInfo.title);
+    form.append("short_description", mediaInfo.short_description);
+    form.append("start_date", mediaInfo.start_date);
+    form.append("end_date", mediaInfo.end_date);
+    type === "modify" && form.append("id", `${id}`);
 
-    const token = Cookies.get('token');
+    const token = Cookies.get("token");
 
     const res = await axios.post(
       `${
-        type == 'modify' ? `${baseUrl}update-event` : `${baseUrl}create-event`
+        type == "modify" ? `${baseUrl}update-event` : `${baseUrl}create-event`
       }`,
       form,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       }
@@ -75,11 +78,11 @@ const ManageEvents = () => {
     if (data.error === false) {
       fetchData();
       updateToast({
-        title: `Event ${type === 'modify' ? 'updated!' : 'added!'}`,
+        title: `Event ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
       });
       dispatch(clearItems());
-      dispatch(setFileName(''));
+      dispatch(setFileName(""));
     }
   };
 
@@ -94,20 +97,31 @@ const ManageEvents = () => {
         ) : (
           <div className="card-wrapper">
             {events.map((event) => {
-              return <Card key={event.id} id={event.id} img={event.banner} />;
+              return (
+                <Card
+                  key={event.id}
+                  id={event.id}
+                  img={event.banner}
+                  onEditClick={() => setCurrEditItemID(event.id)}
+                />
+              );
             })}
           </div>
         )}
       </section>
-      {type == 'modify' && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="Update" />
+      {currEditItemID && (
+        <UpdateModal
+          editItemId={currEditItemID}
+          onResetEditId={() => setCurrEditItemID(null)}
+          handleSubmit={updateMedia}
+          buttonText="update"
+        />
       )}
-
-      {type == 'add' && (
+      {type == "add" && (
         <ModifyModal handleSubmit={updateMedia} buttonText="Add event" />
       )}
 
-      {type == 'delete' && (
+      {type == "delete" && (
         <DeleteModal
           deleteFunc={handleRemoveEvents}
           itemsCount={items.length}

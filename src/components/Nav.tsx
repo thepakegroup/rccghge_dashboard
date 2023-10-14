@@ -59,11 +59,11 @@ const Nav = () => {
         />
         <div className="font-bold text-lg capitalize">{section[pathname]}</div>
       </div>
-      <div className="text-base flex-center gap-3">
+      <div className="text-base flex-center gap-2 md:gap-3">
         <button
           onClick={() => handleButton("delete")}
           className={`gap-1 ${
-            items.length > 0 ? "flex-center text-sm md:text-base" : "hidden"
+            items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
           }`}
         >
           <Image src="icons/delete.svg" alt="" width={18} height={18} />
@@ -72,7 +72,7 @@ const Nav = () => {
         <button
           onClick={() => dispatch(clearItems())}
           className={`gap-1 ${
-            items.length > 0 ? "flex-center text-sm md:text-base" : "hidden"
+            items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
           }`}
         >
           <Image src="icons/edit.svg" alt="" width={18} height={18} />

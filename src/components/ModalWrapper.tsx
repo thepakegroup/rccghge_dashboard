@@ -14,7 +14,7 @@ const ModalWrapper = ({ children }: { children: ReactElement }) => {
         <div onClick={handleCloseModal} className="modal-wrapper">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-red w-full  "
+            className="relative bg-red w-full max-w-[467px]"
           >
             {children}
           </div>

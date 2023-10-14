@@ -48,7 +48,7 @@
   }
 
   .modal-content {
-    @apply h-[600px] overflow-y-scroll relative;
+    @apply max-h-[500px] md:max-h-[561px] overflow-y-scroll overflow-x-hidden relative;
   }
 
   .card-wrapper {

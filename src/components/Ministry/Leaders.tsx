@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { leadersI } from '@/util/interface/ministry';
-import { useFetchData } from '@/hooks/fetchData';
-import ProfileCard from './ProfileCard';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import DeleteModal from '../DeleteModal';
-import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import Image from "next/image";
+import { leadersI } from "@/util/interface/ministry";
+import { useFetchData } from "@/hooks/fetchData";
+import ProfileCard from "./ProfileCard";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import DeleteModal from "../DeleteModal";
+import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import {
   setDescription,
   setFullStory,
@@ -15,19 +15,19 @@ import {
   setPosition,
   setQualification,
   setTitle,
-} from '@/store/slice/leader';
-import ProfileModification from './ProfileModification';
-import Loader from '../Loader';
-import useUpdateToast from '@/hooks/updateToast';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { baseUrl } from '@/util/constants';
-import ImageUpload from '../ImageUpload';
-import { setFileName } from '@/store/slice/mediaItems';
+} from "@/store/slice/leader";
+import ProfileModification from "./ProfileModification";
+import Loader from "../Loader";
+import useUpdateToast from "@/hooks/updateToast";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
+import ImageUpload from "../ImageUpload";
+import { setFileName } from "@/store/slice/mediaItems";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const { data, loading, fetchData } = useFetchData({
-    url: '/api/getAllLeaders',
+    url: "/api/getAllLeaders",
   });
   const { id } = useAppSelector((state) => state.mediaItems);
   const {
@@ -53,7 +53,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
   const removeLeader = async () => {
     const res = await fetch(`/api/removeLeader/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     const data = await res.json();
@@ -61,7 +61,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     if (data.error === false) {
       fetchData();
       updateToast({
-        type: 'delete',
+        type: "delete",
       });
     }
   };
@@ -70,25 +70,25 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   const updateLeader = async (leaderInfo: any) => {
     const form = new FormData();
 
-    file && form.append('profile_picture', file as Blob, file?.name);
-    form.append('name', leaderInfo.name);
-    form.append('title', leaderInfo.title);
-    form.append('qualification', leaderInfo.qualification);
-    form.append('position', leaderInfo.position);
-    form.append('short_description', leaderInfo.short_description);
-    form.append('full_story_about', leaderInfo.full_story_about);
-    action === 'edit' && form.append('id', `${id}`);
+    file && form.append("profile_picture", file as Blob, file?.name);
+    form.append("name", leaderInfo.name);
+    form.append("title", leaderInfo.title);
+    form.append("qualification", leaderInfo.qualification);
+    form.append("position", leaderInfo.position);
+    form.append("short_description", leaderInfo.short_description);
+    form.append("full_story_about", leaderInfo.full_story_about);
+    action === "edit" && form.append("id", `${id}`);
 
-    const token = Cookies.get('token');
+    const token = Cookies.get("token");
 
     const res = await axios.post(
       `${
-        action == 'edit' ? `${baseUrl}update-leader` : `${baseUrl}create-leader`
+        action == "edit" ? `${baseUrl}update-leader` : `${baseUrl}create-leader`
       }`,
       form,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       }
@@ -99,23 +99,23 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     if (data.error === false) {
       fetchData();
       updateToast({
-        title: `Church leader ${action === 'edit' ? 'updated' : 'added'}`,
+        title: `Church leader ${action === "edit" ? "updated" : "added"}`,
         info: leaderInfo.name,
       });
       dispatch(
         setLeaderInfo({
-          name: '',
-          title: '',
-          qualification: '',
-          position: '',
-          description: '',
-          fullStory: '',
-          action: 'add',
+          name: "",
+          title: "",
+          qualification: "",
+          position: "",
+          description: "",
+          fullStory: "",
+          action: "add",
           leaderImg: null,
-          leaderImgName: '',
+          leaderImgName: "",
         })
       );
-      dispatch(setFileName(''));
+      dispatch(setFileName(""));
     }
   };
 
@@ -131,10 +131,10 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   return (
     <div
       className={`${
-        currentSection === 'church leader' ? 'block' : 'hidden md:block'
+        currentSection === "church leader" ? "block" : "hidden md:block"
       }`}
     >
-      <div className="bg-white rounded-lg py-6 px-7 md:h-[40rem] md:overflow-y-auto overflow-x-hidden">
+      <div className="bg-white rounded-lg py-6 px-7 md:max-h-[40rem] md:overflow-y-auto overflow-x-hidden">
         <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
         <ImageUpload section="leader" />
         <div className="flex flex-col gap-[1.19rem]">
@@ -236,10 +236,10 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           })}
         </div>
       )}
-      {type == 'delete' && section === 'leader' && (
+      {type == "delete" && section === "leader" && (
         <DeleteModal deleteFunc={removeLeader} />
       )}
-      {type == 'modify' && section === 'leader' && (
+      {type == "modify" && section === "leader" && (
         <ProfileModification handleSubmit={updateLeader} />
       )}
     </div>

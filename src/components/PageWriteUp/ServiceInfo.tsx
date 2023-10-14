@@ -1,10 +1,10 @@
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setDeleteFunc } from '@/store/slice/content';
-import { setEditMediaId } from '@/store/slice/mediaItems';
-import { setService } from '@/store/slice/service';
-import Image from 'next/image';
-import React from 'react';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setDeleteFunc } from "@/store/slice/content";
+import { setEditMediaId } from "@/store/slice/mediaItems";
+import { setService } from "@/store/slice/service";
+import Image from "next/image";
+import React from "react";
 
 interface infoI {
   name: string;
@@ -19,19 +19,19 @@ const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
   const dispatch = useAppDispatch();
 
   const handleDelete = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setEditMediaId(id));
-    dispatch(setDeleteFunc('service times'));
+    dispatch(setDeleteFunc("service times"));
   };
 
   const handleEdit = () => {
-    handleButton('modify');
-    dispatch(setService({ name, description, id, btnType: 'edit' }));
+    handleButton("modify");
+    dispatch(setService({ name, description, id, btnType: "edit" }));
   };
 
   return (
     <div className="flex-center justify-between bg-[#F2F2F2] rounded-lg p-4">
-      <div className="font-semibold">
+      <div className="font-semibold max-w-[70%] md:max-w-full">
         <h2 className="text-base">{name}</h2>
         <span className="text-sm text-ash-300">{serviceTime}</span>
       </div>

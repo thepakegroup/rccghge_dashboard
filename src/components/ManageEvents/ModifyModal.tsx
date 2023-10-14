@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import ModalWrapper from '../ModalWrapper';
-import DragDrop from '../DragDrop';
-import useCloseModal from '@/hooks/closeModal';
-import { useEffect, useState } from 'react';
-import ImageUpload from '../ImageUpload';
-import { useAppDispatch } from '@/store/hooks';
-import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
+import Image from "next/image";
+import ModalWrapper from "../ModalWrapper";
+import DragDrop from "../DragDrop";
+import useCloseModal from "@/hooks/closeModal";
+import { useEffect, useState } from "react";
+import ImageUpload from "../ImageUpload";
+import { useAppDispatch } from "@/store/hooks";
+import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -17,11 +17,11 @@ interface modalI {
 const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const handleCloseModal = useCloseModal();
 
-  const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
 
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
@@ -32,12 +32,12 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const handleSubmitForm = () => {
     const mediaInfo = {
       title,
-      ...(buttonText === 'Update' && location !== undefined
+      ...(buttonText === "Update" && location !== undefined
         ? { location }
         : {}),
       short_description: description,
       start_date: toIsoStringDate(startDate),
-      end_date: endDate !== '' && toIsoStringDate(endDate),
+      end_date: endDate !== "" && toIsoStringDate(endDate),
     };
 
     handleSubmit(mediaInfo);
@@ -60,7 +60,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
         >
           <div
             onClick={handleCloseModal}
-            className="flex-center justify-end font-semibold text-base text-secondary-01 cursor-pointer"
+            className="flex-center justify-end font-semibold text-base text-orange cursor-pointer"
           >
             <span>Close</span>
             <Image
