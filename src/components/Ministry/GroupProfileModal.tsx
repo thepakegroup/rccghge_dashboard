@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import ModalWrappeer from '../ModalWrapper';
-import { setModalToggle } from '../../store/slice/Modal';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToast } from '../../store/slice/toast';
-import DragDrop from '../DragDrop';
-import useCloseModal from '@/hooks/closeModal';
+import Image from "next/image";
+import ModalWrappeer from "../ModalWrapper";
+import { setModalToggle } from "../../store/slice/Modal";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setToast } from "../../store/slice/toast";
+import DragDrop from "../DragDrop";
+import useCloseModal from "@/hooks/closeModal";
 import {
   groupI,
   setCatgeory,
   setName,
   setDescription,
   setGroupInfo,
-} from '@/store/slice/churchGroup';
-import useUpdateToast from '@/hooks/updateToast';
-import { setFileName, setMediaFile } from '@/store/slice/mediaItems';
-import { useEffect } from 'react';
+} from "@/store/slice/churchGroup";
+import useUpdateToast from "@/hooks/updateToast";
+import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+import { useEffect } from "react";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -41,11 +41,11 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
     handleCloseModal();
     dispatch(
       setGroupInfo({
-        name: '',
-        category: '',
-        description: '',
+        name: "",
+        category: "",
+        description: "",
         id: null,
-        action: 'add',
+        action: "add",
       })
     );
   };
@@ -61,7 +61,7 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
           onClick={(e) => e.stopPropagation()}
           className="modal modal-content"
         >
-          <div className="flex-center justify-end font-semibold text-base text-secondary-01">
+          <div className="flex-center justify-end font-semibold text-base text-orange">
             <button onClick={handleCloseModal} className="flex-center gap-2">
               <span>Close</span>
               <Image src="icons/close.svg" alt="" width={24} height={24} />
@@ -84,7 +84,7 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
                     IMG_1616-01-01.jpeg
                   </p>
                   <span className="text-[0.6875rem] text-gray-400">
-                    313 KB . 31 Aug, 2022{' '}
+                    313 KB . 31 Aug, 2022{" "}
                   </span>
                 </div>
               </div>

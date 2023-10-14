@@ -1,20 +1,21 @@
-'use client';
+"use client";
 
-import { useFetchData } from '@/hooks/fetchData';
-import { useEffect, useState } from 'react';
-import OurMissionInfo from './OurMissionInfo';
-import { ourMissionI } from '@/util/interface/writeup';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import DeleteModal from '../DeleteModal';
-import useGetTypeOfModal from '@/hooks/getTypeOfModal';
+import { useFetchData } from "@/hooks/fetchData";
+import { useEffect, useState, Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import OurMissionInfo from "./OurMissionInfo";
+import { ourMissionI } from "@/util/interface/writeup";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import DeleteModal from "../DeleteModal";
+import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import {
   setCategory,
   setDiscription,
   setMission,
   setTitle,
-} from '@/store/slice/mission';
-import Loader from '../Loader';
-import useUpdateToast from '@/hooks/updateToast';
+} from "@/store/slice/mission";
+import Loader from "../Loader";
+import useUpdateToast from "@/hooks/updateToast";
 
 const OurMission = ({ currentSection }: { currentSection: string }) => {
   const { section } = useAppSelector((state) => state.content);
@@ -36,7 +37,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
 
   const deleteMission = async () => {
     const res = await fetch(`/api/deleteMission/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     const data = await res.json();
@@ -44,7 +45,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
     if (data.error === false) {
       fetchData();
       updateToast({
-        type: 'delete',
+        type: "delete",
       });
     }
   };
@@ -54,13 +55,13 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       title,
       description,
       category,
-      ...(btnType == 'edit' && id !== undefined ? { id } : {}),
+      ...(btnType == "edit" && id !== undefined ? { id } : {}),
     };
 
     const res = await fetch(
-      `/api/${btnType == 'edit' ? 'updateOurMission' : 'createOurMission'}`,
+      `/api/${btnType == "edit" ? "updateOurMission" : "createOurMission"}`,
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(serviceData),
       }
     );
@@ -71,30 +72,37 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       fetchData();
       updateToast({
         title: `Our Mission/Belief ${
-          btnType === 'edit' ? 'updated' : 'added!'
+          btnType === "edit" ? "updated" : "added!"
         }`,
         info: title,
       });
       dispatch(
         setMission({
-          title: '',
-          description: '',
-          category: 'all',
+          title: "",
+          description: "",
+          category: "all",
           id: null,
-          btnType: 'add',
+          btnType: "add",
         })
       );
     }
   };
+  const [cat, setCat] = useState("All");
+  const sortOptions = [
+    { name: "All", value: "all" },
+    { name: "Our Mission", value: "our-mission" },
+    { name: "Our Belief", value: "our-belief" },
+  ];
 
   useEffect(() => {
     fetchData();
-  }, []);
+    dispatch(setCategory(cat));
+  }, [cat, fetchData, dispatch]);
 
   return (
     <div
       className={`bg-white rounded-lg py-6 px-7 md:overflow-y-scroll md:h-[34.75rem] ${
-        currentSection === 'mission' ? 'block' : 'hidden md:block'
+        currentSection === "mission" ? "block" : "hidden md:block"
       }`}
     >
       <h2 className="font-bold text-lg">Our Mission/Belief</h2>
@@ -120,16 +128,74 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
         </label>
         <label htmlFor="name" className="input-field">
           <span>Page Category</span>
-          <select
-            onChange={(e) => dispatch(setCategory(e.target.value))}
-            value={category}
-            name="type"
-            className="input max-w-max pr-7"
-          >
-            <option value="all">All</option>
-            <option value="our-mission">Our mission</option>
-            <option value="our-belief">Our belief</option>
-          </select>
+
+          <Listbox value={cat} onChange={setCat}>
+            <div className="relative">
+              <Listbox.Button className="relative w-full max-w-[187px] gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
+                <span className="block truncate capitalize">
+                  {cat === "our-mission"
+                    ? "Our Mission"
+                    : cat === "our-belief"
+                    ? "Our Belief"
+                    : cat}
+                </span>
+                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="button-icon">
+                      <path
+                        id="Vector"
+                        d="M4.375 7.1875L10 12.8125L15.625 7.1875"
+                        stroke="#686868"
+                        stroke-width="2.25"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </g>
+                  </svg>
+                </span>
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Listbox.Options className="absolute max-h-60 w-full max-w-[187px] overflow-auto rounded-md p-1 mt-[3px] bg-white text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+                  {sortOptions.map((option, optionIdx) => (
+                    <Listbox.Option
+                      key={optionIdx}
+                      className={({ active }) =>
+                        `relative select-none py-2 px-4 cursor-pointer ${
+                          active
+                            ? "bg-gray-2 rounded-md w-full text-black"
+                            : "text-black"
+                        }`
+                      }
+                      value={option.value}
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span
+                            className={`block truncate ${
+                              selected ? "font-medium" : "font-normal"
+                            }`}
+                          >
+                            {option.name}
+                          </span>
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
         </label>
         <button
           onClick={updateMission}
@@ -169,7 +235,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
           })}
         </div>
       )}
-      {type == 'delete' && section === 'mission' && (
+      {type == "delete" && section === "mission" && (
         <DeleteModal deleteFunc={deleteMission} />
       )}
     </div>

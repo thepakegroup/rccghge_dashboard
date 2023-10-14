@@ -69,13 +69,10 @@ const UpdateModal = ({
   return (
     <>
       {isModalOpen && (
-        <div
-          onClick={handleCloseModal}
-          className="modal-wrapper w-full max-w-[467px]"
-        >
+        <div onClick={handleCloseModal} className="modal-wrapper w-full">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative bg-red w-full "
+            className="relative bg-red w-full  max-w-[467px]"
           >
             <>
               <div

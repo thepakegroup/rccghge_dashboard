@@ -45,7 +45,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
       <>
         <div
           onClick={(e) => e.stopPropagation()}
-          className="modal modal-content overflow-x-hidden max-h-[500px] md:max-h-[561px] max-w-[467px]"
+          className="modal modal-content "
         >
           <div className="flex-center justify-end font-semibold text-base text-orange">
             <button onClick={handleCloseModal} className="flex-center gap-2 e">

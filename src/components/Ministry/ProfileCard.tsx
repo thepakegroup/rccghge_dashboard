@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setDeleteFunc } from '@/store/slice/content';
-import { setAction } from '@/store/slice/leader';
-import { setEditMediaId, setFileName } from '@/store/slice/mediaItems';
-import { baseUrl } from '@/util/constants';
-import Image from 'next/image';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setDeleteFunc } from "@/store/slice/content";
+import { setAction } from "@/store/slice/leader";
+import { setEditMediaId, setFileName } from "@/store/slice/mediaItems";
+import { baseUrl } from "@/util/constants";
+import Image from "next/image";
 
 interface profileI {
   name: string;
@@ -36,7 +36,7 @@ const ProfileCard = ({
   const dispatch = useAppDispatch();
 
   const handleDelete = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setDeleteFunc(type));
     title
       ? dispatch(setEditMediaId(slug as string))
@@ -44,8 +44,8 @@ const ProfileCard = ({
   };
 
   const handleEdit = () => {
-    handleButton('modify');
-    dispatch(setAction('edit'));
+    handleButton("modify");
+    dispatch(setAction("edit"));
     dispatch(setDeleteFunc(type));
     dispatch(setFileName(img));
     dispatch(setEditMediaId(id));
@@ -73,11 +73,13 @@ const ProfileCard = ({
             width={400}
             className="md:my-4 rounded-lg"
           />
+
+          {/* mobile */}
           <div className="md:hidden flex gap-6">
-            <button onClick={() => handleButton('modify')}>
+            <button onClick={handleEdit}>
               <Image src="icons/edit.svg" alt="" width={24} height={24} />
             </button>
-            <button onClick={() => handleButton('delete')}>
+            <button onClick={handleDelete}>
               <Image src="icons/delete.svg" alt="" width={24} height={24} />
             </button>
             <button>
