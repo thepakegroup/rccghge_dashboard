@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import ModalWrapper from '../ModalWrapper';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setModalToggle } from '@/store/slice/Modal';
-import useCloseModal from '@/hooks/closeModal';
-import { useState } from 'react';
-import useUpdateToast from '@/hooks/updateToast';
+import Image from "next/image";
+import ModalWrapper from "../ModalWrapper";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setModalToggle } from "@/store/slice/Modal";
+import useCloseModal from "@/hooks/closeModal";
+import { useState } from "react";
+import useUpdateToast from "@/hooks/updateToast";
 
 interface editSettingI {
   handleSubmit: (mediaInfo: any) => void;
@@ -15,8 +15,8 @@ interface editSettingI {
 const EditSettings = ({ handleSubmit }: editSettingI) => {
   const handleCloseModal = useCloseModal();
 
-  const [name, setName] = useState('');
-  const [value, setValue] = useState('');
+  const [name, setName] = useState("");
+  const [value, setValue] = useState("");
 
   const submitForm = (e: any) => {
     handleSubmit({ name, value });
@@ -28,7 +28,7 @@ const EditSettings = ({ handleSubmit }: editSettingI) => {
       <div onClick={(e) => e.stopPropagation()} className="modal pb-8">
         <div
           onClick={handleCloseModal}
-          className="flex-center justify-end font-semibold text-base text-secondary-01 cursor-pointer"
+          className="flex-center justify-end font-semibold text-base text-orange cursor-pointer"
         >
           <span>Close</span>
           <Image

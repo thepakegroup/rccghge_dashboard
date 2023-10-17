@@ -44,7 +44,7 @@ const Nav = () => {
 
   return (
     <nav
-      className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full ${
+      className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full z-30 ${
         isSidebarOpen ? "lg:calc-width-50 lg:ml-[271px]" : "lg:w-full md:ml-0"
       }`}
     >
