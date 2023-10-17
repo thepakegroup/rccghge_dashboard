@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setEditMediaId } from '@/store/slice/mediaItems';
-import Image from 'next/image';
-import React from 'react';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setEditMediaId } from "@/store/slice/mediaItems";
+import Image from "next/image";
+import React from "react";
 
 interface adminInfoI {
   email: string;
@@ -18,12 +18,12 @@ const AdminInfo = ({ email, id, level }: adminInfoI) => {
   const dispatch = useAppDispatch();
 
   const handleEditAdmin = () => {
-    handleButton('modify');
+    handleButton("modify");
     dispatch(setEditMediaId(id));
   };
 
   const handleDeleteAdmin = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setEditMediaId(id));
   };
 
@@ -33,7 +33,7 @@ const AdminInfo = ({ email, id, level }: adminInfoI) => {
       <p>********</p>
       <p className="flex-center justify-center">
         <span className="text-xs text-white bg-[#EB5017] rounded-full px-2 py-1">
-          {level === 1 ? 'Super admin' : 'Admin'}
+          {level === 1 ? "Super Admin" : "Admin"}
         </span>
       </p>
       <div>

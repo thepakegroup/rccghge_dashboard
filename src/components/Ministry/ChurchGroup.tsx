@@ -146,7 +146,9 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   return (
     <div
       className={`${
-        currentSection === "church group" ? "block" : "hidden md:block"
+        currentSection === "church group"
+          ? "block overflow-x-hidden"
+          : "hidden md:block"
       }`}
     >
       <div className="bg-white rounded-lg md:max-h-[40rem] py-6 px-7">

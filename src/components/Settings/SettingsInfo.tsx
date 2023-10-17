@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setEditMediaId } from '@/store/slice/mediaItems';
-import { settingI } from '@/util/interface/settings';
-import Image from 'next/image';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setEditMediaId } from "@/store/slice/mediaItems";
+import { settingI } from "@/util/interface/settings";
+import Image from "next/image";
 
 const SettingsInfo = ({ name, id, value }: settingI) => {
   const handleButton = useModalType();
@@ -12,21 +12,21 @@ const SettingsInfo = ({ name, id, value }: settingI) => {
   const dispatch = useAppDispatch();
 
   const handleEditSettings = () => {
-    handleButton('modify');
+    handleButton("modify");
     dispatch(setEditMediaId(id));
   };
 
   const handleDeleteSettings = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setEditMediaId(id));
   };
 
   return (
     <div className="flex flex-col gap-3 bg-white p-4 md:px-6 md:py-5 rounded-lg">
-      <div className="flex-center justify-between">
-        <p>{name}</p>
-        <p className="hidden md:block truncate">{value}</p>
-        <div className="flex-center justify-end gap-6">
+      <div className="grid grid-cols-6">
+        <p className="col-span-2">{name}</p>
+        <p className="hidden md:block truncate col-span-3">{value}</p>
+        <div className="flex-center justify-end gap-3 md:gap-6 col-span-1 min-w-[70px]">
           <button onClick={handleEditSettings}>
             <Image src="icons/edit.svg" alt="" width={24} height={24} />
           </button>
