@@ -23,8 +23,8 @@ const EditSettings = ({
 }: editSettingI) => {
   const handleCloseModal = useCloseModal();
 
-  const [name, setName] = useState(editItemData.name);
-  const [value, setValue] = useState(editItemData.value);
+  const [name, setName] = useState(editItemData?.name);
+  const [value, setValue] = useState(editItemData?.value);
 
   const submitForm = (e: any) => {
     handleSubmit({ name, value });
