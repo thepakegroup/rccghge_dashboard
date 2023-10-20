@@ -24,11 +24,13 @@ import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName } from "@/store/slice/mediaItems";
+import { useEffect, useState } from "react";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
-  const { data, loading, fetchData } = useFetchData({
-    url: "/api/getAllLeaders",
-  });
+  const type = useGetTypeOfModal();
+  const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
+  const { section } = useAppSelector((state) => state.content);
   const { id } = useAppSelector((state) => state.mediaItems);
   const {
     name,
@@ -40,23 +42,31 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     action,
     leaderImg: file,
   } = useAppSelector((state) => state.leader);
-  const { section } = useAppSelector((state) => state.content);
-  const type = useGetTypeOfModal();
 
-  // console.log(file);
+  const [currEditItemID, setCurrEditItemID] = useState<number | undefined>(
+    undefined
+  );
+  const [currEditItem, setCurrEditItem] = useState<any | null>(null);
+  const [currAction, setCurrAction] = useState(false);
 
-  const dispatch = useAppDispatch();
-
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}leaders`,
+    method: "client",
+  });
   const leaders: leadersI[] = data?.message;
 
-  const updateToast = useUpdateToast();
+  const token = Cookies.get("token");
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
 
   const removeLeader = async () => {
-    const res = await fetch(`/api/removeLeader/${id}`, {
-      method: "DELETE",
+    const res = await axios.delete(`${baseUrl}leader/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
@@ -65,7 +75,6 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       });
     }
   };
-  // console.log(data);
 
   const updateLeader = async (leaderInfo: any) => {
     const form = new FormData();
@@ -82,9 +91,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     const token = Cookies.get("token");
 
     const res = await axios.post(
-      `${
-        action == "edit" ? `${baseUrl}update-leader` : `${baseUrl}create-leader`
-      }`,
+      `${currAction ? `${baseUrl}update-leader` : `${baseUrl}create-leader`}`,
       form,
       {
         headers: {
@@ -98,10 +105,12 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
     if (data.error === false) {
       fetchData();
+      setCurrAction(false);
       updateToast({
-        title: `Church leader ${action === "edit" ? "updated" : "added"}`,
+        title: `Church leader ${currAction ? "updated" : "added"}`,
         info: leaderInfo.name,
       });
+
       dispatch(
         setLeaderInfo({
           name: "",
@@ -127,6 +136,23 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     short_description: description,
     full_story_about: fullStory,
   };
+
+  useEffect(() => {
+    dispatch(
+      setLeaderInfo({
+        name: "",
+        title: "",
+        qualification: "",
+        position: "",
+        description: "",
+        fullStory: "",
+        action: "add",
+        leaderImg: null,
+        leaderImgName: "",
+      })
+    );
+    dispatch(setFileName(""));
+  }, [dispatch]);
 
   return (
     <div
@@ -231,6 +257,11 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
                 img={leader.profile_picture as string}
                 type="leader"
                 slug={leader.slug as string}
+                onEditClick={() => {
+                  setCurrEditItemID(leader?.id);
+                  setCurrEditItem(leader);
+                  setCurrAction(true);
+                }}
               />
             );
           })}
@@ -240,7 +271,15 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
         <DeleteModal deleteFunc={removeLeader} />
       )}
       {type == "modify" && section === "leader" && (
-        <ProfileModification handleSubmit={updateLeader} />
+        <ProfileModification
+          onResetEditId={() => {
+            setCurrEditItemID(undefined);
+            setCurrEditItem(null);
+          }}
+          editItemData={currEditItem}
+          editItemId={currEditItemID}
+          handleSubmit={updateLeader}
+        />
       )}
     </div>
   );

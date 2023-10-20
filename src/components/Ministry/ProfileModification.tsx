@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import ModalWrappeer from "../ModalWrapper";
-import { setModalToggle } from "../../store/slice/Modal";
+// import { setModalToggle } from "../../store/slice/Modal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setToast } from "../../store/slice/toast";
-import DragDrop from "../DragDrop";
+// import { setToast } from "../../store/slice/toast";
+// import DragDrop from "../DragDrop";
 import useCloseModal from "@/hooks/closeModal";
 import {
   setFullStory,
+  setLeaderInfo,
   setName,
   setPosition,
   setQualification,
@@ -18,12 +19,21 @@ import { setDescription } from "@/store/slice/content";
 import { leadersI } from "@/util/interface/ministry";
 import { useEffect } from "react";
 import { setMediaFile } from "@/store/slice/mediaItems";
+import ImageUpload from "../ImageUpload";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
+  onResetEditId: () => void;
+  editItemData: any;
+  editItemId: number | undefined;
 }
 
-const ProfileModification = ({ handleSubmit }: modalI) => {
+const ProfileModification = ({
+  handleSubmit,
+  editItemData,
+  editItemId,
+  onResetEditId,
+}: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
   const { name, title, qualification, position, description, fullStory } =
@@ -40,59 +50,60 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
     };
     handleSubmit(leaderInfo);
     handleCloseModal();
+    onResetEditId();
   };
 
   useEffect(() => {
+    editItemData &&
+      dispatch(
+        setLeaderInfo({
+          name: editItemData.name,
+          title: editItemData.title,
+          qualification: editItemData.qualification,
+          position: editItemData.position,
+          description: editItemData.short_description,
+          fullStory: editItemData.full_story_about,
+          action: "edit",
+        })
+      );
+
     dispatch(setMediaFile(null));
-  }, []);
+  }, [dispatch, editItemData]);
 
   return (
-    <ModalWrappeer>
+    <div
+      onClick={() => {
+        handleCloseModal();
+        onResetEditId();
+      }}
+      className="modal-wrapper"
+    >
       <>
         <div
           onClick={(e) => e.stopPropagation()}
           className="modal modal-content"
         >
           <div className="flex-center justify-end font-semibold text-base text-orange">
-            <button onClick={handleCloseModal} className="flex-center gap-2">
+            <button
+              onClick={() => {
+                handleCloseModal();
+                onResetEditId();
+              }}
+              className="flex-center gap-2"
+            >
               <span>Close</span>
               <Image src="icons/close.svg" alt="" width={24} height={24} />
             </button>
           </div>
 
-          <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-            <div className="flex-center justify-between">
-              <div className="flex-center gap-3">
-                <div className="w-8 h-8 flex-center justify-center rounded-full bg-[#0F973D]/20">
-                  <Image
-                    src="icons/success.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                <div>
-                  <p className="text-gray-800 text-sm font-medium">
-                    IMG_1616-01-01.jpeg
-                  </p>
-                  <span className="text-[0.6875rem] text-gray-400">
-                    313 KB . 31 Aug, 2022{" "}
-                  </span>
-                </div>
-              </div>
-              <button className="flex-center gap-2 text-[#EB5017]">
-                <Image src="icons/delete.svg" alt="" width={24} height={24} />
-                <span>Clear</span>
-              </button>
-            </div>
-          </div>
+          <ImageUpload />
 
           <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
             <label htmlFor="name" className="input-field">
               <span>Name</span>
               <input
                 onChange={(e) => dispatch(setName(e.target.value))}
-                value={name}
+                defaultValue={editItemData.name}
                 name="name"
                 type="text"
                 className="input"
@@ -102,7 +113,7 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
               <span>Title</span>
               <input
                 onChange={(e) => dispatch(setTitle(e.target.value))}
-                value={title}
+                defaultValue={editItemData.title}
                 name="title"
                 type="text"
                 className="input"
@@ -112,7 +123,7 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
               <span>Qualification</span>
               <input
                 onChange={(e) => dispatch(setQualification(e.target.value))}
-                value={qualification}
+                defaultValue={editItemData.qualification}
                 name="qualification"
                 type="text"
                 className="input"
@@ -122,7 +133,7 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
               <span>Position</span>
               <input
                 onChange={(e) => dispatch(setPosition(e.target.value))}
-                value={position}
+                defaultValue={editItemData.position}
                 name="position"
                 type="text"
                 className="input"
@@ -132,7 +143,7 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
               <span>Short description</span>
               <input
                 onChange={(e) => dispatch(setDescription(e.target.value))}
-                value={description}
+                defaultValue={editItemData.short_description}
                 name="description"
                 type="text"
                 className="input"
@@ -142,21 +153,22 @@ const ProfileModification = ({ handleSubmit }: modalI) => {
               <span>Full story</span>
               <textarea
                 onChange={(e) => dispatch(setFullStory(e.target.value))}
-                value={fullStory}
+                defaultValue={editItemData.full_story_about}
                 name="fullStory"
                 rows={5}
                 className="input"
               />
             </label>
+
+            <div className="">
+              <button onClick={handleSubmitForm} className="modal-btn">
+                update
+              </button>
+            </div>
           </form>
         </div>
-        <div className="modal-btn-wrapper">
-          <button onClick={handleSubmitForm} className="modal-btn">
-            update
-          </button>
-        </div>
       </>
-    </ModalWrappeer>
+    </div>
   );
 };
 

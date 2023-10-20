@@ -33,7 +33,8 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { data, loading, fetchData } = useFetchData({
-    url: `/api/getOurMission/all`,
+    url: `${baseUrl}oms/all`,
+    method: "client",
   });
 
   const ourMissions: ourMissionI[] = data?.message;
