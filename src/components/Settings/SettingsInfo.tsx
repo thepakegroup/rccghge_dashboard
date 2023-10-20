@@ -6,13 +6,19 @@ import { setEditMediaId } from "@/store/slice/mediaItems";
 import { settingI } from "@/util/interface/settings";
 import Image from "next/image";
 
-const SettingsInfo = ({ name, id, value }: settingI) => {
+const SettingsInfo = ({
+  name,
+  id,
+  value,
+  onEditClick = () => {},
+}: settingI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
 
   const handleEditSettings = () => {
     handleButton("modify");
+    onEditClick();
     dispatch(setEditMediaId(id));
   };
 

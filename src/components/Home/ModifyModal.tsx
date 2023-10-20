@@ -21,10 +21,17 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
   const [mediaLink, setMediaLink] = useState("");
   const [description, setDescription] = useState("");
   const [mediaType, setMediaType] = useState("");
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
 
   const handleSubmitForm = () => {
     const mediaInfo = {
       name,
+      media: img,
       link: mediaLink,
       short_description: description,
       media_type: mediaType,
@@ -53,7 +60,7 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
               <Image src="icons/close.svg" alt="" width={24} height={24} />
             </button>
           </div>
-          <ImageUpload />
+          <ImageUpload handleImageChange={handleImageChange} />
           <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
             <label htmlFor="type" className="input-field">
               <span>Media type</span>

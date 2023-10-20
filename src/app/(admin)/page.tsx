@@ -37,7 +37,6 @@ export default function Home() {
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<EditItem | null>(null);
-
   const { items, file, id } = useAppSelector((state: any) => state.mediaItems);
 
   const { data, loading, fetchData } = useFetchData({
@@ -87,7 +86,8 @@ export default function Home() {
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
-    file && form.append("media", file as Blob, file?.name);
+    mediaInfo.media &&
+      form.append("media", mediaInfo.media as Blob, mediaInfo.media?.name);
     form.append("name", mediaInfo.name);
     form.append("media_type", mediaInfo.media_type);
     form.append("short_description", mediaInfo.short_description);

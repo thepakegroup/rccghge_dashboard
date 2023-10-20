@@ -8,39 +8,56 @@ import { useFetchData } from "@/hooks/fetchData";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import useUpdateToast from "@/hooks/updateToast";
 import { useAppSelector } from "@/store/hooks";
+import { baseUrl } from "@/util/constants";
 import { settingI } from "@/util/interface/settings";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const Settings = () => {
   const type = useGetTypeOfModal();
-
+  const updateToast = useUpdateToast();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
-
-  const { data, loading, fetchData } = useFetchData({
-    url: "/api/getAllSettings",
-  });
   const { id } = useAppSelector((state) => state.mediaItems);
 
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}settings`,
+    method: "client",
+  });
   const settings: settingI[] = data?.message;
 
+  const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [sortSettings, setSortSettings] = useState<settingI[]>(settings);
   const [sorted, setSorted] = useState(false);
 
-  const updateToast = useUpdateToast();
+  // Header and token
+  const token = Cookies.get("token");
 
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
+
+  // Update Setting
   const updateSettings = async (settingInfo: any) => {
     const settingData = {
       ...settingInfo,
       id,
     };
 
-    const res = await fetch(`/api/updateSettings`, {
-      method: "POST",
-      body: JSON.stringify(settingData),
-    });
+    const res = await axios.post(
+      `${baseUrl}update-setting`,
+      JSON.stringify(settingData),
+      {
+        headers,
+      }
+    );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
@@ -51,12 +68,13 @@ const Settings = () => {
     }
   };
 
+  // Delete Setting
   const deleteSetting = async () => {
-    const res = await fetch(`/api/deleteSetting/${id}`, {
-      method: "DELETE",
+    const res = await axios.delete(`${baseUrl}setting/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
@@ -66,15 +84,19 @@ const Settings = () => {
     }
   };
 
+  // Create Setting
   const createSetting = async (e: any) => {
     e.preventDefault();
 
-    const res = await fetch("/api/createSetting", {
-      method: "POST",
-      body: JSON.stringify({ name, value }),
-    });
+    const res = await axios.post(
+      `${baseUrl}create-setting`,
+      JSON.stringify({ name, value }),
+      {
+        headers,
+      }
+    );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
@@ -140,7 +162,6 @@ const Settings = () => {
       <button
         onClick={() => {
           setSorted(!sorted);
-          // console.log(sorted);
         }}
         className={`rounded-lg border border-[#D0D5DD] px-3 py-[0.375rem] my-4 ${
           sorted && "bg-[#C5D5F1]"
@@ -154,11 +175,32 @@ const Settings = () => {
         <div className="text-base font-medium flex flex-col gap-2">
           {sortSettings?.map((setting) => {
             const { id, value, name } = setting;
-            return <SettingsInfo key={id} id={id} value={value} name={name} />;
+            return (
+              <SettingsInfo
+                key={id}
+                id={id}
+                value={value}
+                name={name}
+                onEditClick={() => {
+                  setCurrEditItemID(id);
+                  setCurrEditItem(setting);
+                }}
+              />
+            );
           })}
         </div>
       )}
-      {type == "modify" && <EditSettings handleSubmit={updateSettings} />}
+      {type == "modify" && (
+        <EditSettings
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
+          editItemData={currEditItem}
+          editItemId={currEditItemID}
+          handleSubmit={updateSettings}
+        />
+      )}
       {type == "delete" && <DeleteModal deleteFunc={deleteSetting} />}
     </section>
   );

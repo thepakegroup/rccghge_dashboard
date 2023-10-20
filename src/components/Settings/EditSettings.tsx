@@ -10,24 +10,36 @@ import useUpdateToast from "@/hooks/updateToast";
 
 interface editSettingI {
   handleSubmit: (mediaInfo: any) => void;
+  onResetEditId: () => void;
+  editItemData: any;
+  editItemId: number | null;
 }
 
-const EditSettings = ({ handleSubmit }: editSettingI) => {
+const EditSettings = ({
+  handleSubmit,
+  editItemData,
+  editItemId,
+  onResetEditId,
+}: editSettingI) => {
   const handleCloseModal = useCloseModal();
 
-  const [name, setName] = useState("");
-  const [value, setValue] = useState("");
+  const [name, setName] = useState(editItemData.name);
+  const [value, setValue] = useState(editItemData.value);
 
   const submitForm = (e: any) => {
     handleSubmit({ name, value });
     handleCloseModal();
+    onResetEditId();
   };
 
   return (
     <ModalWrapper>
       <div onClick={(e) => e.stopPropagation()} className="modal pb-8">
         <div
-          onClick={handleCloseModal}
+          onClick={() => {
+            handleCloseModal();
+            onResetEditId();
+          }}
           className="flex-center justify-end font-semibold text-base text-orange cursor-pointer"
         >
           <span>Close</span>

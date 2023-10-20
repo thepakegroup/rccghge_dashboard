@@ -11,34 +11,54 @@ import { useAppSelector } from "@/store/hooks";
 import { baseUrl } from "@/util/constants";
 import { adminI } from "@/util/interface/admin";
 import Image from "next/image";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useMemo } from "react";
 import { Listbox, Transition } from "@headlessui/react";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const Admin = () => {
   const type = useGetTypeOfModal();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [level, setLevel] = useState("admin");
+  const updateToast = useUpdateToast();
+  const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<any | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { id } = useAppSelector((state) => state.mediaItems);
+
+  // Header and token
+  const token = Cookies.get("token");
+
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
+
+  // Load All Admins
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}admins`,
     method: "client",
   });
   const admins: adminI[] = data?.message;
 
-  const updateToast = useUpdateToast();
-
+  // Create Admin
   const createAdmin = async (e: any) => {
     e.preventDefault();
     const adminLevel = level === "admin" ? "2" : "1";
 
-    const res = await fetch("/api/createAdmin", {
-      method: "POST",
-      body: JSON.stringify({ email, password, level: adminLevel }),
-    });
+    const res = await axios.post(
+      `${baseUrl}admin/create`,
+      JSON.stringify({ email, password, level: adminLevel }),
+      {
+        headers,
+      }
+    );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
@@ -47,17 +67,18 @@ const Admin = () => {
         info: email,
       });
       setPassword("");
-      setLevel("");
+      setLevel("admin");
       setEmail("");
     }
   };
 
+  // Delete Admin
   const deleteAdmin = async () => {
-    const res = await fetch(`/api/deleteAdmin/${id}`, {
-      method: "DELETE",
+    const res = await axios.delete(`${baseUrl}admin/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
@@ -67,6 +88,7 @@ const Admin = () => {
     }
   };
 
+  // Update Admin
   const updateMedia = async (adminInfo: any) => {
     const adminData = {
       ...adminInfo,
@@ -119,16 +141,28 @@ const Admin = () => {
             <input
               onChange={(e) => setPassword(e.target.value)}
               value={password}
-              type="password"
+              type={showPassword ? "text" : "password"}
               className="input"
             />
-            <Image
-              src="icons/eye.svg"
-              alt=""
-              width={20}
-              height={20}
-              className="absolute top-1/2 -translate-y-1/2 right-3"
-            />
+            {showPassword ? (
+              <Image
+                src="icons/eyeoff.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            ) : (
+              <Image
+                src="icons/eye.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            )}
           </div>
         </label>
         <label htmlFor="level" className="input-field col-span-2 w-full">
@@ -223,13 +257,27 @@ const Admin = () => {
                   email={admin.email}
                   id={admin.id}
                   level={admin.level}
+                  onEditClick={() => {
+                    setCurrEditItemID(admin.id);
+                    setCurrEditItem(admin);
+                  }}
                 />
               );
             })
           )}
         </div>
       </div>
-      {type == "modify" && <EditAdmin handleSubmit={updateMedia} />}
+      {type == "modify" && (
+        <EditAdmin
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
+          editItemData={currEditItem}
+          editItemId={currEditItemID}
+          handleSubmit={updateMedia}
+        />
+      )}
       {type == "delete" && <DeleteModal deleteFunc={deleteAdmin} />}
     </section>
   );

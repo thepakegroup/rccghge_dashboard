@@ -7,9 +7,11 @@ import { setGroupImg, setGroupImgName } from "@/store/slice/churchGroup";
 
 interface uploadI {
   section?: string;
+  handleImageChange: (file: File) => void;
+  // defImg?: any;
 }
 
-const ImageUpload = ({ section }: uploadI) => {
+const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
   const { file, fileName } = useAppSelector((state) => state.mediaItems);
   const { leaderImg, leaderImgName } = useAppSelector((state) => state.leader);
   const { groupImg, groupImgName } = useAppSelector(
@@ -136,6 +138,7 @@ const ImageUpload = ({ section }: uploadI) => {
     if (!file && fileName === "") {
       return upload;
     }
+
     if (file && kb && kb >= 3000) {
       return fileTooLarge;
     }
@@ -146,7 +149,7 @@ const ImageUpload = ({ section }: uploadI) => {
   };
 
   return (
-    <DragDrop section={section}>
+    <DragDrop section={section} handleImageChange={handleImageChange}>
       <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
         {section === "leader"
           ? content(leaderImg as File, leaderImgName as string)

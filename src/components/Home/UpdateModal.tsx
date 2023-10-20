@@ -32,6 +32,12 @@ const UpdateModal = ({
   const [mediaLink, setMediaLink] = useState("");
   const [description, setDescription] = useState("");
   const [mediaType, setMediaType] = useState("");
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
 
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
 
@@ -43,6 +49,7 @@ const UpdateModal = ({
   const handleSubmitForm = () => {
     const mediaInfo = {
       name,
+      media: img,
       link: mediaLink,
       short_description: description,
       media_type: mediaType,
@@ -90,7 +97,7 @@ const UpdateModal = ({
                     />
                   </button>
                 </div>
-                <ImageUpload />
+                <ImageUpload handleImageChange={handleImageChange} />
                 <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
                   <label htmlFor="type" className="input-field">
                     <span>Media type</span>

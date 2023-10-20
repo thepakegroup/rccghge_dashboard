@@ -7,17 +7,28 @@ import { useEffect, useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 interface editAdminI {
   handleSubmit: (mediaInfo: any) => void;
+  onResetEditId: () => void;
+  editItemData: any;
+  editItemId: number | null;
 }
 
-const EditAdmin = ({ handleSubmit }: editAdminI) => {
+const EditAdmin = ({
+  handleSubmit,
+  editItemData,
+  editItemId,
+  onResetEditId,
+}: editAdminI) => {
   const handleCloseModal = useCloseModal();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(editItemData?.email);
   const [password, setPassword] = useState("");
-  const [level, setLevel] = useState("admin");
+  const [showPassword, setShowPassword] = useState(false);
+  const [level, setLevel] = useState(
+    editItemData?.level === 2 ? "admin" : "super admin"
+  );
 
   const submitForm = () => {
-    const adminLevel = level === "admin" ? "1" : "2";
+    const adminLevel = level === "admin" ? "2" : "1";
     handleSubmit({ email, password, level: adminLevel });
     handleCloseModal();
   };
@@ -65,16 +76,28 @@ const EditAdmin = ({ handleSubmit }: editAdminI) => {
               <input
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="input"
               />
-              <Image
-                src="icons/eye.svg"
-                alt=""
-                width={20}
-                height={20}
-                className="absolute top-1/2 -translate-y-1/2 right-3"
-              />
+              {showPassword ? (
+                <Image
+                  src="icons/eyeoff.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              ) : (
+                <Image
+                  src="icons/eye.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              )}
             </div>
           </label>
           <label htmlFor="level" className="input-field flex-1">
