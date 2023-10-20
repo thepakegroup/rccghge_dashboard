@@ -17,6 +17,7 @@ interface profileI {
   category?: string;
   type: string;
   id: number;
+  onEditClick?: () => void;
   slug?: string;
 }
 
@@ -29,6 +30,7 @@ const ProfileCard = ({
   category,
   type,
   id,
+  onEditClick = () => {},
   slug,
 }: profileI) => {
   const handleButton = useModalType();
@@ -45,6 +47,8 @@ const ProfileCard = ({
 
   const handleEdit = () => {
     handleButton("modify");
+    onEditClick();
+
     dispatch(setAction("edit"));
     dispatch(setDeleteFunc(type));
     dispatch(setFileName(img));

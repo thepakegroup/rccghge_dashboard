@@ -1,7 +1,7 @@
 import Image from "next/image";
 import ProfileCard from "./ProfileCard";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useState, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect, useMemo, useCallback } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { churchGroupI } from "@/util/interface/ministry";
 import DeleteModal from "../DeleteModal";
@@ -22,9 +22,22 @@ import ImageUpload from "../ImageUpload";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
+  const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
   const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
   const type = useGetTypeOfModal();
+
+  const [groups, setGroups] = useState<churchGroupI[]>([]);
+  const [loading, setloading] = useState(true);
+
+  const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<any | null>(null);
+  const [currAction, setCurrAction] = useState(false);
+
+  // Sort Functionality
+  const sortOptions = useMemo(() => ["Older", "Most recent"] as const, []);
+  const [sortKey, setSortKey] = useState(sortOptions[0]);
 
   const {
     name,
@@ -34,34 +47,44 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     groupImg: file,
   } = useAppSelector((state) => state.churchGroup);
 
-  const dispatch = useAppDispatch();
+  // Header and token
+  const token = Cookies.get("token");
 
-  const [groups, setGroups] = useState<churchGroupI[]>([]);
-  const [loading, setloading] = useState(true);
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
 
-  const getGroupByCategory = async (category: string) => {
-    const res = await fetch("api/fetchGroup", {
-      method: "POST",
-      body: JSON.stringify({ category, page: 1 }),
-    });
+  // Fetch All Group
+  const getGroupByCategory = useCallback(
+    async (category: string) => {
+      const res = await axios.post(
+        `${baseUrl}groups`,
+        JSON.stringify({ category, page: 1 }),
+        {
+          headers,
+        }
+      );
 
-    const data = await res.json();
+      const data = await res.data;
+      if (data.error === false) {
+        setloading(false);
 
-    if (data.error === false) setloading(false);
+        setGroups(data?.message?.data);
+      }
+    },
+    [headers]
+  );
 
-    setGroups(data.message.data);
-  };
-
-  useEffect(() => {
-    getGroupByCategory(category);
-  }, [category]);
-
+  // Delete Group
   const removeGroup = async () => {
-    const res = await fetch(`/api/removeGroup/${id}`, {
-      method: "DELETE",
+    const res = await axios.delete(`${baseUrl}group/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       getGroupByCategory(category);
@@ -71,23 +94,30 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     }
   };
 
-  const updateToast = useUpdateToast();
+  // Sort Functionality
+  const sortGroup = useCallback(
+    (a: any, b: any) => {
+      if (sortKey === "Older") {
+        return a.id - b.id;
+      }
 
+      return b.id - a.id;
+    },
+    [sortKey]
+  );
+
+  // Create and Update Group
   const updateGroup = async (groupInfo: any) => {
     const form = new FormData();
 
     file && form.append("banner", file as Blob, file?.name);
     form.append("name", groupInfo.name);
     form.append("category", groupInfo.category);
-    form.append("description", groupInfo.qualification);
-    action === "edit" && form.append("id", `${id}`);
-
-    const token = Cookies.get("token");
+    form.append("description", groupInfo.description);
+    currAction && form.append("id", `${id}`);
 
     const res = await axios.post(
-      `${
-        action == "edit" ? `${baseUrl}update-group` : `${baseUrl}create-group`
-      }`,
+      `${currAction ? `${baseUrl}update-group` : `${baseUrl}create-group`}`,
       form,
       {
         headers: {
@@ -98,17 +128,20 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     );
 
     const data = res.data;
-
     if (data.error === false) {
       getGroupByCategory(category);
+      setCurrAction(false);
+
       updateToast({
-        title: `Church group ${action === "edit" ? "updated" : "added"}`,
+        title: `Church group ${currAction ? "updated" : "added"}`,
         info: groupInfo.name,
       });
+
+      dispatch(setFileName(""));
       dispatch(
         setGroupInfo({
           name: "",
-          category: "",
+          category: "All",
           description: "",
           id: null,
           action: "add",
@@ -116,21 +149,24 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           groupImgName: "",
         })
       );
-      dispatch(setFileName(""));
+      return;
+    }
+
+    if (data.error === true) {
+      updateToast({
+        title: `${data.message}`,
+        info: data.message,
+      });
     }
   };
 
+  // Category
   const [cat, setCat] = useState("All");
-
   const catOptions = [
     { name: "All", value: "All" },
     { name: "Department", value: "Department" },
     { name: "Ministry", value: "Ministry" },
   ];
-
-  useEffect(() => {
-    dispatch(setCatgeory(cat));
-  }, [cat, dispatch]);
 
   const groupInfo = {
     name,
@@ -138,10 +174,10 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     description,
   };
 
-  // Sort Functionality
-
-  const sortOptions = [{ name: "Most recent" }, { name: "Older" }];
-  const [selected, setSelected] = useState("");
+  useEffect(() => {
+    dispatch(setCatgeory(cat));
+    getGroupByCategory(category);
+  }, [cat, dispatch, category, getGroupByCategory]);
 
   return (
     <div
@@ -262,10 +298,10 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       </div>
       <div className="">
         <div className="flex justify-end my-4">
-          <Listbox value={selected} onChange={setSelected}>
+          <Listbox value={sortKey} onChange={setSortKey}>
             <div className="relative">
               <Listbox.Button className="relative w-full min-w-[127px] gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
-                <span className="block truncate">{selected || "Sort by"}</span>
+                <span className="block truncate">{sortKey || "Sort by"}</span>
                 <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                   <svg
                     width="20"
@@ -304,7 +340,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
                             : "text-black"
                         }`
                       }
-                      value={option.name}
+                      value={option}
                     >
                       {({ selected }) => (
                         <>
@@ -313,7 +349,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
                               selected ? "font-medium" : "font-normal"
                             }`}
                           >
-                            {option.name}
+                            {option}
                           </span>
                         </>
                       )}
@@ -328,7 +364,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           <Loader />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {groups?.map((group) => {
+            {groups?.sort(sortGroup).map((group) => {
               return (
                 <ProfileCard
                   key={group.id}
@@ -337,6 +373,11 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
                   name={group.name}
                   category={group.category}
                   type="group"
+                  onEditClick={() => {
+                    setCurrEditItemID(group.id);
+                    setCurrEditItem(group);
+                    setCurrAction(true);
+                  }}
                 />
               );
             })}
@@ -347,7 +388,15 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
         <DeleteModal deleteFunc={removeGroup} />
       )}
       {type == "modify" && section === "group" && (
-        <GroupProfileModal handleSubmit={updateGroup} />
+        <GroupProfileModal
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
+          editItemData={currEditItem}
+          editItemId={currEditItemID}
+          handleSubmit={updateGroup}
+        />
       )}
     </div>
   );

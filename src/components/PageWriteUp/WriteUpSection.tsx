@@ -171,7 +171,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
               className="input"
             />
           </label>
-          <div className=" h-40">
+          <div className=" h-40 mb-10">
             <ReactQuill
               theme="snow"
               formats={formats}

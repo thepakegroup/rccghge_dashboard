@@ -97,6 +97,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         title: `Service time ${btnType === "edit" ? "updated" : "added!"}`,
         info: name,
       });
+
       dispatch(
         setService({
           name: "",
@@ -117,7 +118,10 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
       }`}
     >
       <h2 className="font-bold text-lg">Service time</h2>
-      <form className="flex flex-col gap-[1.12rem] mt-4">
+      <form
+        className="flex flex-col gap-[1.12rem] mt-4"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <label htmlFor="title" className="input-field">
           <span>Servic name</span>
           <input

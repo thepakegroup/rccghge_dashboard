@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { baseUrl, labels } from "@/util/constants";
+import { labels } from "@/util/constants";
 import { useState, useEffect } from "react";
-import useUpdateToast from "@/hooks/updateToast";
+// import useUpdateToast from "@/hooks/updateToast";
 import ImageUpload from "../ImageUpload";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setModalToggle } from "@/store/slice/Modal";
-import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
-import { useFetchData } from "@/hooks/fetchData";
+// import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+// import { useFetchData } from "@/hooks/fetchData";
 import { EditItem } from "@/app/(admin)/page";
 
 interface modalI {

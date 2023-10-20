@@ -4,7 +4,7 @@ import Image from "next/image";
 import ModalWrappeer from "../ModalWrapper";
 import { setModalToggle } from "../../store/slice/Modal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setToast } from "../../store/slice/toast";
+import { Listbox, Transition } from "@headlessui/react";
 import DragDrop from "../DragDrop";
 import useCloseModal from "@/hooks/closeModal";
 import {
@@ -12,19 +12,30 @@ import {
   setCatgeory,
   setName,
   setDescription,
+  setAction,
   setGroupInfo,
 } from "@/store/slice/churchGroup";
 import useUpdateToast from "@/hooks/updateToast";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
-import { useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
+import ImageUpload from "../ImageUpload";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
+  onResetEditId: () => void;
+  editItemData: any;
+  editItemId: number | null;
 }
 
-const GroupProfileModal = ({ handleSubmit }: modalI) => {
+const GroupProfileModal = ({
+  handleSubmit,
+  editItemData,
+  editItemId,
+  onResetEditId,
+}: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
+
   const { name, id, category, description } = useAppSelector(
     (state) => state.churchGroup
   );
@@ -36,71 +47,78 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
       id,
       category,
     };
+
     handleSubmit(groupInfo);
 
     handleCloseModal();
-    dispatch(
-      setGroupInfo({
-        name: "",
-        category: "",
-        description: "",
-        id: null,
-        action: "add",
-      })
-    );
+    onResetEditId();
   };
 
   useEffect(() => {
+    editItemData &&
+      dispatch(
+        setGroupInfo({
+          banner: editItemData?.banner,
+          name: editItemData?.name,
+          category: editItemData?.category,
+          description: editItemData?.description,
+          id: editItemData?.id,
+          action: "edit",
+        })
+      );
+
     dispatch(setMediaFile(null));
-  }, []);
+  }, [dispatch, editItemData]);
+
+  const [cat, setCat] = useState(editItemData?.category);
+
+  const catOptions = [
+    { name: "All", value: "All" },
+    { name: "Department", value: "Department" },
+    { name: "Ministry", value: "Ministry" },
+  ];
+
+  useEffect(() => {
+    dispatch(setCatgeory(cat));
+  }, [cat, dispatch]);
 
   return (
-    <ModalWrappeer>
+    <div
+      onClick={() => {
+        handleCloseModal();
+        onResetEditId();
+      }}
+      className="modal-wrapper"
+    >
       <>
         <div
           onClick={(e) => e.stopPropagation()}
           className="modal modal-content"
         >
           <div className="flex-center justify-end font-semibold text-base text-orange">
-            <button onClick={handleCloseModal} className="flex-center gap-2">
+            <button
+              onClick={() => {
+                handleCloseModal();
+                onResetEditId();
+              }}
+              className="flex-center gap-2"
+            >
               <span>Close</span>
               <Image src="icons/close.svg" alt="" width={24} height={24} />
             </button>
           </div>
 
-          <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-            <div className="flex-center justify-between">
-              <div className="flex-center gap-3">
-                <div className="w-8 h-8 flex-center justify-center rounded-full bg-[#0F973D]/20">
-                  <Image
-                    src="icons/success.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                <div>
-                  <p className="text-gray-800 text-sm font-medium">
-                    IMG_1616-01-01.jpeg
-                  </p>
-                  <span className="text-[0.6875rem] text-gray-400">
-                    313 KB . 31 Aug, 2022{" "}
-                  </span>
-                </div>
-              </div>
-              <button className="flex-center gap-2 text-[#EB5017]">
-                <Image src="icons/delete.svg" alt="" width={24} height={24} />
-                <span>Clear</span>
-              </button>
-            </div>
-          </div>
+          <ImageUpload />
 
-          <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
+          <form
+            className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <label htmlFor="name" className="input-field">
               <span>Name</span>
               <input
                 onChange={(e) => dispatch(setName(e.target.value))}
-                value={name}
+                defaultValue={editItemData?.name}
                 name="name"
                 type="text"
                 className="input"
@@ -108,36 +126,93 @@ const GroupProfileModal = ({ handleSubmit }: modalI) => {
             </label>
             <label htmlFor="category" className="input-field">
               <span>Category</span>
-              <select
-                onChange={(e) => dispatch(setCatgeory(e.target.value))}
-                value={category}
-                name="category"
-                className="input"
-              >
-                <option value="All">All</option>
-                <option value="Department">Department</option>
-                <option value="Ministry">Ministy</option>
-              </select>
+              <Listbox value={cat} onChange={setCat}>
+                <div className="relative">
+                  <Listbox.Button className="relative w-full gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
+                    <span className="block truncate capitalize">
+                      {cat === "our-mission"
+                        ? "Our Mission"
+                        : cat === "our-belief"
+                        ? "Our Belief"
+                        : cat}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g id="button-icon">
+                          <path
+                            id="Vector"
+                            d="M4.375 7.1875L10 12.8125L15.625 7.1875"
+                            stroke="#686868"
+                            strokeWidth="2.25"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </g>
+                      </svg>
+                    </span>
+                  </Listbox.Button>
+                  <Transition
+                    as={Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute max-h-60 w-full overflow-auto rounded-md p-1 mt-[3px] bg-white text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+                      {catOptions.map((option, optionIdx) => (
+                        <Listbox.Option
+                          key={optionIdx}
+                          className={({ active }) =>
+                            `relative select-none py-2 px-4 cursor-pointer ${
+                              active
+                                ? "bg-gray-2 rounded-md w-full text-black"
+                                : "text-black"
+                            }`
+                          }
+                          value={option.value}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? "font-medium" : "font-normal"
+                                }`}
+                              >
+                                {option.name}
+                              </span>
+                            </>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
+              </Listbox>
             </label>
             <label htmlFor="description" className="input-field">
               <span>Description</span>
               <textarea
                 onChange={(e) => dispatch(setDescription(e.target.value))}
-                value={description}
+                defaultValue={editItemData?.description}
                 name="description"
                 rows={5}
                 className="input"
               />
             </label>
+            <div className="">
+              <button onClick={handleSubmitForm} className="modal-btn">
+                update
+              </button>
+            </div>
           </form>
         </div>
-        <div className="modal-btn-wrapper">
-          <button onClick={handleSubmitForm} className="modal-btn">
-            update
-          </button>
-        </div>
       </>
-    </ModalWrappeer>
+    </div>
   );
 };
 
