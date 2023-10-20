@@ -1,48 +1,31 @@
-import React, { useState } from 'react';
-import ServiceInfo from './ServiceInfo';
-import { useFetchData } from '@/hooks/fetchData';
-import { serviceTime } from '@/util/interface/serviceTime';
-import DeleteModal from '../DeleteModal';
-import useGetTypeOfModal from '@/hooks/getTypeOfModal';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { convertTo12HourFormat } from '@/helper/convertTo12HrTime';
+import React, { useState } from "react";
+import ServiceInfo from "./ServiceInfo";
+import { useFetchData } from "@/hooks/fetchData";
+import { serviceTime } from "@/util/interface/serviceTime";
+import DeleteModal from "../DeleteModal";
+import useGetTypeOfModal from "@/hooks/getTypeOfModal";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { convertTo12HourFormat } from "@/helper/convertTo12HrTime";
 import {
   setDiscriptionService,
   setEndTime,
   setName,
   setService,
   setStartTime,
-} from '@/store/slice/service';
-import Loader from '../Loader';
-import useUpdateToast from '@/hooks/updateToast';
+} from "@/store/slice/service";
+import Loader from "../Loader";
+import useUpdateToast from "@/hooks/updateToast";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
-  const { data, loading, fetchData } = useFetchData({
-    url: '/api/getServices',
-  });
+  const updateToast = useUpdateToast();
+  const dispatch = useAppDispatch();
+
   const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
-
-  const services: serviceTime[] = data?.message;
-
-  const updateToast = useUpdateToast();
-
-  const deleteService = async () => {
-    const res = await fetch(`/api/deleteService/${id}`, {
-      method: 'DELETE',
-    });
-
-    const data = await res.json();
-
-    if (data.error === false) {
-      fetchData();
-      updateToast({
-        type: 'delete',
-      });
-    }
-  };
-
   const {
     name,
     startTime,
@@ -51,8 +34,39 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
     btnType,
     id: editId,
   } = useAppSelector((state) => state.service);
-  const dispatch = useAppDispatch();
 
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}service-times`,
+    method: "client",
+  });
+
+  const services: serviceTime[] = data?.message;
+
+  // Token and Headers
+  const token = Cookies.get("token");
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Delete Service
+  const deleteService = async () => {
+    const res = await axios.delete(`${baseUrl}service-time/${id}`, {
+      headers,
+    });
+
+    const data = await res?.data;
+
+    if (data.error === false) {
+      fetchData();
+      updateToast({
+        type: "delete",
+      });
+    }
+  };
+
+  // Update and Create Service
   const updateService = async () => {
     const serviceData = {
       service_name: name,
@@ -60,32 +74,36 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         startTime as string
       )} ${convertTo12HourFormat(endTime as string)}`,
       service_description: description,
-      ...(btnType == 'edit' && editId !== undefined ? { id: editId } : {}),
+      ...(btnType == "edit" && editId !== undefined ? { id: editId } : {}),
     };
 
-    const res = await fetch(
-      `/api/${btnType == 'edit' ? 'updateService' : 'createService'}`,
+    const res = await axios.post(
+      `${
+        btnType == "edit"
+          ? `${baseUrl}update-service-times`
+          : `${baseUrl}create-service-time`
+      }`,
+      serviceData,
       {
-        method: 'POST',
-        body: JSON.stringify(serviceData),
+        headers,
       }
     );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
       updateToast({
-        title: `Service time ${btnType === 'edit' ? 'updated' : 'added!'}`,
+        title: `Service time ${btnType === "edit" ? "updated" : "added!"}`,
         info: name,
       });
       dispatch(
         setService({
-          name: '',
-          startTime: '',
-          endTime: '',
-          description: '',
-          btnType: 'add',
+          name: "",
+          startTime: "",
+          endTime: "",
+          description: "",
+          btnType: "add",
           id: null,
         })
       );
@@ -95,11 +113,11 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   return (
     <div
       className={`bg-white rounded-lg py-6 px-7 md:overflow-y-scroll md:h-[34.75rem] ${
-        currentSection === 'service times' ? 'block' : 'hidden md:block'
+        currentSection === "service times" ? "block" : "hidden md:block"
       }`}
     >
       <h2 className="font-bold text-lg">Service time</h2>
-      <div className="flex flex-col gap-[1.12rem] mt-4">
+      <form className="flex flex-col gap-[1.12rem] mt-4">
         <label htmlFor="title" className="input-field">
           <span>Servic name</span>
           <input
@@ -118,6 +136,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
               value={startTime}
               type="time"
               name="start"
+              required
               className="input"
             />
           </label>
@@ -128,6 +147,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
               value={endTime}
               type="time"
               name="end"
+              required
               className="input"
             />
           </label>
@@ -142,6 +162,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         </label>
         <button
           onClick={updateService}
+          type="submit"
           className="flex-center gap-1 p-2 capitalize rounded-md bg-gray-300 max-w-max text-sm font-semibold"
         >
           {btnType}
@@ -177,8 +198,8 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
             })}
           </div>
         )}
-      </div>
-      {type == 'delete' && section === 'service times' && (
+      </form>
+      {type == "delete" && section === "service times" && (
         <DeleteModal deleteFunc={deleteService} />
       )}
     </div>

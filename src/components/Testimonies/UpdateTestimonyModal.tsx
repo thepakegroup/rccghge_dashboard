@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { useFetchData } from "@/hooks/fetchData";
 import { setModalToggle } from "@/store/slice/Modal";
+import { testimonyI } from "@/util/interface/testimony";
 
 interface testimoneyModalI {
   buttonText: string;
   handleSubmit: any;
   editItemId: number | null;
+  editItemData: testimonyI | null;
   onResetEditId: () => void;
 }
 
@@ -16,6 +18,7 @@ const UpdateTestimonyModal = ({
   handleSubmit,
   editItemId,
   onResetEditId,
+  editItemData,
 }: testimoneyModalI) => {
   // const handleCloseModal = useCloseModal();
   const dispatch = useAppDispatch();
@@ -30,23 +33,17 @@ const UpdateTestimonyModal = ({
     onResetEditId();
   };
 
-  const { data } = useFetchData({
-    url: `/api/getTestimonyById/${editItemId}`,
-  });
-
-  const testimony = data?.message;
-
   const handleSubmitTestimony = () => {
-    handleSubmit({ title, content });
+    handleSubmit({ title, content, editItemId });
     handleCloseModal();
   };
 
   useEffect(() => {
-    if (testimony) {
-      setTitle(testimony?.title);
-      setContent(testimony?.content);
+    if (editItemData) {
+      setTitle(editItemData.title);
+      setContent(editItemData.content);
     }
-  }, [testimony]);
+  }, [editItemData]);
 
   return (
     <>

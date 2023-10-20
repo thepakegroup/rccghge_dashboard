@@ -2,26 +2,32 @@
 
 import Image from "next/image";
 import ModalWrapper from "../ModalWrapper";
-import DragDrop from "../DragDrop";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import useCloseModal from "@/hooks/closeModal";
 import { useEffect, useState } from "react";
 import ImageUpload from "../ImageUpload";
 import { useAppDispatch } from "@/store/hooks";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+import { eventSchema1 } from "@/helper/schema";
 
 interface modalI {
-  handleSubmit: (mediaInfo: any) => void;
+  handleSubmitEvent: (mediaInfo: any) => void;
   buttonText: string;
 }
 
-const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
+const ModifyModal = ({ buttonText, handleSubmitEvent }: modalI) => {
   const handleCloseModal = useCloseModal();
+  const dispatch = useAppDispatch();
 
-  const [title, setTitle] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(eventSchema1),
+  });
 
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
@@ -29,27 +35,23 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
     return isoDateString;
   };
 
-  const handleSubmitForm = () => {
+  const onSubmit = (data: any) => {
     const mediaInfo = {
-      title,
-      ...(buttonText === "Update" && location !== undefined
-        ? { location }
-        : {}),
-      short_description: description,
-      start_date: toIsoStringDate(startDate),
-      end_date: endDate !== "" && toIsoStringDate(endDate),
+      title: data.eventTitle,
+      location: data.location,
+      short_description: data.description,
+      start_date: toIsoStringDate(data.startDate),
+      end_date: data.endDate !== "" && toIsoStringDate(data.endDate),
     };
 
-    handleSubmit(mediaInfo);
+    handleSubmitEvent(mediaInfo);
     handleCloseModal();
   };
-
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(setMediaFile(null));
     // dispatch(setFileName(''));
-  }, []);
+  }, [dispatch]);
 
   return (
     <ModalWrapper>
@@ -72,68 +74,76 @@ const ModifyModal = ({ buttonText, handleSubmit }: modalI) => {
             />
           </div>
           <ImageUpload />
-          <form className="flex flex-col gap-[1.19rem] min-h-[200px]">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-[1.19rem] min-h-[200px]"
+          >
             <label htmlFor="title" className="input-field">
-              <span>Event title</span>
+              <span>Event Title</span>
               <input
-                onChange={(e) => setTitle(e.target.value)}
-                value={title}
                 type="text"
-                name="title"
                 id="title"
+                {...register("eventTitle")}
                 className="input"
               />
+              <p className="text-xs text-red-600">
+                {errors.eventTitle?.message}
+              </p>
             </label>
             <label htmlFor="start" className="input-field">
               <span>Start Date</span>
               <input
-                onChange={(e) => setStartDate(e.target.value)}
-                value={startDate}
                 type="date"
-                name="start"
                 id="start"
+                {...register("startDate")}
                 className="input"
               />
+              <p className="text-xs text-red-600">
+                {errors.startDate?.message}
+              </p>
             </label>
 
             <label htmlFor="end" className="input-field">
               <span>End Date</span>
               <input
-                onChange={(e) => setEndDate(e.target.value)}
-                value={endDate}
                 type="date"
-                name="end"
                 id="end"
+                {...register("endDate")}
                 className="input"
               />
+              <p className="text-xs text-red-600">{errors.endDate?.message}</p>
             </label>
 
             <label htmlFor="location" className="input-field">
               <span>Event Location</span>
               <input
-                onChange={(e) => setLocation(e.target.value)}
-                value={location}
                 type="text"
-                name="location"
+                id="location"
+                {...register("location")}
                 className="input"
               />
+              <p className="text-xs text-red-600">{errors.location?.message}</p>
             </label>
 
             <label htmlFor="type" className="input-field">
-              <span>Short description</span>
+              <span>Short Description</span>
               <textarea
-                onChange={(e) => setDescription(e.target.value)}
-                value={description}
+                id="type"
                 rows={10}
+                {...register("description")}
                 className="input"
               />
+              <p className="text-xs text-red-600">
+                {errors.description?.message}
+              </p>
             </label>
+
+            <div className="">
+              <button type="submit" className="modal-btn">
+                {buttonText}
+              </button>
+            </div>
           </form>
-        </div>
-        <div className="modal-btn-wrapper">
-          <button onClick={handleSubmitForm} className="modal-btn">
-            {buttonText}
-          </button>
         </div>
       </>
     </ModalWrapper>

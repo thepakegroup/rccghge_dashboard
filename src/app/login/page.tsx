@@ -75,7 +75,13 @@ const Login = () => {
         <div className="w-[85%] md:w-full max-w-[29.1875rem]">
           <div className="flex justify-center mb-[1.35875rem]">
             <div className="max-w-max bg-white p-[0.465rem] rounded-md">
-              <Image src="/images/logo.png" alt="" width={54} height={40} />
+              <Image
+                src="/images/logo1.png"
+                alt=""
+                width={119.58}
+                height={62.57}
+                className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
+              />
             </div>
           </div>
           <div className="rounded-lg bg-white p-6 md:py-12 md:px-9 w-full">
@@ -114,14 +120,25 @@ const Login = () => {
                     required
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <Image
-                    src="icons/eye.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                    className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
+                  {showPassword ? (
+                    <Image
+                      src="icons/eyeoff.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                      className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  ) : (
+                    <Image
+                      src="icons/eye.svg"
+                      alt=""
+                      width={20}
+                      height={20}
+                      className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  )}
                 </div>
                 {password === "" && submit && (
                   <p className="text-xs text-error-400">Password is required</p>

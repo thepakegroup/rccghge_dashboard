@@ -35,7 +35,7 @@ const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
         <h2 className="text-base">{name}</h2>
         <span className="text-sm text-ash-300">{serviceTime}</span>
       </div>
-      <div className="flex-center gap-6">
+      <div className="flex-center justify-end gap-6 flex-[30%]">
         <button onClick={handleEdit}>
           <Image src="icons/edit.svg" alt="" width={24} height={24} />
         </button>

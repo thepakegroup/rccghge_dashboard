@@ -14,28 +14,53 @@ import { eventI } from "@/util/interface/events";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpdateModal from "@/components/ManageEvents/UpdateModal";
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
+  const dispatch = useAppDispatch();
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
+
+  const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
   const { data, loading, fetchData } = useFetchData({
-    url: "/api/getAllEvents",
+    url: `${baseUrl}events/{page}`,
+    method: "client",
   });
-  const { items, file, id } = useAppSelector((state) => state.mediaItems);
-  const dispatch = useAppDispatch();
 
   const events: eventI[] = data?.message.data;
 
+  useEffect(() => {
+    if (currEditItemID) {
+      const EditItem = events?.filter(
+        (item: any) => item.id === currEditItemID
+      )[0];
+
+      setCurrEditItem(EditItem);
+    }
+  }, [currEditItemID, events]);
+
+  // Token & Header
+  const token = Cookies.get("token");
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  const postData = {
+    ids: items,
+  };
+
+  // Delete Events
   const handleRemoveEvents = async () => {
-    const res = await fetch("/api/removeEvents", {
-      method: "POST",
-      body: JSON.stringify(items),
+    const res = await axios.post(`${baseUrl}delete-event`, postData, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
@@ -48,11 +73,13 @@ const ManageEvents = () => {
 
   const updateToast = useUpdateToast();
 
+  // Update Event
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
     file && form.append("banner", file as Blob, file?.name);
     form.append("title", mediaInfo.title);
+    form.append("location", mediaInfo.location);
     form.append("short_description", mediaInfo.short_description);
     form.append("start_date", mediaInfo.start_date);
     form.append("end_date", mediaInfo.end_date);
@@ -112,13 +139,17 @@ const ManageEvents = () => {
       {currEditItemID && (
         <UpdateModal
           editItemId={currEditItemID}
-          onResetEditId={() => setCurrEditItemID(null)}
-          handleSubmit={updateMedia}
-          buttonText="update"
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
+          handleSubmitEvent={updateMedia}
+          buttonText="Update"
+          editItemData={currEditItem}
         />
       )}
       {type == "add" && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="Add event" />
+        <ModifyModal handleSubmitEvent={updateMedia} buttonText="Add Event" />
       )}
 
       {type == "delete" && (
