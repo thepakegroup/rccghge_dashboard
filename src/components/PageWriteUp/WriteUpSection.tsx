@@ -1,31 +1,33 @@
-'use client';
+"use client";
 
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import Content from './Content';
-import { useFetchData } from '@/hooks/fetchData';
-import { writeupI } from '@/util/interface/writeup';
-import useGetTypeOfModal from '@/hooks/getTypeOfModal';
-import DeleteModal from '../DeleteModal';
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import Content from "./Content";
+import { useFetchData } from "@/hooks/fetchData";
+import { writeupI } from "@/util/interface/writeup";
+import useGetTypeOfModal from "@/hooks/getTypeOfModal";
+import DeleteModal from "../DeleteModal";
 import {
   setContent,
   setDescription,
   setHeader,
   setTitle,
-} from '@/store/slice/content';
-import Loader from '../Loader';
-import useUpdateToast from '@/hooks/updateToast';
-// import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import dynamic from 'next/dynamic';
+} from "@/store/slice/content";
+import Loader from "../Loader";
+import useUpdateToast from "@/hooks/updateToast";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
+  const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
+
   const { id } = useAppSelector((state) => state.mediaItems);
-  const { data, loading, fetchData } = useFetchData({
-    url: '/api/getAllWriteup',
-  });
   const {
     content,
     title,
@@ -34,99 +36,116 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
     id: editId,
     section,
   } = useAppSelector((state) => state.content);
-  const dispatch = useAppDispatch();
+
+  const { data, loading, fetchData } = useFetchData({
+    url: `${baseUrl}writeups`,
+    method: "client",
+  });
 
   const writeups: writeupI[] = data?.message;
 
-  const updateToast = useUpdateToast();
+  // Token and Headers
+  const token = Cookies.get("token");
 
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Delete Write Ups
   const deleteContent = async () => {
-    const res = await fetch(`/api/deleteContent/${id}`, {
-      method: 'DELETE',
+    const res = await axios.delete(`${baseUrl}writeup/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
       updateToast({
-        type: 'delete',
+        type: "delete",
       });
     }
   };
 
+  // Update and Create Write Ups
   const updateContent = async () => {
     const contentData = {
       page_title: title,
       content,
       heading: header,
-      ...(btnType == 'edit' && editId !== undefined ? { id: editId } : {}),
+      ...(btnType == "edit" && editId !== undefined ? { id: editId } : {}),
     };
 
-    const res = await fetch(
-      `/api/${btnType == 'edit' ? 'updateContent' : 'createWriteup'}`,
+    const res = await axios.post(
+      `${
+        btnType == "edit"
+          ? `${baseUrl}update-writeup`
+          : `${baseUrl}create-writeup`
+      }`,
+      contentData,
       {
-        method: 'POST',
-        body: JSON.stringify(contentData),
+        headers,
       }
     );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
       updateToast({
-        title: `Content ${btnType === 'edit' ? 'updated' : 'added!'}`,
+        title: `Content ${btnType === "edit" ? "updated" : "added!"}`,
         info: title,
       });
+
       dispatch(
         setContent({
-          title: '',
-          content: '',
-          header: '',
+          title: "",
+          content: "",
+          header: "",
           id: null,
-          btnType: `${btnType === 'edit' ? 'add' : 'edit'}`,
+          btnType: `${btnType === "edit" ? "add" : "edit"}`,
         })
       );
     }
   };
 
   const formats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'link',
-    'color',
-    'image',
-    'background',
-    'align',
-    'size',
-    'font',
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "color",
+    "image",
+    "background",
+    "align",
+    "size",
+    "font",
   ];
 
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      ["bold", "italic", "underline", "strike", "blockquote"],
       [{ size: [] }],
       [{ font: [] }],
-      [{ align: ['right', 'center', 'justify'] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      [{ color: ['red', '#785412'] }],
-      [{ background: ['red', '#785412'] }],
+      [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      [{ color: ["red", "#785412"] }],
+      [{ background: ["red", "#785412"] }],
     ],
   };
 
   return (
     <section
       className={`mt-3 ${
-        currentSection === 'edit content' ? 'block' : 'hidden md:block'
+        currentSection === "edit content" ? "block" : "hidden md:block"
       }`}
     >
       <div className="bg-white rounded-lg py-6 px-7">
@@ -168,7 +187,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
           onClick={updateContent}
           className="text-sm text-ash-300 font-semibold mt-28 md:mt-14 bg-gray-300 rounded-md px-4 py-2 my-5"
         >
-          {btnType === 'add' ? 'Create Post' : 'Edit Post'}
+          {btnType === "add" ? "Create Post" : "Edit Post"}
         </button>
         {loading ? (
           <Loader />
@@ -189,7 +208,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
           </div>
         )}
       </div>
-      {type == 'delete' && section == 'edit content' && (
+      {type == "delete" && section == "edit content" && (
         <DeleteModal deleteFunc={deleteContent} />
       )}
     </section>

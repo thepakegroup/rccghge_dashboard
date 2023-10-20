@@ -67,7 +67,7 @@ const Nav = () => {
           }`}
         >
           <Image src="icons/delete.svg" alt="" width={18} height={18} />
-          <span>Delete all</span>
+          <span>{items.length === 1 ? "Delete" : "Delete All"}</span>
         </button>
         <button
           onClick={() => dispatch(clearItems())}
@@ -76,7 +76,7 @@ const Nav = () => {
           }`}
         >
           <Image src="icons/edit.svg" alt="" width={18} height={18} />
-          <span>Uncheck all</span>
+          <span>{items.length === 1 ? "Uncheck" : "Uncheck All"}</span>
         </button>
         <button
           onClick={() => handleButton("add")}

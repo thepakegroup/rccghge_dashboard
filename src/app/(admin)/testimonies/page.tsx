@@ -15,7 +15,19 @@ import Image from "next/image";
 import { useEffect, useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import UpdateTestimonyModal from "@/components/Testimonies/UpdateTestimonyModal";
-// import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+export interface EditItem {
+  id: number;
+  name: string;
+  image_url: string;
+  link: string;
+  short_description: string;
+  type: string;
+  created_at: Date;
+  updated_at: Date;
+}
 
 const Testimonials = () => {
   const type = useGetTypeOfModal();
@@ -23,6 +35,7 @@ const Testimonials = () => {
   const { id } = useAppSelector((state) => state.testimony);
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<testimonyI | null>(null);
 
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}testimonies/{sort}/{page}`,
@@ -36,17 +49,27 @@ const Testimonials = () => {
 
   useEffect(() => {
     setTestimoniesData(testimonies);
-  }, [testimonies]);
+
+    if (currEditItemID) {
+      const EditItem = testimoniesData?.filter(
+        (item: any) => item.id === currEditItemID
+      )[0];
+
+      setCurrEditItem(EditItem);
+    }
+  }, [testimonies, currEditItemID, testimoniesData]);
 
   // Delete Testimony
-
   const deleteTestimony = async () => {
-    const res = await fetch(`/api/deleteTestimony/${id}`, {
-      method: "DELETE",
+    const token = Cookies.get("token");
+    const res = await axios.delete(`${baseUrl}testimonies/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    const data = await res.json();
-
+    const data = await res?.data;
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -56,28 +79,31 @@ const Testimonials = () => {
   };
 
   // Update Testimony
-
   const updateTestimony = async ({
     title,
     content,
+    editItemId,
   }: {
     title: string;
     content: string;
+    editItemId: number;
   }) => {
     const updateData = {
       title,
       content,
-      id,
+      id: editItemId,
     };
 
-    const res = await fetch(`/api/updateTestimony`, {
-      method: "POST",
-      body: JSON.stringify(updateData),
+    const token = Cookies.get("token");
+    const res = await axios.post(`${baseUrl}testimonies/update`, updateData, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    const data = await res.json();
-
-    if (data.error === false) {
+    const data = await res?.data;
+    if (data?.error === false) {
       fetchData();
       updateToast({
         title: `Testimony updated!`,
@@ -87,15 +113,20 @@ const Testimonials = () => {
   };
 
   // Publish Testimony
-
   const publishTestimony = async (published: boolean, id: number) => {
-    const res = await fetch(`/api/publish`, {
-      method: "POST",
-      body: JSON.stringify({ id, published: !published }),
-    });
+    const token = Cookies.get("token");
+    const res = await axios.post(
+      `${baseUrl}testimonies/publish`,
+      JSON.stringify({ id, published: !published }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-    const data = await res.json();
-
+    const data = await res?.data;
     updateToast({
       title: `${published ? "Unpublished" : "Published"}`,
     });
@@ -106,7 +137,6 @@ const Testimonials = () => {
   };
 
   // Search Functionality
-
   const searchTestimonies = (title: string) => {
     if (!title) {
       setTestimoniesData(testimonies);
@@ -120,15 +150,14 @@ const Testimonials = () => {
   };
 
   // Sort Functionality
-
   const sortOptions = [{ name: "Most recent" }, { name: "Older" }];
   const [selected, setSelected] = useState("");
 
   return (
     <section>
-      <div className="flex justify-end mt-2">
+      {/* <div className="flex justify-end mt-2">
         <AddItemButton title="Add testimony" />
-      </div>
+      </div> */}
       <section className="mt-4">
         <div className="text-ash-100 flex flex-col gap-[17px] md:flex-row">
           <label
@@ -169,9 +198,9 @@ const Testimonials = () => {
                         id="Vector"
                         d="M4.375 7.1875L10 12.8125L15.625 7.1875"
                         stroke="#686868"
-                        stroke-width="2.25"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2.25"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </g>
                   </svg>
@@ -245,19 +274,24 @@ const Testimonials = () => {
       {currEditItemID && (
         <UpdateTestimonyModal
           editItemId={currEditItemID}
-          onResetEditId={() => setCurrEditItemID(null)}
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
           handleSubmit={updateTestimony}
-          buttonText="update"
+          buttonText="Update"
+          editItemData={currEditItem}
         />
       )}
 
-      {type === "add" && (
+      {type == "delete" && <DeleteModal deleteFunc={deleteTestimony} />}
+
+      {/* {type === "add" && (
         <TestimonyModal
           handleSubmit={updateTestimony}
-          buttonText="Add testimony"
+          buttonText="Add Testimony"
         />
-      )}
-      {type == "delete" && <DeleteModal deleteFunc={deleteTestimony} />}
+      )} */}
     </section>
   );
 };

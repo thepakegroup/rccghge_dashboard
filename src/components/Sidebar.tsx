@@ -132,7 +132,13 @@ const Sidebar = () => {
         className="px-2 py-3 h-screen overflow-y-auto w-[17rem] bg-side-bar-bg relative flex flex-col justify-between gap-10"
       >
         <div className="bg-white rounded-md p-[0.465rem] max-w-max">
-          <Image src="/images/logo.png" alt="" width={54} height={40} />
+          <Image
+            src="/images/logo1.png"
+            alt=""
+            width={119.58}
+            height={62.57}
+            className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
+          />
         </div>
         <ul className=" min-h-max">
           {navItems.map((navItem) => {

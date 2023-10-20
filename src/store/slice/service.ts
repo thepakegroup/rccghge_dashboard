@@ -1,44 +1,44 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface serviceI{
+interface serviceI {
   name?: string;
   startTime?: string;
   endTime?: string;
   id?: number | null;
-  description?:string
-  btnType?: 'edit' | 'add';
+  description?: string;
+  btnType?: "edit" | "add";
 }
 
 const serviceSlice = createSlice({
-  name: 'service',
+  name: "service",
   initialState: {
     name: "",
-    startTime: "",
-    endTime: "",
+    startTime: new Date().toISOString(),
+    endTime: new Date().toISOString(),
     id: null,
-    description:"",
+    description: "",
     btnType: "add",
   } as serviceI,
   reducers: {
-    setService: (state, action:PayloadAction<serviceI>) => {
-      state.name = action.payload.name
-      state.startTime = action.payload.startTime
-      state.endTime = action.payload.endTime
-      state.description = action.payload.description
-      state.id = action.payload.id
-      state.btnType = action.payload.btnType
+    setService: (state, action: PayloadAction<serviceI>) => {
+      state.name = action.payload.name;
+      state.startTime = action.payload.startTime;
+      state.endTime = action.payload.endTime;
+      state.description = action.payload.description;
+      state.id = action.payload.id;
+      state.btnType = action.payload.btnType;
     },
     setName: (state, action) => {
-      state.name = action.payload
+      state.name = action.payload;
     },
     setStartTime: (state, action) => {
-      state.startTime = action.payload
+      state.startTime = action.payload;
     },
     setEndTime: (state, action) => {
-      state.endTime = action.payload
+      state.endTime = action.payload;
     },
     setDiscriptionService: (state, action) => {
-      state.description = action.payload
+      state.description = action.payload;
     },
   },
 });
@@ -48,7 +48,7 @@ export const {
   setName,
   setStartTime,
   setEndTime,
-  setDiscriptionService
+  setDiscriptionService,
 } = serviceSlice.actions;
 
 export default serviceSlice.reducer;

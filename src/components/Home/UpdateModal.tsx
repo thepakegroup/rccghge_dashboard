@@ -9,11 +9,13 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setModalToggle } from "@/store/slice/Modal";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { useFetchData } from "@/hooks/fetchData";
+import { EditItem } from "@/app/(admin)/page";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
   buttonText: string;
   editItemId: number | null;
+  editItemData: EditItem | null;
   onResetEditId: () => void;
 }
 
@@ -22,6 +24,7 @@ const UpdateModal = ({
   handleSubmit,
   editItemId,
   onResetEditId,
+  editItemData,
 }: modalI) => {
   // initializing state
   const dispatch = useAppDispatch();
@@ -31,12 +34,6 @@ const UpdateModal = ({
   const [mediaType, setMediaType] = useState("");
 
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
-
-  const { data, loading } = useFetchData({
-    url: `api/getMediaById/${editItemId}`,
-  });
-
-  const media = data?.message;
 
   const handleCloseModal = () => {
     dispatch(setModalToggle({ isModalOpen: !isModalOpen }));
@@ -58,13 +55,13 @@ const UpdateModal = ({
   useEffect(() => {
     // dispatch(setMediaFile(null));
 
-    if (media) {
-      setName(media?.name);
-      setMediaLink(media?.link);
-      setDescription(media?.short_description);
-      setMediaType(media?.type);
+    if (editItemData) {
+      setName(editItemData.name);
+      setMediaLink(editItemData.link);
+      setDescription(editItemData.short_description);
+      setMediaType(editItemData.type);
     }
-  }, [media]);
+  }, [editItemData, dispatch]);
 
   return (
     <>
@@ -98,7 +95,8 @@ const UpdateModal = ({
                   <label htmlFor="type" className="input-field">
                     <span>Media type</span>
                     <select
-                      onChange={(e) => setMediaType(e.target.value)}
+                      // onChange={(e) => setMediaType(e.target.value)}
+                      disabled
                       value={mediaType}
                       name="type"
                       className="input"

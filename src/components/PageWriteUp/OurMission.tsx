@@ -16,6 +16,9 @@ import {
 } from "@/store/slice/mission";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { baseUrl } from "@/util/constants";
 
 const OurMission = ({ currentSection }: { currentSection: string }) => {
   const { section } = useAppSelector((state) => state.content);
@@ -26,6 +29,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   );
 
   const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { data, loading, fetchData } = useFetchData({
@@ -33,22 +37,32 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   });
 
   const ourMissions: ourMissionI[] = data?.message;
-  const updateToast = useUpdateToast();
 
+  const token = Cookies.get("token");
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+
+  // Delete
   const deleteMission = async () => {
-    const res = await fetch(`/api/deleteMission/${id}`, {
-      method: "DELETE",
+    const res = await axios.delete(`${baseUrl}om/${id}`, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
+      return;
     }
   };
+
+  // Update and Create
 
   const updateMission = async () => {
     const serviceData = {
@@ -58,15 +72,15 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       ...(btnType == "edit" && id !== undefined ? { id } : {}),
     };
 
-    const res = await fetch(
-      `/api/${btnType == "edit" ? "updateOurMission" : "createOurMission"}`,
+    const res = await axios.post(
+      `${btnType == "edit" ? `${baseUrl}update-om` : `${baseUrl}create-om`}`,
+      serviceData,
       {
-        method: "POST",
-        body: JSON.stringify(serviceData),
+        headers,
       }
     );
 
-    const data = await res.json();
+    const data = await res.data;
 
     if (data.error === false) {
       fetchData();
@@ -76,6 +90,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
         }`,
         info: title,
       });
+
       dispatch(
         setMission({
           title: "",
@@ -85,9 +100,12 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
           btnType: "add",
         })
       );
+
+      return;
     }
   };
-  const [cat, setCat] = useState("All");
+
+  const [cat, setCat] = useState("all");
   const sortOptions = [
     { name: "All", value: "all" },
     { name: "Our Mission", value: "our-mission" },
@@ -95,9 +113,9 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   ];
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
     dispatch(setCategory(cat));
-  }, [cat, fetchData, dispatch]);
+  }, [cat, dispatch]);
 
   return (
     <div

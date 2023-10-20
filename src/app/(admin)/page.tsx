@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "@/components/Home/Card";
 import ScrollModalToTop from "@/components/Home/ScrollModal";
 import Image from "next/image";
@@ -19,32 +19,60 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import UpdateModal from "@/components/Home/UpdateModal";
 
+export interface EditItem {
+  id: number;
+  name: string;
+  image_url: string;
+  link: string;
+  short_description: string;
+  type: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export default function Home() {
   const type = useGetTypeOfModal();
+  const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<EditItem | null>(null);
 
-  const { items, file, id } = useAppSelector((state) => state.mediaItems);
+  const { items, file, id } = useAppSelector((state: any) => state.mediaItems);
 
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}load-all-media`,
     method: "client",
   });
-  const dispatch = useAppDispatch();
 
-  const updateToast = useUpdateToast();
+  const token = Cookies.get("token");
 
-  if (loading) {
-    return <Loader />;
-  }
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
 
+  const postData = {
+    ids: items,
+  };
+
+  useEffect(() => {
+    if (currEditItemID) {
+      const EditItem = data?.message?.filter(
+        (item: any) => item.id === currEditItemID
+      )[0];
+
+      setCurrEditItem(EditItem);
+    }
+  }, [currEditItemID, data]);
+
+  // Delete Media
   const handleRemoveMedia = async () => {
-    const res = await fetch("/api/removeMedia", {
-      method: "POST",
-      body: JSON.stringify(items),
+    const res = await axios.post(`${baseUrl}remove-media`, postData, {
+      headers,
     });
 
-    const data = await res.json();
+    const data = await res?.data;
 
     if (data.error === false) {
       fetchData();
@@ -55,6 +83,7 @@ export default function Home() {
     }
   };
 
+  // Update Media Info
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
@@ -81,7 +110,6 @@ export default function Home() {
     );
 
     const data = res.data;
-
     if (data.error === false) {
       fetchData();
       updateToast({
@@ -94,6 +122,10 @@ export default function Home() {
   };
 
   const mediaData: mediaI[] = data?.message;
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <section className="w-full">
@@ -134,21 +166,21 @@ export default function Home() {
 
       <ScrollModalToTop />
 
-      {/* {type == "modify" && (
-        <UpdateModal handleSubmit={updateMedia} buttonText="update" />
-      )} */}
-
       {currEditItemID && (
         <UpdateModal
           editItemId={currEditItemID}
-          onResetEditId={() => setCurrEditItemID(null)}
+          onResetEditId={() => {
+            setCurrEditItemID(null);
+            setCurrEditItem(null);
+          }}
           handleSubmit={updateMedia}
-          buttonText="update"
+          buttonText="Update"
+          editItemData={currEditItem}
         />
       )}
 
       {type == "add" && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="add media" />
+        <ModifyModal handleSubmit={updateMedia} buttonText="Add Media" />
       )}
 
       {type == "delete" && (
