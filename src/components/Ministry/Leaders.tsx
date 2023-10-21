@@ -48,7 +48,9 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   );
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [currAction, setCurrAction] = useState(false);
+  const [img, setImg] = useState<File | any>("");
 
+  // Fetch All leaders
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}leaders`,
     method: "client",
@@ -76,10 +78,23 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     }
   };
 
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
+  // console.log(img);
+
   const updateLeader = async (leaderInfo: any) => {
     const form = new FormData();
 
-    file && form.append("profile_picture", file as Blob, file?.name);
+    img && form.append("profile_picture", img as Blob, img?.name as string);
+    leaderInfo.profile_picture &&
+      form.append(
+        "profile_picture",
+        leaderInfo.profile_picture as Blob,
+        leaderInfo.profile_picture?.name as string
+      );
     form.append("name", leaderInfo.name);
     form.append("title", leaderInfo.title);
     form.append("qualification", leaderInfo.qualification);
@@ -106,6 +121,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     if (data.error === false) {
       fetchData();
       setCurrAction(false);
+      setImg("");
       updateToast({
         title: `Church leader ${currAction ? "updated" : "added"}`,
         info: leaderInfo.name,
@@ -162,13 +178,14 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg py-6 px-7 md:max-h-[40rem] md:overflow-y-auto overflow-x-hidden">
         <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
-        <ImageUpload section="leader" />
+        <ImageUpload handleImageChange={handleImageChange} section="leader" />
         <div className="flex flex-col gap-[1.19rem]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>
             <input
               onChange={(e) => dispatch(setName(e.target.value))}
               value={name}
+              required
               name="name"
               type="text"
               className="input"
@@ -181,6 +198,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               onChange={(e) => dispatch(setTitle(e.target.value))}
               value={title}
               name="title"
+              required
               type="text"
               className="input"
             />
@@ -192,6 +210,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               value={qualification}
               name="qualification"
               type="text"
+              required
               className="input"
             />
           </label>
@@ -202,6 +221,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               value={position}
               name="position"
               type="text"
+              required
               className="input"
             />
           </label>
@@ -212,6 +232,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               value={description}
               name="description"
               type="text"
+              required
               className="input"
             />
           </label>
@@ -222,6 +243,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               value={fullStory}
               name="fullStory"
               rows={5}
+              required
               className="input"
             />
           </label>

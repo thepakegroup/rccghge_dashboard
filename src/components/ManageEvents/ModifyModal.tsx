@@ -14,10 +14,15 @@ import { eventSchema1 } from "@/helper/schema";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
+  handleImageChange: (file: File) => void;
   buttonText: string;
 }
 
-const ModifyModal = ({ buttonText, handleSubmitEvent }: modalI) => {
+const ModifyModal = ({
+  buttonText,
+  handleSubmitEvent,
+  handleImageChange = () => {},
+}: modalI) => {
   const handleCloseModal = useCloseModal();
   const dispatch = useAppDispatch();
 
@@ -73,7 +78,7 @@ const ModifyModal = ({ buttonText, handleSubmitEvent }: modalI) => {
               className="cursor-pointer"
             />
           </div>
-          <ImageUpload />
+          <ImageUpload handleImageChange={handleImageChange} />
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-[1.19rem] min-h-[200px]"

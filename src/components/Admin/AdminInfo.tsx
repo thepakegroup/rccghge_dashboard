@@ -10,15 +10,22 @@ interface adminInfoI {
   email: string;
   level: number;
   id: number;
+  onEditClick: () => void;
 }
 
-const AdminInfo = ({ email, id, level }: adminInfoI) => {
+const AdminInfo = ({
+  email,
+  id,
+  level,
+  onEditClick = () => {},
+}: adminInfoI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
 
   const handleEditAdmin = () => {
     handleButton("modify");
+    onEditClick();
     dispatch(setEditMediaId(id));
   };
 

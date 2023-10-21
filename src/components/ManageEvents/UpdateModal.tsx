@@ -18,6 +18,7 @@ interface modalI {
   buttonText: string;
   editItemId: number | null;
   onResetEditId: () => void;
+  handleImageChange: (file: File) => void;
   editItemData: eventI | null;
 }
 
@@ -25,6 +26,7 @@ const UpdateModal = ({
   buttonText,
   handleSubmitEvent,
   editItemId,
+  handleImageChange = () => {},
   editItemData,
   onResetEditId,
 }: modalI) => {
@@ -94,7 +96,7 @@ const UpdateModal = ({
                     className="cursor-pointer"
                   />
                 </div>
-                <ImageUpload />
+                <ImageUpload handleImageChange={handleImageChange} />
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className="flex flex-col gap-[1.19rem] min-h-[200px]"

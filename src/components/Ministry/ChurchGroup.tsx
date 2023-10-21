@@ -34,6 +34,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [currAction, setCurrAction] = useState(false);
+  const [img, setImg] = useState<File | any>("");
 
   // Sort Functionality
   const sortOptions = useMemo(() => ["Older", "Most recent"] as const, []);
@@ -71,7 +72,6 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       const data = await res.data;
       if (data.error === false) {
         setloading(false);
-
         setGroups(data?.message?.data);
       }
     },
@@ -106,11 +106,22 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     [sortKey]
   );
 
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
   // Create and Update Group
   const updateGroup = async (groupInfo: any) => {
     const form = new FormData();
 
-    file && form.append("banner", file as Blob, file?.name);
+    img && form.append("banner", img as Blob, img?.name as string);
+    groupInfo.banner &&
+      form.append(
+        "banner",
+        groupInfo.banner as Blob,
+        groupInfo.banner?.name as string
+      );
     form.append("name", groupInfo.name);
     form.append("category", groupInfo.category);
     form.append("description", groupInfo.description);
@@ -131,6 +142,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     if (data.error === false) {
       getGroupByCategory(category);
       setCurrAction(false);
+      setImg("");
 
       updateToast({
         title: `Church group ${currAction ? "updated" : "added"}`,
@@ -189,7 +201,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     >
       <div className="bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
-        <ImageUpload section="group" />
+        <ImageUpload handleImageChange={handleImageChange} section="group" />
         <div className="flex flex-col gap-[1.19rem] min-h-[200px]">
           <label htmlFor="name" className="input-field">
             <span>Name</span>
@@ -199,6 +211,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
               name="name"
               type="text"
               className="input"
+              required
             />
           </label>
           <label htmlFor="category" className="input-field">
@@ -277,6 +290,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
               onChange={(e) => dispatch(setDescription(e.target.value))}
               value={description}
               name="description"
+              required
               rows={4}
               className="input"
             />

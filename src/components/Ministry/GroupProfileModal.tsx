@@ -40,11 +40,19 @@ const GroupProfileModal = ({
     (state) => state.churchGroup
   );
 
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
   const handleSubmitForm = () => {
     const groupInfo: groupI = {
       name,
       description,
       id,
+      banner: img,
       category,
     };
 
@@ -108,7 +116,7 @@ const GroupProfileModal = ({
             </button>
           </div>
 
-          <ImageUpload />
+          <ImageUpload handleImageChange={handleImageChange} />
 
           <form
             className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10"

@@ -22,16 +22,22 @@ const ManageEvents = () => {
   const dispatch = useAppDispatch();
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
-
+  const [img, setImg] = useState<File | any>("");
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
+  //Fetch All Data
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}events/{page}`,
     method: "client",
   });
-
   const events: eventI[] = data?.message.data;
 
+  // Set Edit Data
   useEffect(() => {
     if (currEditItemID) {
       const EditItem = events?.filter(
@@ -73,11 +79,13 @@ const ManageEvents = () => {
 
   const updateToast = useUpdateToast();
 
+  console.log(img);
+
   // Update Event
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
-    file && form.append("banner", file as Blob, file?.name);
+    img && form.append("banner", img as Blob, img?.name);
     form.append("title", mediaInfo.title);
     form.append("location", mediaInfo.location);
     form.append("short_description", mediaInfo.short_description);
@@ -104,6 +112,7 @@ const ManageEvents = () => {
 
     if (data.error === false) {
       fetchData();
+      setImg("");
       updateToast({
         title: `Event ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
@@ -144,12 +153,17 @@ const ManageEvents = () => {
             setCurrEditItem(null);
           }}
           handleSubmitEvent={updateMedia}
+          handleImageChange={handleImageChange}
           buttonText="Update"
           editItemData={currEditItem}
         />
       )}
       {type == "add" && (
-        <ModifyModal handleSubmitEvent={updateMedia} buttonText="Add Event" />
+        <ModifyModal
+          handleImageChange={handleImageChange}
+          handleSubmitEvent={updateMedia}
+          buttonText="Add Event"
+        />
       )}
 
       {type == "delete" && (

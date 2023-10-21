@@ -1,12 +1,66 @@
 "use client";
 
-import React from "react";
-import { useEffect, useState, Fragment } from "react";
+import React, { useMemo } from "react";
+import { useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
+import useUpdateToast from "@/hooks/updateToast";
 
 const NotificationPage = () => {
+  const updateToast = useUpdateToast();
   const sortOptions = [{ name: "Notification 1" }, { name: "Notification 2" }];
-  const [selected, setSelected] = useState("");
+  const [noticeType, setNoticeType] = useState("");
+  const [noticeInfo, setNoticeInfo] = useState({
+    title: "",
+    content: "",
+  });
+
+  // Header and token
+  const token = Cookies.get("token");
+
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
+
+  // Send Notification
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const notice = {
+      messageTitle: noticeInfo.title,
+      messageBody: noticeInfo.content,
+      type: noticeType,
+    };
+
+    const res = await axios.post(
+      `${baseUrl}admin/send-notice`,
+      JSON.stringify(notice),
+      {
+        headers,
+      }
+    );
+
+    const data = await res.data;
+
+    if (data.error === false) {
+      updateToast({
+        title: "Admin Notice Added!",
+        info: data.message,
+      });
+      setNoticeType("");
+      setNoticeInfo((info) => {
+        return {
+          ...info,
+          title: "",
+          content: "",
+        };
+      });
+    }
+  };
 
   return (
     <section className="flex-center justify-center mt-9 md:mt-14">
@@ -15,15 +69,18 @@ const NotificationPage = () => {
           Send push notification
         </h1>
         <div className="modal py-9 md:max-w-[467px] mx-auto">
-          <form className="flex flex-col gap-[1.19rem] h-auto">
+          <form
+            className="flex flex-col gap-[1.19rem] h-auto"
+            onSubmit={(e) => e.preventDefault()}
+          >
             <label htmlFor="type" className="input-field">
               <span>Notice type</span>
 
-              <Listbox value={selected} onChange={setSelected}>
+              <Listbox value={noticeType} onChange={setNoticeType}>
                 <div className="relative">
                   <Listbox.Button className="relative w-full min-w-[127px] gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
                     <span className="block truncate text-base">
-                      {selected || "Select Type"}
+                      {noticeType || "Select Type"}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <svg
@@ -85,13 +142,40 @@ const NotificationPage = () => {
             </label>
             <label htmlFor="title" className="input-field">
               <span>Notice title</span>
-              <input type="text" className="input" />
+              <input
+                type="text"
+                className="input"
+                required
+                onChange={(e) => {
+                  setNoticeInfo((info) => {
+                    return {
+                      ...info,
+                      title: e.target.value,
+                    };
+                  });
+                }}
+              />
             </label>
             <label htmlFor="description" className="input-field">
               <span>Notice content</span>
-              <textarea rows={10} className="input" />
+              <textarea
+                onChange={(e) => {
+                  setNoticeInfo((info) => {
+                    return {
+                      ...info,
+                      content: e.target.value,
+                    };
+                  });
+                }}
+                rows={10}
+                className="input"
+              />
             </label>
-            <button className="w-full bg-[#1063C6] text-white rounded-md px-6 py-4">
+            <button
+              className="w-full bg-[#1063C6] text-white rounded-md px-6 py-4"
+              type="submit"
+              onClick={(e) => handleSubmit(e)}
+            >
               Send
             </button>
           </form>

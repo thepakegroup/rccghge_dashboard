@@ -17,7 +17,7 @@ import {
 } from "@/store/slice/leader";
 import { setDescription } from "@/store/slice/content";
 import { leadersI } from "@/util/interface/ministry";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setMediaFile } from "@/store/slice/mediaItems";
 import ImageUpload from "../ImageUpload";
 
@@ -38,6 +38,12 @@ const ProfileModification = ({
   const handleCloseModal = useCloseModal();
   const { name, title, qualification, position, description, fullStory } =
     useAppSelector((state) => state.leader);
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
 
   const handleSubmitForm = () => {
     const leaderInfo: leadersI = {
@@ -45,6 +51,7 @@ const ProfileModification = ({
       title,
       qualification,
       position,
+      profile_picture: img,
       short_description: description,
       full_story_about: fullStory,
     };
@@ -96,7 +103,7 @@ const ProfileModification = ({
             </button>
           </div>
 
-          <ImageUpload />
+          <ImageUpload handleImageChange={handleImageChange} />
 
           <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
             <label htmlFor="name" className="input-field">
