@@ -3,9 +3,12 @@
 import Loader from "@/components/Loader";
 import Toaster from "@/components/Toaster";
 import useUpdateToast from "@/hooks/updateToast";
+import { baseUrl } from "@/util/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
@@ -42,23 +45,25 @@ const Login = () => {
     setloading(true);
     setSubmit(true);
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify(login),
-    });
+    const res = await axios.post(`${baseUrl}admin/login`, login);
 
-    const data = await res.json();
+    const data = await res.data;
+    const token = data.token.token;
+
+    if (data.error === false) {
+      // Set the token as a cookie
+      Cookies.set("token", token, { expires: 2 });
+      router.push("/");
+      return;
+    }
 
     if (data.error === true) {
       updateToast({
         title: data.message,
         info: "Please provide valid credentials",
       });
-      setloading(false);
-    }
 
-    if (data.error === false) {
-      router.push("/");
+      setloading(false);
     }
   };
 
@@ -77,6 +82,7 @@ const Login = () => {
             <div className="max-w-max bg-white p-[0.465rem] rounded-md">
               <Image
                 src="/images/logo1.png"
+                priority
                 alt=""
                 width={119.58}
                 height={62.57}

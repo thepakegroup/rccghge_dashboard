@@ -82,7 +82,7 @@ export default function Home() {
     }
   };
 
-  // Update Media Info
+  // Create & Update Media Info
   const updateMedia = async (mediaInfo: any) => {
     const form = new FormData();
 
@@ -95,6 +95,10 @@ export default function Home() {
     type === "modify" && form.append("id", `${id}`);
 
     const token = Cookies.get("token");
+
+    // for (const [key, value] of form.entries()) {
+    //   console.log(key, value);
+    // }
 
     const res = await axios.post(
       `${

@@ -4,58 +4,47 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { setIsSidebarToggle } from "../store/slice/sidbar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
+import axios from "axios";
 import Cookies from "js-cookie";
+import { baseUrl } from "@/util/constants";
 
 const Sidebar = () => {
   const pathname = usePathname();
-
+  const router = useRouter();
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
 
-  const access = Cookies.get("access");
+  // Header and token
+  const token = Cookies.get("token");
 
-  // const windowSize = typeof window !== "undefined" ? window.innerWidth : 0;
-
-  // const [screenWidth, setScreenWidth] = useState<number>(windowSize);
-
-  // const updateScreenSize = () => {
-  //   if (typeof window === "undefined") return;
-
-  //   setScreenWidth(windowSize);
-  // };
+  const headers = useMemo(() => {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
 
   const handleToggle = () => {
     window.innerWidth < 1024 && dispatch(setIsSidebarToggle(false));
   };
 
-  const router = useRouter();
-
+  // Handle Logout
   const handleLogout = async () => {
-    await fetch("/api/auth/logout");
-    router.push("/login");
+    const res = await axios.get(`${baseUrl}admin/logout`, {
+      headers,
+    });
+
+    const data = await res.data;
+
+    if (data.error === false) {
+      Cookies.remove("token");
+      router.replace("/login");
+    }
   };
-
-  // useEffect(() => {
-  //   window.addEventListener("resize", updateScreenSize);
-  //   updateScreenSize();
-
-  //   if (screenWidth > 1024) {
-  //     dispatch(setIsSidebarToggle(true));
-  //     document.body.classList.remove("overflow-hidden");
-  //   } else if (screenWidth <= 1024) {
-  //     dispatch(setIsSidebarToggle(false));
-  //   }
-
-  //   setEmail(Cookies.get("email") as string);
-
-  //   return () => {
-  //     window.removeEventListener("resize", updateScreenSize);
-  //   };
-  // }, [screenWidth]);
 
   useEffect(() => {
     dispatch(setIsSidebarToggle(true));
@@ -134,6 +123,7 @@ const Sidebar = () => {
         <div className="bg-white rounded-md p-[0.465rem] max-w-max">
           <Image
             src="/images/logo1.png"
+            priority
             alt=""
             width={119.58}
             height={62.57}

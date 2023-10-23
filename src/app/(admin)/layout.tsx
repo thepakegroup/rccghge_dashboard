@@ -18,17 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className}`}>
-        <div className="md:flex">
-          <Sidebar />
-          <main className="w-full relative !overflow-y-scroll h-[100vh] scroll-pt-56 scroll-smooth">
-            <Nav />
-            <SectionWrapper>{children}</SectionWrapper>
-          </main>
-        </div>
-        <Toaster />
-      </body>
-    </html>
+    <div className={`${inter.className}`}>
+      <div className="md:flex">
+        <Sidebar />
+        <main className="w-full relative !overflow-y-scroll h-[100vh] scroll-pt-56 scroll-smooth">
+          <Nav />
+          <SectionWrapper>{children}</SectionWrapper>
+        </main>
+      </div>
+      <Toaster />
+    </div>
   );
 }

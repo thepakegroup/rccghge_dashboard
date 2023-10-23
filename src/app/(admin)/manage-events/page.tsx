@@ -2,7 +2,7 @@
 
 import AddItemButton from "@/components/AddItemButton";
 import DeleteModal from "@/components/DeleteModal";
-import Card from "@/components/Home/Card";
+import Card from "@/components/ManageEvents/Card";
 import Loader from "@/components/Loader";
 import ModifyModal from "@/components/ManageEvents/ModifyModal";
 import { useFetchData } from "@/hooks/fetchData";
@@ -79,7 +79,7 @@ const ManageEvents = () => {
 
   const updateToast = useUpdateToast();
 
-  console.log(img);
+  // console.log(img);
 
   // Update Event
   const updateMedia = async (mediaInfo: any) => {
