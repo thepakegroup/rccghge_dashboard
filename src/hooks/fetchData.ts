@@ -16,7 +16,11 @@ export const useFetchData = ({ url, method }: fetchI) => {
   const fetchData = async () => {
     const token = Cookies.get("token");
     try {
-      let res = await fetch(url);
+      let res;
+
+      if (method !== "client") {
+        res = await fetch(url);
+      }
 
       if (method === "client") {
         res = await fetch(url, {

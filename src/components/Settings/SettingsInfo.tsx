@@ -30,9 +30,9 @@ const SettingsInfo = ({
   return (
     <div className="flex flex-col gap-3 bg-white p-4 md:px-6 md:py-5 rounded-lg">
       <div className="grid grid-cols-6">
-        <p className="col-span-2">{name}</p>
-        <p className="hidden md:block truncate col-span-3">{value}</p>
-        <div className="flex-center justify-end gap-3 md:gap-6 col-span-1 min-w-[70px]">
+        <p className="col-span-3 md:col-span-2">{name}</p>
+        <p className="hidden md:block truncate md:col-span-3">{value}</p>
+        <div className="flex-center justify-end gap-3 md:gap-6 col-span-3 md:col-span-1 min-w-[70px]">
           <button onClick={handleEditSettings}>
             <Image src="icons/edit.svg" alt="" width={24} height={24} />
           </button>

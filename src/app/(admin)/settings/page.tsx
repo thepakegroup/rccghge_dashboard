@@ -25,6 +25,7 @@ const Settings = () => {
     url: `${baseUrl}settings`,
     method: "client",
   });
+
   const settings: settingI[] = data?.message;
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
