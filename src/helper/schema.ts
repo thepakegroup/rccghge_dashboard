@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+// Manage Events Schema
 export const eventSchema1 = yup.object({
   eventTitle: yup.string().required("This field is required"),
   startDate: yup
@@ -48,4 +49,11 @@ export const eventSchema2 = yup.object({
     .required("This field is required"),
   location: yup.string(),
   description: yup.string(),
+});
+
+// Home Schema
+export const mediaSchema = yup.object({
+  name: yup.string().required("This field is required"),
+  mediaLink: yup.string().required("This field is required"),
+  description: yup.string().required("This field is required"),
 });

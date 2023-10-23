@@ -12,7 +12,11 @@ import { mediaI } from "@/util/interface/media";
 import { useFetchData } from "@/hooks/fetchData";
 import Loader from "@/components/Loader";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { clearItems, setFileName, setItems } from "@/store/slice/mediaItems";
+import {
+  clearItems,
+  setFileName,
+  setMediaFile,
+} from "@/store/slice/mediaItems";
 import { baseUrl, labels } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
 import axios from "axios";
@@ -122,6 +126,7 @@ export default function Home() {
       });
       dispatch(clearItems());
       dispatch(setFileName(""));
+      dispatch(setMediaFile(""));
     }
   };
 
@@ -184,7 +189,7 @@ export default function Home() {
       )}
 
       {type == "add" && (
-        <ModifyModal handleSubmit={updateMedia} buttonText="Add Media" />
+        <ModifyModal handleMSubmit={updateMedia} buttonText="Add Media" />
       )}
 
       {type == "delete" && (

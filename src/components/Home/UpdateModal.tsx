@@ -10,6 +10,7 @@ import { setModalToggle } from "@/store/slice/Modal";
 // import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 // import { useFetchData } from "@/hooks/fetchData";
 import { EditItem } from "@/app/(admin)/page";
+import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -44,6 +45,8 @@ const UpdateModal = ({
   const handleCloseModal = () => {
     dispatch(setModalToggle({ isModalOpen: !isModalOpen }));
     onResetEditId();
+    dispatch(setMediaFile(null));
+    dispatch(setFileName(""));
   };
 
   const handleSubmitForm = () => {
@@ -60,14 +63,13 @@ const UpdateModal = ({
   };
 
   useEffect(() => {
-    // dispatch(setMediaFile(null));
-
     if (editItemData) {
       setName(editItemData.name);
       setMediaLink(editItemData.link);
       setDescription(editItemData.short_description);
       setMediaType(editItemData.type);
     }
+    dispatch(setMediaFile(null));
   }, [editItemData, dispatch]);
 
   return (
