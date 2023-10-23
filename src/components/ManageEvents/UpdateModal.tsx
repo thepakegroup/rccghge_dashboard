@@ -40,9 +40,12 @@ const UpdateModal = ({
 
   const dispatch = useAppDispatch();
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
+
   const handleCloseModal = () => {
     dispatch(setModalToggle({ isModalOpen: !isModalOpen }));
     onResetEditId();
+    dispatch(setMediaFile(null));
+    dispatch(setFileName(""));
   };
 
   const toIsoStringDate = (dateString: string) => {

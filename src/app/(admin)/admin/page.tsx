@@ -47,6 +47,22 @@ const Admin = () => {
 
   // Create Admin
   const createAdmin = async (e: any) => {
+    if (email === "") {
+      updateToast({
+        title: "Email cannot be empty!",
+        info: "Please provide your email address",
+      });
+
+      return;
+    } else if (password === "") {
+      updateToast({
+        title: "Password cannot be empty!",
+        info: "Please provide your password",
+      });
+
+      return;
+    }
+
     e.preventDefault();
     const adminLevel = level === "admin" ? "2" : "1";
 

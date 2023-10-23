@@ -55,7 +55,7 @@ const ModifyModal = ({
 
   useEffect(() => {
     dispatch(setMediaFile(null));
-    // dispatch(setFileName(''));
+    dispatch(setFileName(""));
   }, [dispatch]);
 
   return (
