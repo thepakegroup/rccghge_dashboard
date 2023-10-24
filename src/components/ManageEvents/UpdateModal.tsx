@@ -18,7 +18,7 @@ interface modalI {
   buttonText: string;
   editItemId: number | null;
   onResetEditId: () => void;
-  handleImageChange: (file: File) => void;
+  // handleImageChange: (file: File) => void;
   editItemData: eventI | null;
 }
 
@@ -26,7 +26,7 @@ const UpdateModal = ({
   buttonText,
   handleSubmitEvent,
   editItemId,
-  handleImageChange = () => {},
+  // handleImageChange = () => {},
   editItemData,
   onResetEditId,
 }: modalI) => {
@@ -48,6 +48,13 @@ const UpdateModal = ({
     dispatch(setFileName(""));
   };
 
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
     const isoDateString = dateObject?.toISOString();
@@ -56,6 +63,7 @@ const UpdateModal = ({
 
   const onSubmit = (data: any) => {
     const mediaInfo = {
+      banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,

@@ -101,7 +101,7 @@ const ModifyModal = ({ buttonText, handleMSubmit }: modalI) => {
                 <div className="relative">
                   <Listbox.Button className="relative w-full min-w-[127px] gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
                     <span className="block truncate">
-                      {mediaType || "Sort by"}
+                      {mediaType || "Select Media Type"}
                     </span>
                     <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                       <svg

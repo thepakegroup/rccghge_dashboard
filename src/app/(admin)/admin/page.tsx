@@ -25,6 +25,7 @@ const Admin = () => {
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const { id } = useAppSelector((state) => state.mediaItems);
 
@@ -64,6 +65,7 @@ const Admin = () => {
     }
 
     e.preventDefault();
+    setLoader(true);
     const adminLevel = level === "admin" ? "2" : "1";
 
     const res = await axios.post(
@@ -85,11 +87,13 @@ const Admin = () => {
       setPassword("");
       setLevel("admin");
       setEmail("");
+      setLoader(false);
     }
   };
 
   // Delete Admin
   const deleteAdmin = async () => {
+    setLoader(true);
     const res = await axios.delete(`${baseUrl}admin/${id}`, {
       headers,
     });
@@ -101,11 +105,14 @@ const Admin = () => {
       updateToast({
         type: "delete",
       });
+
+      setLoader(false);
     }
   };
 
   // Update Admin
   const updateMedia = async (adminInfo: any) => {
+    setLoader(true);
     const adminData = {
       ...adminInfo,
       id,
@@ -124,6 +131,7 @@ const Admin = () => {
         title: "Admin updated!",
         info: adminInfo.email,
       });
+      setLoader(false);
     }
   };
 
@@ -135,10 +143,10 @@ const Admin = () => {
       <form className="flex flex-col justify-start md:grid md:grid-cols-8 gap-[12px] mt-9 md:items-end">
         <label htmlFor="email" className="input-field col-span-3 w-full">
           <span>Admin email</span>
-          <div className="relative z-10">
+          <div className="relative">
             <input
               onChange={(e) => setEmail(e.target.value)}
-              value={email}
+              // value={email}
               type="email"
               className="input"
             />
@@ -153,10 +161,10 @@ const Admin = () => {
         </label>
         <label htmlFor="password" className="input-field col-span-2 w-full">
           <span>Admin password</span>
-          <div className="relative z-10">
+          <div className="relative">
             <input
               onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              // value={password}
               type={showPassword ? "text" : "password"}
               className="input"
             />
@@ -263,7 +271,7 @@ const Admin = () => {
             <p className="col-span-2">Email</p>
             <p>Password</p>
           </div>
-          {loading ? (
+          {loading || loader ? (
             <Loader />
           ) : (
             admins?.map((admin) => {

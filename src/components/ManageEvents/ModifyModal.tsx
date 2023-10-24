@@ -11,20 +11,28 @@ import ImageUpload from "../ImageUpload";
 import { useAppDispatch } from "@/store/hooks";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { eventSchema1 } from "@/helper/schema";
+import useUpdateToast from "@/hooks/updateToast";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
-  handleImageChange: (file: File) => void;
+  // handleImageChange: (file: File) => void;
   buttonText: string;
 }
 
 const ModifyModal = ({
   buttonText,
   handleSubmitEvent,
-  handleImageChange = () => {},
-}: modalI) => {
+}: // handleImageChange = () => {},
+modalI) => {
   const handleCloseModal = useCloseModal();
   const dispatch = useAppDispatch();
+  const [img, setImg] = useState<File | any>("");
+  const updateToast = useUpdateToast();
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
 
   const {
     register,
@@ -41,7 +49,16 @@ const ModifyModal = ({
   };
 
   const onSubmit = (data: any) => {
+    if (img === "") {
+      updateToast({
+        title: "Image cannot be empty",
+        info: "Please select an image!",
+      });
+      return;
+    }
+
     const mediaInfo = {
+      banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,

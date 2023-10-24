@@ -49,6 +49,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [currAction, setCurrAction] = useState(false);
   const [img, setImg] = useState<File | any>("");
+  const [loader, setLoader] = useState(false);
 
   // Fetch All leaders
   const { data, loading, fetchData } = useFetchData({
@@ -64,6 +65,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   };
 
   const removeLeader = async () => {
+    setLoader(true);
     const res = await axios.delete(`${baseUrl}leader/${id}`, {
       headers,
     });
@@ -75,6 +77,8 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       updateToast({
         type: "delete",
       });
+
+      setLoader(false);
     }
   };
 
@@ -86,6 +90,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   // console.log(img);
 
   const updateLeader = async (leaderInfo: any) => {
+    setLoader(true);
     const form = new FormData();
 
     img && form.append("profile_picture", img as Blob, img?.name as string);
@@ -141,6 +146,8 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
         })
       );
       dispatch(setFileName(""));
+
+      setLoader(false);
     }
   };
 
@@ -184,7 +191,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Name</span>
             <input
               onChange={(e) => dispatch(setName(e.target.value))}
-              value={name}
+              // value={name}
               required
               name="name"
               type="text"
@@ -196,7 +203,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Title</span>
             <input
               onChange={(e) => dispatch(setTitle(e.target.value))}
-              value={title}
+              // value={title}
               name="title"
               required
               type="text"
@@ -207,7 +214,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Qualification</span>
             <input
               onChange={(e) => dispatch(setQualification(e.target.value))}
-              value={qualification}
+              // value={qualification}
               name="qualification"
               type="text"
               required
@@ -218,7 +225,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Position</span>
             <input
               onChange={(e) => dispatch(setPosition(e.target.value))}
-              value={position}
+              // value={position}
               name="position"
               type="text"
               required
@@ -229,7 +236,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Short description</span>
             <input
               onChange={(e) => dispatch(setDescription(e.target.value))}
-              value={description}
+              // value={description}
               name="description"
               type="text"
               required
@@ -240,7 +247,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             <span>Full story</span>
             <textarea
               onChange={(e) => dispatch(setFullStory(e.target.value))}
-              value={fullStory}
+              // value={fullStory}
               name="fullStory"
               rows={5}
               required
@@ -263,7 +270,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           </button>
         </div>
       </div>
-      {loading ? (
+      {loading || loader ? (
         <Loader />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">

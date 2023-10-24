@@ -42,6 +42,7 @@ export default function Home() {
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<EditItem | null>(null);
   const { items, file, id } = useAppSelector((state: any) => state.mediaItems);
+  const [loader, setLoader] = useState(false);
 
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}load-all-media`,
@@ -71,6 +72,7 @@ export default function Home() {
 
   // Delete Media
   const handleRemoveMedia = async () => {
+    setLoader(true);
     const res = await axios.post(`${baseUrl}remove-media`, postData, {
       headers,
     });
@@ -83,11 +85,13 @@ export default function Home() {
       updateToast({
         type: "delete",
       });
+      setLoader(false);
     }
   };
 
   // Create & Update Media Info
   const updateMedia = async (mediaInfo: any) => {
+    setLoader(true);
     const form = new FormData();
 
     mediaInfo.media &&
@@ -118,15 +122,31 @@ export default function Home() {
     );
 
     const data = res.data;
+
     if (data.error === false) {
       fetchData();
       updateToast({
         title: `Media ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
       });
+
+      setLoader(false);
+
       dispatch(clearItems());
       dispatch(setFileName(""));
       dispatch(setMediaFile(""));
+
+      return;
+    }
+
+    if (data?.error === true) {
+      updateToast({
+        title: `Error`,
+        type: "delete",
+        info: data.message,
+      });
+      setLoader(false);
+      return;
     }
   };
 
@@ -142,36 +162,40 @@ export default function Home() {
         <AddItemButton title="Add media" />
       </div>
 
-      <section className="flex flex-col gap-6">
-        {labels.map((label) => {
-          return (
-            <section key={label.value} className="" id={label.value}>
-              <div className="flex-center gap-1 ">
-                <Image src="icons/img.svg" alt="" width={18} height={18} />
-                <p className="text-base text-fade-ash font-bold">
-                  {label.label}
-                </p>
-              </div>
-              <div className="card-wrapper">
-                {mediaData?.map((media) => {
-                  return (
-                    label.value === media.type && (
-                      <Card
-                        title={media.name}
-                        img={media.image_url}
-                        id={media.id}
-                        key={media.id}
-                        home={true}
-                        onEditClick={() => setCurrEditItemID(media.id)}
-                      />
-                    )
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
-      </section>
+      {loader ? (
+        <Loader />
+      ) : (
+        <section className="flex flex-col gap-6">
+          {labels.map((label) => {
+            return (
+              <section key={label.value} className="" id={label.value}>
+                <div className="flex-center gap-1 ">
+                  <Image src="icons/img.svg" alt="" width={18} height={18} />
+                  <p className="text-base text-fade-ash font-bold">
+                    {label.label}
+                  </p>
+                </div>
+                <div className="card-wrapper">
+                  {mediaData?.map((media) => {
+                    return (
+                      label.value === media.type && (
+                        <Card
+                          title={media.name}
+                          img={media.image_url}
+                          id={media.id}
+                          key={media.id}
+                          home={true}
+                          onEditClick={() => setCurrEditItemID(media.id)}
+                        />
+                      )
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </section>
+      )}
 
       <ScrollModalToTop />
 
@@ -185,6 +209,7 @@ export default function Home() {
           handleSubmit={updateMedia}
           buttonText="Update"
           editItemData={currEditItem}
+          loading={loader}
         />
       )}
 

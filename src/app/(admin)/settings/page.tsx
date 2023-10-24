@@ -19,6 +19,7 @@ const Settings = () => {
   const updateToast = useUpdateToast();
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
+  const [loader, setLoader] = useState(false);
   const { id } = useAppSelector((state) => state.mediaItems);
 
   const { data, loading, fetchData } = useFetchData({
@@ -45,6 +46,7 @@ const Settings = () => {
 
   // Update Setting
   const updateSettings = async (settingInfo: any) => {
+    setLoader(true);
     const settingData = {
       ...settingInfo,
       id,
@@ -66,11 +68,14 @@ const Settings = () => {
         title: `Setting updated!`,
         info: settingInfo.name,
       });
+
+      setLoader(false);
     }
   };
 
   // Delete Setting
   const deleteSetting = async () => {
+    setLoader(true);
     const res = await axios.delete(`${baseUrl}setting/${id}`, {
       headers,
     });
@@ -82,6 +87,8 @@ const Settings = () => {
       updateToast({
         type: "delete",
       });
+
+      setLoader(false);
     }
   };
 
@@ -89,6 +96,7 @@ const Settings = () => {
   const createSetting = async (e: any) => {
     e.preventDefault();
 
+    setLoader(true);
     const res = await axios.post(
       `${baseUrl}create-setting`,
       JSON.stringify({ name, value }),
@@ -107,6 +115,8 @@ const Settings = () => {
       });
       setName("");
       setValue("");
+
+      setLoader(false);
     }
   };
 
@@ -170,7 +180,7 @@ const Settings = () => {
       >
         A-Z
       </button>
-      {loading ? (
+      {loading || loader ? (
         <Loader />
       ) : (
         <div className="text-base font-medium flex flex-col gap-2">

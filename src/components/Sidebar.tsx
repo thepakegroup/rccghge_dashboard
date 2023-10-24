@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
+import Loader from "./Loader";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -17,6 +18,9 @@ const Sidebar = () => {
 
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   // Header and token
   const token = Cookies.get("token");
@@ -34,6 +38,7 @@ const Sidebar = () => {
 
   // Handle Logout
   const handleLogout = async () => {
+    setLoader(true);
     const res = await axios.get(`${baseUrl}admin/logout`, {
       headers,
     });
@@ -42,6 +47,7 @@ const Sidebar = () => {
 
     if (data.error === false) {
       Cookies.remove("token");
+      setLoader(false);
       router.replace("/login");
     }
   };
@@ -109,6 +115,10 @@ const Sidebar = () => {
     },
   ];
 
+  const handleCloseModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <aside
       onClick={handleToggle}
@@ -161,7 +171,10 @@ const Sidebar = () => {
         <div className="border-t-2 border-[#657596]">
           <div
             className="flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary"
-            onClick={handleToggle}
+            onClick={() => {
+              // handleToggle();
+              setIsOpen(true);
+            }}
           >
             <Image
               src="/icons/logout.svg"
@@ -170,13 +183,50 @@ const Sidebar = () => {
               height={24}
               className="cursor-pointer"
             />
-            <div onClick={handleLogout} className="capitalize">
+            <div className="capitalize">
               <p className="text-sm font-bold text-secondary-01">Logout</p>
               <span className="text-xs font-medium">{email}</span>
             </div>
           </div>
         </div>
       </div>
+
+      {isOpen && (
+        <div onClick={handleCloseModal} className="modal-wrapper">
+          {loader ? (
+            <Loader />
+          ) : (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative bg-red w-full flex flex-col justify-center items-center "
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="delete-modal flex-center flex-col justify-center"
+              >
+                <Image src="/icons/logout.svg" alt="" width={24} height={24} />
+                <div className="text-base font-medium text-center text-black mt-3 mb-6">
+                  Are you sure you want to logout?
+                </div>
+                <div className="flex-center gap-3 text-sm [&>button]:px-8 [&>button]:py-2 [&>button]:rounded-md">
+                  <button
+                    onClick={handleCloseModal}
+                    className="border-2 border-[#D0D5DD] text-black"
+                  >
+                    No
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-[#CB1A14] text-white"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </aside>
   );
 };

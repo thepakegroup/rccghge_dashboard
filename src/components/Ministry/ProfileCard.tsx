@@ -110,7 +110,7 @@ const ProfileCard = ({
           )}
           {position && (
             <div>
-              <p className="font-medium">Posiion</p>
+              <p className="font-medium">Position</p>
               <p className="font-bold">{position}</p>
             </div>
           )}
