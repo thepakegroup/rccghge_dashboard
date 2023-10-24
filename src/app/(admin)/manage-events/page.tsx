@@ -20,21 +20,24 @@ import UpdateModal from "@/components/ManageEvents/UpdateModal";
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
   const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
-  const [img, setImg] = useState<File | any>("");
+  // const [img, setImg] = useState<File | any>("");
+  const [loader, setLoader] = useState(false);
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
   // HandleImage
-  const handleImageChange = (file: File) => {
-    setImg(file);
-  };
+  // const handleImageChange = (file: File) => {
+  //   setImg(file);
+  // };
 
   //Fetch All Data
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}events/{page}`,
     method: "client",
   });
+
   const events: eventI[] = data?.message.data;
 
   // Set Edit Data
@@ -50,7 +53,6 @@ const ManageEvents = () => {
 
   // Token & Header
   const token = Cookies.get("token");
-
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
@@ -62,6 +64,7 @@ const ManageEvents = () => {
 
   // Delete Events
   const handleRemoveEvents = async () => {
+    setLoader(true);
     const res = await axios.post(`${baseUrl}delete-event`, postData, {
       headers,
     });
@@ -73,19 +76,19 @@ const ManageEvents = () => {
       updateToast({
         type: "delete",
       });
+
+      setLoader(false);
       dispatch(clearItems());
     }
   };
 
-  const updateToast = useUpdateToast();
-
-  // console.log(img);
-
   // Update Event
   const updateMedia = async (mediaInfo: any) => {
+    setLoader(true);
     const form = new FormData();
 
-    img && form.append("banner", img as Blob, img?.name);
+    mediaInfo.banner &&
+      form.append("banner", mediaInfo.banner as Blob, mediaInfo.nammer?.name);
     form.append("title", mediaInfo.title);
     form.append("location", mediaInfo.location);
     form.append("short_description", mediaInfo.short_description);
@@ -112,11 +115,12 @@ const ManageEvents = () => {
 
     if (data.error === false) {
       fetchData();
-      setImg("");
       updateToast({
         title: `Event ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
       });
+
+      setLoader(false);
       dispatch(clearItems());
       dispatch(setFileName(""));
     }
@@ -128,7 +132,7 @@ const ManageEvents = () => {
         <AddItemButton title="Add event" />
       </div>
       <section className="mt-3">
-        {loading ? (
+        {loading || loader ? (
           <Loader />
         ) : (
           <div className="card-wrapper">
@@ -153,14 +157,14 @@ const ManageEvents = () => {
             setCurrEditItem(null);
           }}
           handleSubmitEvent={updateMedia}
-          handleImageChange={handleImageChange}
+          // handleImageChange={handleImageChange}
           buttonText="Update"
           editItemData={currEditItem}
         />
       )}
       {type == "add" && (
         <ModifyModal
-          handleImageChange={handleImageChange}
+          // handleImageChange={handleImageChange}
           handleSubmitEvent={updateMedia}
           buttonText="Add Event"
         />

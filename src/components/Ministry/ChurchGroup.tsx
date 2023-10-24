@@ -29,7 +29,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
 
   const [groups, setGroups] = useState<churchGroupI[]>([]);
-  const [loading, setloading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
@@ -71,7 +71,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
 
       const data = await res.data;
       if (data.error === false) {
-        setloading(false);
+        setLoading(false);
         setGroups(data?.message?.data);
       }
     },
@@ -80,6 +80,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
 
   // Delete Group
   const removeGroup = async () => {
+    setLoading(true);
     const res = await axios.delete(`${baseUrl}group/${id}`, {
       headers,
     });
@@ -91,6 +92,8 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       updateToast({
         type: "delete",
       });
+
+      setLoading(false);
     }
   };
 
@@ -113,6 +116,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
 
   // Create and Update Group
   const updateGroup = async (groupInfo: any) => {
+    setLoading(true);
     const form = new FormData();
 
     img && form.append("banner", img as Blob, img?.name as string);
@@ -148,6 +152,8 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
         title: `Church group ${currAction ? "updated" : "added"}`,
         info: groupInfo.name,
       });
+
+      setLoading(false);
 
       dispatch(setFileName(""));
       dispatch(
@@ -207,7 +213,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
             <span>Name</span>
             <input
               onChange={(e) => dispatch(setName(e.target.value))}
-              value={name}
+              // value={name}
               name="name"
               type="text"
               className="input"
@@ -288,7 +294,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
             <span>Description</span>
             <textarea
               onChange={(e) => dispatch(setDescription(e.target.value))}
-              value={description}
+              // value={description}
               name="description"
               required
               rows={4}

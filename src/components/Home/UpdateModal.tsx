@@ -11,6 +11,7 @@ import { setModalToggle } from "@/store/slice/Modal";
 // import { useFetchData } from "@/hooks/fetchData";
 import { EditItem } from "@/app/(admin)/page";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+import Loader from "../Loader";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
@@ -18,6 +19,7 @@ interface modalI {
   editItemId: number | null;
   editItemData: EditItem | null;
   onResetEditId: () => void;
+  loading: boolean;
 }
 
 const UpdateModal = ({
@@ -26,6 +28,7 @@ const UpdateModal = ({
   editItemId,
   onResetEditId,
   editItemData,
+  loading,
 }: modalI) => {
   // initializing state
   const dispatch = useAppDispatch();
@@ -59,18 +62,25 @@ const UpdateModal = ({
     };
 
     handleSubmit(mediaInfo);
-    handleCloseModal();
+
+    loading ? null : handleCloseModal();
   };
 
   useEffect(() => {
     if (editItemData) {
       setName(editItemData.name);
-      setMediaLink(editItemData.link);
+      setMediaLink((info) => {
+        return editItemData?.link === "undefined"
+          ? "test link"
+          : editItemData?.link;
+      });
       setDescription(editItemData.short_description);
       setMediaType(editItemData.type);
     }
     dispatch(setMediaFile(null));
   }, [editItemData, dispatch]);
+
+  // console.log(editItemData);
 
   return (
     <>
@@ -80,81 +90,85 @@ const UpdateModal = ({
             onClick={(e) => e.stopPropagation()}
             className="relative bg-red w-full  max-w-[467px]"
           >
-            <>
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="modal modal-content overflow-x-hidden max-h-[500px] md:max-h-[561px]"
-              >
-                <div className="flex-center justify-end font-semibold text-base text-orange">
-                  <button
-                    onClick={handleCloseModal}
-                    className="flex-center gap-2 "
-                  >
-                    <span>Close</span>
-                    <Image
-                      src="icons/close.svg"
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
+            {loading ? (
+              <Loader />
+            ) : (
+              <>
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="modal modal-content overflow-x-hidden max-h-[500px] md:max-h-[561px]"
+                >
+                  <div className="flex-center justify-end font-semibold text-base text-orange">
+                    <button
+                      onClick={handleCloseModal}
+                      className="flex-center gap-2 "
+                    >
+                      <span>Close</span>
+                      <Image
+                        src="icons/close.svg"
+                        alt=""
+                        width={24}
+                        height={24}
+                      />
+                    </button>
+                  </div>
+                  <ImageUpload handleImageChange={handleImageChange} />
+                  <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
+                    <label htmlFor="type" className="input-field">
+                      <span>Media type</span>
+                      <select
+                        // onChange={(e) => setMediaType(e.target.value)}
+                        disabled
+                        value={mediaType}
+                        name="type"
+                        className="input"
+                      >
+                        <option value=""></option>
+                        {labels.map((label) => {
+                          return (
+                            <option key={label.value} value={label.value}>
+                              {label.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </label>
+                    <label htmlFor="name" className="input-field">
+                      <span>Media name</span>
+                      <input
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        type="text"
+                        className="input"
+                      />
+                    </label>
+                    <label htmlFor="link" className="input-field">
+                      <span>Media link</span>
+                      <input
+                        onChange={(e) => setMediaLink(e.target.value)}
+                        value={mediaLink}
+                        type="text"
+                        className="input"
+                      />
+                    </label>
+                    <label htmlFor="description" className="input-field">
+                      <span>Short description</span>
+                      <textarea
+                        onChange={(e) => setDescription(e.target.value)}
+                        value={description}
+                        rows={10}
+                        className="input"
+                      />
+                    </label>
+                  </form>
+                </div>
+                <div className="modal-btn-wrapper">
+                  <button onClick={handleSubmitForm} className="modal-btn">
+                    {buttonText}
                   </button>
                 </div>
-                <ImageUpload handleImageChange={handleImageChange} />
-                <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
-                  <label htmlFor="type" className="input-field">
-                    <span>Media type</span>
-                    <select
-                      // onChange={(e) => setMediaType(e.target.value)}
-                      disabled
-                      value={mediaType}
-                      name="type"
-                      className="input"
-                    >
-                      <option value=""></option>
-                      {labels.map((label) => {
-                        return (
-                          <option key={label.value} value={label.value}>
-                            {label.label}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </label>
-                  <label htmlFor="name" className="input-field">
-                    <span>Media name</span>
-                    <input
-                      onChange={(e) => setName(e.target.value)}
-                      value={name}
-                      type="text"
-                      className="input"
-                    />
-                  </label>
-                  <label htmlFor="link" className="input-field">
-                    <span>Media link</span>
-                    <input
-                      onChange={(e) => setMediaLink(e.target.value)}
-                      value={mediaLink}
-                      type="text"
-                      className="input"
-                    />
-                  </label>
-                  <label htmlFor="description" className="input-field">
-                    <span>Short description</span>
-                    <textarea
-                      onChange={(e) => setDescription(e.target.value)}
-                      value={description}
-                      rows={10}
-                      className="input"
-                    />
-                  </label>
-                </form>
-              </div>
-              <div className="modal-btn-wrapper">
-                <button onClick={handleSubmitForm} className="modal-btn">
-                  {buttonText}
-                </button>
-              </div>
-            </>
+              </>
+            )}
           </div>
         </div>
       )}

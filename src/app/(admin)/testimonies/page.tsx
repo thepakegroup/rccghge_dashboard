@@ -12,7 +12,7 @@ import { useAppSelector } from "@/store/hooks";
 import { baseUrl } from "@/util/constants";
 import { testimonyI } from "@/util/interface/testimony";
 import Image from "next/image";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useMemo, useCallback } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import UpdateTestimonyModal from "@/components/Testimonies/UpdateTestimonyModal";
 import axios from "axios";
@@ -36,6 +36,8 @@ const Testimonials = () => {
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<testimonyI | null>(null);
+  const [loader, setLoader] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const { data, loading, fetchData } = useFetchData({
     url: `${baseUrl}testimonies/{sort}/{page}`,
@@ -44,23 +46,46 @@ const Testimonials = () => {
 
   const testimonies: testimonyI[] = data?.message.data;
 
-  const [testimoniesData, setTestimoniesData] =
-    useState<testimonyI[]>(testimonies);
+  // Search Functionality
+  const testimonyData = useMemo(() => {
+    if (searchValue) {
+      return testimonies.filter((item) => {
+        return item.title.toLowerCase().includes(searchValue.toLowerCase());
+      });
+    }
+
+    return testimonies;
+  }, [searchValue, testimonies]);
 
   useEffect(() => {
-    setTestimoniesData(testimonies);
-
     if (currEditItemID) {
-      const EditItem = testimoniesData?.filter(
+      const EditItem = testimonyData?.filter(
         (item: any) => item.id === currEditItemID
       )[0];
 
       setCurrEditItem(EditItem);
     }
-  }, [testimonies, currEditItemID, testimoniesData]);
+  }, [currEditItemID, testimonyData]);
+
+  // Sort Functionality
+  const sortOptions = [{ name: "Most recent" }, { name: "Older" }];
+  const [selected, setSelected] = useState("Most recent");
+
+  const sortGroup = useCallback(
+    (a: any, b: any) => {
+      if (selected === "Older") {
+        return a.id - b.id;
+      }
+
+      return b.id - a.id;
+    },
+    [selected]
+  );
 
   // Delete Testimony
   const deleteTestimony = async () => {
+    setLoader(true);
+
     const token = Cookies.get("token");
     const res = await axios.delete(`${baseUrl}testimonies/${id}`, {
       headers: {
@@ -75,6 +100,7 @@ const Testimonials = () => {
       updateToast({
         type: "delete",
       });
+      setLoader(false);
     }
   };
 
@@ -88,6 +114,8 @@ const Testimonials = () => {
     content: string;
     editItemId: number;
   }) => {
+    setLoader(true);
+
     const updateData = {
       title,
       content,
@@ -109,11 +137,25 @@ const Testimonials = () => {
         title: `Testimony updated!`,
         info: title,
       });
+
+      setLoader(false);
+      return;
+    }
+    if (data?.error === true) {
+      updateToast({
+        title: `Testimony not updated!`,
+        type: "delete",
+        info: data?.message,
+      });
+      setLoader(false);
+      return;
     }
   };
 
   // Publish Testimony
   const publishTestimony = async (published: boolean, id: number) => {
+    setLoader(true);
+
     const token = Cookies.get("token");
     const res = await axios.post(
       `${baseUrl}testimonies/publish`,
@@ -127,31 +169,15 @@ const Testimonials = () => {
     );
 
     const data = await res?.data;
-    updateToast({
-      title: `${published ? "Unpublished" : "Published"}`,
-    });
 
     if (data.error === false) {
       fetchData();
+      updateToast({
+        title: `${published ? "Unpublished" : "Published"}`,
+      });
+      setLoader(false);
     }
   };
-
-  // Search Functionality
-  const searchTestimonies = (title: string) => {
-    if (!title) {
-      setTestimoniesData(testimonies);
-      return;
-    }
-
-    const filteredTestimonies = testimonies.filter((item) => {
-      return item.title.toLowerCase().includes(title.toLowerCase());
-    });
-    setTestimoniesData(filteredTestimonies);
-  };
-
-  // Sort Functionality
-  const sortOptions = [{ name: "Most recent" }, { name: "Older" }];
-  const [selected, setSelected] = useState("");
 
   return (
     <section>
@@ -174,7 +200,7 @@ const Testimonials = () => {
             <input
               type="text"
               name="search"
-              onChange={(e) => searchTestimonies(e.target.value)}
+              onChange={(e) => setSearchValue(e.target.value)}
               id="search"
               placeholder="Search testimonies"
               className="pl-7 rounded-md border-none outline-none w-full"
@@ -244,11 +270,11 @@ const Testimonials = () => {
           </Listbox>
         </div>
 
-        {loading ? (
+        {loading || loader ? (
           <Loader />
         ) : (
           <section className="mt-4 card-wrapper">
-            {testimoniesData?.map((testimony) => {
+            {testimonyData.sort(sortGroup)?.map((testimony) => {
               const { title, published, content, created_at } = testimony;
               return (
                 <Card
@@ -267,7 +293,7 @@ const Testimonials = () => {
         )}
       </section>
 
-      {testimoniesData && !testimoniesData.length ? (
+      {testimonyData && !testimonyData.length ? (
         <p className="w-full text-center pt-10">No Testimonies Found!</p>
       ) : null}
 

@@ -17,8 +17,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [submit, setSubmit] = useState(false);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const logIn = async () => {
     const login = {
@@ -42,28 +41,25 @@ const Login = () => {
       return;
     }
 
-    setloading(true);
-    setSubmit(true);
+    setLoading(true);
 
     const res = await axios.post(`${baseUrl}admin/login`, login);
-
     const data = await res.data;
-    const token = data.token.token;
 
     if (data.error === false) {
-      // Set the token as a cookie
+      const token = data.token.token;
       Cookies.set("token", token, { expires: 2 });
+
       router.push("/");
       return;
     }
-
+    data.error && setLoading(false);
     if (data.error === true) {
       updateToast({
         title: data.message,
         info: "Please provide valid credentials",
       });
-
-      setloading(false);
+      return;
     }
   };
 
@@ -112,9 +108,6 @@ const Login = () => {
                     className="absolute top-1/2 -translate-y-1/2 right-3"
                   />
                 </div>
-                {email === "" && submit && (
-                  <p className="text-xs text-error-400">Email is required</p>
-                )}
               </label>
               <label htmlFor="password" className="input-field flex-1 relative">
                 <span>Password</span>
@@ -146,9 +139,6 @@ const Login = () => {
                     />
                   )}
                 </div>
-                {password === "" && submit && (
-                  <p className="text-xs text-error-400">Password is required</p>
-                )}
               </label>
               <button
                 onClick={handleLogin}
