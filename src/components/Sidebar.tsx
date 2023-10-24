@@ -49,6 +49,7 @@ const Sidebar = () => {
       Cookies.remove("token");
       router.replace("/login");
       setLoader(false);
+      handleCloseModal();
     }
   };
 
