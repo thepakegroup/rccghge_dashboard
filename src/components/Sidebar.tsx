@@ -123,13 +123,13 @@ const Sidebar = () => {
   return (
     <aside
       onClick={handleToggle}
-      className={`fixed lg:max-w-max top-0 z-50 w-full text-white transition-all ease-in-out delay-150 overflow-y-auto ${
+      className={`fixed lg:max-w-max top-0 z-50 w-full h-screen text-white transition-all ease-in-out delay-150 overflow-y-auto ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full hidden"
       }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="px-2 py-3 h-auto lg:h-screen w-[17rem] bg-side-bar-bg relative overflow-y-scroll lg:overscroll-y-auto flex flex-col justify-between gap-7 lg:gap-10"
+        className="px-2 py-3 h-auto md:h-screen w-[17rem] bg-side-bar-bg relative overflow-y-scroll lg:overscroll-y-auto flex flex-col justify-between gap-7 lg:gap-10"
       >
         <div className="bg-white rounded-md p-[0.465rem] max-w-max">
           <Image

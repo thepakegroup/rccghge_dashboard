@@ -136,7 +136,7 @@ const ManageEvents = () => {
           <Loader />
         ) : (
           <div className="card-wrapper">
-            {events.map((event) => {
+            {events?.map((event) => {
               return (
                 <Card
                   key={event.id}
