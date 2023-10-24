@@ -1,6 +1,6 @@
 const Loader = () => {
   return (
-    <div className="loaderWrapper">
+    <div className="loaderWrapper min-w-full pt-24">
       <div className="loader"></div>
     </div>
   );
