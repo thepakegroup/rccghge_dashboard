@@ -47,13 +47,30 @@ const GroupProfileModal = ({
     setImg(file);
   };
 
+  // category
+  const [cat, setCat] = useState(editItemData?.category);
+
+  const catOptions = [
+    { name: "All", value: "All" },
+    { name: "Department", value: "Department" },
+    { name: "Ministry", value: "Ministry" },
+  ];
+
+  // Data
+  const [groupsInfo, setGroupsinfo] = useState({
+    name: editItemData?.name,
+    category: editItemData?.category,
+    description: editItemData?.description,
+    id: editItemData?.id,
+  });
+
   const handleSubmitForm = () => {
     const groupInfo: groupI = {
-      name,
-      description,
-      id,
+      name: groupsInfo.name,
+      description: groupsInfo.description,
+      id: groupsInfo.id,
       banner: img,
-      category,
+      category: groupsInfo.category,
     };
 
     handleSubmit(groupInfo);
@@ -67,9 +84,9 @@ const GroupProfileModal = ({
       dispatch(
         setGroupInfo({
           banner: editItemData?.banner,
-          name: editItemData?.name,
-          category: editItemData?.category,
-          description: editItemData?.description,
+          name: "",
+          category: "",
+          description: "",
           id: editItemData?.id,
           action: "edit",
         })
@@ -78,15 +95,12 @@ const GroupProfileModal = ({
     dispatch(setMediaFile(null));
   }, [dispatch, editItemData]);
 
-  const [cat, setCat] = useState(editItemData?.category);
-
-  const catOptions = [
-    { name: "All", value: "All" },
-    { name: "Department", value: "Department" },
-    { name: "Ministry", value: "Ministry" },
-  ];
-
   useEffect(() => {
+    setGroupsinfo((val) => ({
+      ...val,
+      category: cat,
+    }));
+
     dispatch(setCatgeory(cat));
   }, [cat, dispatch]);
 
@@ -125,7 +139,12 @@ const GroupProfileModal = ({
             <label htmlFor="name" className="input-field">
               <span>Name</span>
               <input
-                onChange={(e) => dispatch(setName(e.target.value))}
+                onChange={(e) =>
+                  setGroupsinfo((val) => ({
+                    ...val,
+                    name: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData?.name}
                 name="name"
                 type="text"
@@ -205,7 +224,12 @@ const GroupProfileModal = ({
             <label htmlFor="description" className="input-field">
               <span>Description</span>
               <textarea
-                onChange={(e) => dispatch(setDescription(e.target.value))}
+                onChange={(e) =>
+                  setGroupsinfo((val) => ({
+                    ...val,
+                    description: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData?.description}
                 name="description"
                 rows={5}

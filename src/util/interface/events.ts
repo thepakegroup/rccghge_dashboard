@@ -5,7 +5,7 @@ export interface eventI {
   title: string;
   notice_tag: 0;
   slug: string;
-  start_date?: string;
-  end_date?: string;
+  start_date: string;
+  end_date: string;
   location?: string;
 }

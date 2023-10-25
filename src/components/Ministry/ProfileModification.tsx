@@ -36,8 +36,8 @@ const ProfileModification = ({
 }: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
-  const { name, title, qualification, position, description, fullStory } =
-    useAppSelector((state) => state.leader);
+  // const { name, title, qualification, position, description, fullStory } =
+  //   useAppSelector((state) => state.leader);
   const [img, setImg] = useState<File | any>("");
 
   // HandleImage
@@ -45,16 +45,27 @@ const ProfileModification = ({
     setImg(file);
   };
 
+  // Data
+  const [leadInfo, setLeadinfo] = useState({
+    name: editItemData.name,
+    title: editItemData.title,
+    qualification: editItemData.qualification,
+    position: editItemData.position,
+    description: editItemData.short_description,
+    fullStory: editItemData.full_story_about,
+  });
+
   const handleSubmitForm = () => {
     const leaderInfo: leadersI = {
-      name,
-      title,
-      qualification,
-      position,
+      name: leadInfo.name,
+      title: leadInfo.title,
+      qualification: leadInfo.qualification,
+      position: leadInfo.position,
       profile_picture: img,
-      short_description: description,
-      full_story_about: fullStory,
+      short_description: leadInfo.description,
+      full_story_about: leadInfo.fullStory,
     };
+
     handleSubmit(leaderInfo);
     handleCloseModal();
     onResetEditId();
@@ -64,12 +75,12 @@ const ProfileModification = ({
     editItemData &&
       dispatch(
         setLeaderInfo({
-          name: editItemData.name,
-          title: editItemData.title,
-          qualification: editItemData.qualification,
-          position: editItemData.position,
-          description: editItemData.short_description,
-          fullStory: editItemData.full_story_about,
+          name: "",
+          title: "",
+          qualification: "",
+          position: "",
+          description: "",
+          fullStory: "",
           action: "edit",
         })
       );
@@ -109,7 +120,12 @@ const ProfileModification = ({
             <label htmlFor="name" className="input-field">
               <span>Name</span>
               <input
-                onChange={(e) => dispatch(setName(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    name: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.name}
                 name="name"
                 type="text"
@@ -119,7 +135,12 @@ const ProfileModification = ({
             <label htmlFor="title" className="input-field">
               <span>Title</span>
               <input
-                onChange={(e) => dispatch(setTitle(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    title: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.title}
                 name="title"
                 type="text"
@@ -129,7 +150,12 @@ const ProfileModification = ({
             <label htmlFor="qualification" className="input-field">
               <span>Qualification</span>
               <input
-                onChange={(e) => dispatch(setQualification(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    qualification: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.qualification}
                 name="qualification"
                 type="text"
@@ -139,7 +165,12 @@ const ProfileModification = ({
             <label htmlFor="position" className="input-field">
               <span>Position</span>
               <input
-                onChange={(e) => dispatch(setPosition(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    position: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.position}
                 name="position"
                 type="text"
@@ -149,7 +180,12 @@ const ProfileModification = ({
             <label htmlFor="description" className="input-field">
               <span>Short description</span>
               <input
-                onChange={(e) => dispatch(setDescription(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    description: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.short_description}
                 name="description"
                 type="text"
@@ -159,7 +195,12 @@ const ProfileModification = ({
             <label htmlFor="fullStory" className="input-field">
               <span>Full story</span>
               <textarea
-                onChange={(e) => dispatch(setFullStory(e.target.value))}
+                onChange={(e) =>
+                  setLeadinfo((val) => ({
+                    ...val,
+                    fullStory: e.target.value,
+                  }))
+                }
                 defaultValue={editItemData.full_story_about}
                 name="fullStory"
                 rows={5}

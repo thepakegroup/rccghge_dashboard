@@ -6,21 +6,18 @@ import { Listbox, Transition } from "@headlessui/react";
 import { churchGroupI } from "@/util/interface/ministry";
 import DeleteModal from "../DeleteModal";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
-import {
-  setCatgeory,
-  setDescription,
-  setGroupInfo,
-  setName,
-} from "@/store/slice/churchGroup";
+import { setCatgeory, setGroupInfo } from "@/store/slice/churchGroup";
 import GroupProfileModal from "./GroupProfileModal";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
 import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { post, remove } from "@/helper/apiFetch";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { groupSchema } from "@/helper/schema";
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const dispatch = useAppDispatch();
@@ -37,6 +34,16 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const [currAction, setCurrAction] = useState(false);
   const [img, setImg] = useState<File | any>("");
 
+  const {
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm({
+    resolver: yupResolver(groupSchema),
+  });
+
   // Sort Functionality
   const sortOptions = useMemo(() => ["Older", "Most recent"] as const, []);
   const [sortKey, setSortKey] = useState(sortOptions[0]);
@@ -49,16 +56,6 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     groupImg: file,
   } = useAppSelector((state) => state.churchGroup);
 
-  // Header and token
-  const token = Cookies.get("token");
-
-  const headers = useMemo(() => {
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-  }, [token]);
-
   // Fetch All Group
   const getGroupByCategory = useCallback(async (category: string) => {
     try {
@@ -66,6 +63,14 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       setLoading(false);
 
       const data = await res.data;
+      if (data.error) {
+        updateToast({
+          title: `Error!`,
+          info: `${res.data?.message}`,
+        });
+        return;
+      }
+
       setGroups(data?.message?.data);
     } catch (error) {
       setLoading(false);
@@ -147,6 +152,14 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       setCurrAction(false);
       setImg("");
 
+      if (res.data?.error) {
+        updateToast({
+          title: `Church group ${currAction ? "update error" : "create error"}`,
+          info: `${res.data?.message}`,
+        });
+        return;
+      }
+
       updateToast({
         title: `Church group ${currAction ? "updated" : "added"}`,
         info: groupInfo.name,
@@ -185,10 +198,27 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     { name: "Ministry", value: "Ministry" },
   ];
 
-  const groupInfo = {
-    name,
-    category,
-    description,
+  // Onsubmit of the form
+  const handleCreateGroup = (data: any) => {
+    if (img === "") {
+      updateToast({
+        title: "Image cannot be empty",
+        info: "Please select an image!",
+      });
+      return;
+    }
+
+    const groupInfo = {
+      name: data.name,
+      category: cat,
+      description: data.description,
+    };
+
+    updateGroup(groupInfo);
+
+    if (formState.isSubmitSuccessful) {
+      reset();
+    }
   };
 
   useEffect(() => {
@@ -207,17 +237,14 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       <div className="bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
         <ImageUpload handleImageChange={handleImageChange} section="group" />
-        <div className="flex flex-col gap-[1.19rem] min-h-[200px]">
+        <form
+          className="flex flex-col gap-[1.19rem] min-h-[200px]"
+          onSubmit={handleSubmit(handleCreateGroup)}
+        >
           <label htmlFor="name" className="input-field">
             <span>Name</span>
-            <input
-              onChange={(e) => dispatch(setName(e.target.value))}
-              // value={name}
-              name="name"
-              type="text"
-              className="input"
-              required
-            />
+            <input {...register("name")} type="text" className="input" />
+            <p className="text-xs text-red-600">{errors.name?.message}</p>
           </label>
           <label htmlFor="category" className="input-field">
             <span>Category</span>
@@ -291,17 +318,13 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           </label>
           <label htmlFor="description" className="input-field">
             <span>Description</span>
-            <textarea
-              onChange={(e) => dispatch(setDescription(e.target.value))}
-              // value={description}
-              name="description"
-              required
-              rows={4}
-              className="input"
-            />
+            <textarea {...register("description")} rows={4} className="input" />
+            <p className="text-xs text-red-600">
+              {errors.description?.message}
+            </p>
           </label>
           <button
-            onClick={() => updateGroup(groupInfo)}
+            type="submit"
             className="flex-center gap-2 bg-secondary-02 rounded-md max-w-max text-white text-sm px-4 py-2"
           >
             <span>Upload</span>
@@ -313,7 +336,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
               className="cursor-pointer"
             />
           </button>
-        </div>
+        </form>
       </div>
       <div className="">
         <div className="flex justify-end my-4">

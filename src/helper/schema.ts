@@ -2,51 +2,13 @@ import * as yup from "yup";
 
 // Manage Events Schema
 export const eventSchema1 = yup.object({
-  eventTitle: yup.string().required("This field is required"),
-  startDate: yup
-    .date()
-    .transform((value, originalValue) => {
-      // If the original value is an empty string or invalid date, return undefined
-      if (!originalValue || isNaN(new Date(originalValue).getTime())) {
-        return undefined;
-      }
-      return value;
-    })
-    .required("This field is required"),
-  endDate: yup
-    .date()
-    .transform((value, originalValue) => {
-      if (!originalValue || isNaN(new Date(originalValue).getTime())) {
-        return undefined;
-      }
-      return value;
-    })
-    .required("This field is required"),
-  location: yup.string().required("This field is required"),
-  description: yup.string().required("This field is required"),
+  eventTitle: yup.string().required("Event title is required"),
+  location: yup.string().required("Location is required"),
+  description: yup.string().required("Event Description is required"),
 });
 
 export const eventSchema2 = yup.object({
   eventTitle: yup.string(),
-  startDate: yup
-    .date()
-    .transform((value, originalValue) => {
-      // If the original value is an empty string or invalid date, return undefined
-      if (!originalValue || isNaN(new Date(originalValue).getTime())) {
-        return undefined;
-      }
-      return value;
-    })
-    .required("This field is required"),
-  endDate: yup
-    .date()
-    .transform((value, originalValue) => {
-      if (!originalValue || isNaN(new Date(originalValue).getTime())) {
-        return undefined;
-      }
-      return value;
-    })
-    .required("This field is required"),
   location: yup.string(),
   description: yup.string(),
 });
@@ -71,4 +33,19 @@ export const loginSchema = yup.object({
     })
     .required("Email is required"),
   password: yup.string().required("Password is required"),
+});
+
+// Leader Schema
+export const leaderSchema = yup.object({
+  name: yup.string().required("Name is required"),
+  title: yup.string().required("Title is required"),
+  qualification: yup.string().required("Qualification is required"),
+  position: yup.string().required("Position is required"),
+  fullStory: yup.string().required("Full Story is required"),
+  description: yup.string().required("Description is required"),
+});
+
+export const groupSchema = yup.object({
+  name: yup.string().required("Name is required"),
+  description: yup.string().required("Description is required"),
 });

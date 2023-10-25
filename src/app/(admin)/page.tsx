@@ -132,17 +132,13 @@ export default function Home() {
 
   const mediaData: mediaI[] = data?.message;
 
-  if (loading) {
-    return <Loader />;
-  }
-
   return (
     <section className="w-full">
       <div className="flex justify-end mt-2">
         <AddItemButton title="Add media" />
       </div>
 
-      {loader ? (
+      {loading || loader ? (
         <Loader />
       ) : (
         <section className="flex flex-col gap-6">
