@@ -57,3 +57,12 @@ export const mediaSchema = yup.object({
   mediaLink: yup.string().required("This field is required"),
   description: yup.string().required("This field is required"),
 });
+
+// Home Schema
+export const loginSchema = yup.object({
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  password: yup.string().required("Password is required"),
+});
