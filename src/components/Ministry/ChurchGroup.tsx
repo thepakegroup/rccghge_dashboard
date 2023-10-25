@@ -60,26 +60,23 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   }, [token]);
 
   // Fetch All Group
-  const getGroupByCategory = useCallback(
-    async (category: string) => {
-      try {
-        const res = await post(`groups`, { category, page: 1 });
-        setLoading(false);
+  const getGroupByCategory = useCallback(async (category: string) => {
+    try {
+      const res = await post(`groups`, { category, page: 1 });
+      setLoading(false);
 
-        const data = await res.data;
-        setGroups(data?.message?.data);
-      } catch (error) {
-        setLoading(false);
+      const data = await res.data;
+      setGroups(data?.message?.data);
+    } catch (error) {
+      setLoading(false);
 
-        updateToast({
-          type: "error",
-          title: "Error!",
-          info: `${(error as AxiosError)?.message}`,
-        });
-      }
-    },
-    [updateToast]
-  );
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
+      });
+    }
+  }, []);
 
   // Delete Group
   const removeGroup = async () => {
