@@ -14,11 +14,13 @@ import {
 } from "@/store/slice/content";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { post, remove } from "@/helper/apiFetch";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -26,6 +28,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
+  const [loader, setLoader] = useState(false);
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const {
@@ -38,32 +41,32 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   } = useAppSelector((state) => state.content);
 
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}writeups`,
+    url: `writeups`,
     method: "client",
   });
 
   const writeups: writeupI[] = data?.message;
 
-  // Token and Headers
-  const token = Cookies.get("token");
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-
   // Delete Write Ups
   const deleteContent = async () => {
-    const res = await axios.delete(`${baseUrl}writeup/${id}`, {
-      headers,
-    });
+    setLoader(true);
 
-    const data = await res?.data;
+    try {
+      const res = await remove(`writeup/${id}`);
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
+      });
+
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
       });
     }
   };
@@ -76,27 +79,20 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
       heading: header,
       ...(btnType == "edit" && editId !== undefined ? { id: editId } : {}),
     };
+    setLoader(true);
+    try {
+      const res = await post(
+        `${btnType == "edit" ? `update-writeup` : `create-writeup`}`,
+        contentData
+      );
 
-    const res = await axios.post(
-      `${
-        btnType == "edit"
-          ? `${baseUrl}update-writeup`
-          : `${baseUrl}create-writeup`
-      }`,
-      contentData,
-      {
-        headers,
-      }
-    );
-
-    const data = await res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Content ${btnType === "edit" ? "updated" : "added!"}`,
         info: title,
       });
+
+      setLoader(false);
 
       dispatch(
         setContent({
@@ -107,6 +103,14 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
           btnType: `${btnType === "edit" ? "add" : "edit"}`,
         })
       );
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -189,7 +193,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
         >
           {btnType === "add" ? "Create Post" : "Edit Post"}
         </button>
-        {loading ? (
+        {loading || loader ? (
           <Loader />
         ) : (
           <div className="flex flex-col gap-2">

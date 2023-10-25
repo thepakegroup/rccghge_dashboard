@@ -1,27 +1,27 @@
 import { useAppDispatch } from "@/store/hooks";
 import { setToast } from "@/store/slice/toast";
 
-interface toastI{
+interface toastI {
   title?: string;
   info?: string;
-  type?:'delete' | 'update' | 'add'
+  type?: "delete" | "update" | "add" | "error";
 }
 
 const useUpdateToast = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const updateToast = ({title,info,type}:toastI) => {
-  dispatch(
+  const updateToast = ({ title, info, type }: toastI) => {
+    dispatch(
       setToast({
         isToast: true,
-        title:title as string,
+        title: title as string,
         info,
-        type
+        type,
       })
-  );
-  }
-  
-  return updateToast
-}
+    );
+  };
 
-export default useUpdateToast
+  return updateToast;
+};
+
+export default useUpdateToast;

@@ -11,11 +11,12 @@ import useUpdateToast from "@/hooks/updateToast";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearItems, setFileName } from "@/store/slice/mediaItems";
 import { eventI } from "@/util/interface/events";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import { useEffect, useState } from "react";
 import UpdateModal from "@/components/ManageEvents/UpdateModal";
+import { post } from "@/helper/apiFetch";
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
@@ -23,18 +24,12 @@ const ManageEvents = () => {
   const updateToast = useUpdateToast();
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
-  // const [img, setImg] = useState<File | any>("");
   const [loader, setLoader] = useState(false);
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
 
-  // HandleImage
-  // const handleImageChange = (file: File) => {
-  //   setImg(file);
-  // };
-
   //Fetch All Data
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}events/{page}`,
+    url: `events/{page}`,
     method: "client",
   });
 
@@ -65,20 +60,24 @@ const ManageEvents = () => {
   // Delete Events
   const handleRemoveEvents = async () => {
     setLoader(true);
-    const res = await axios.post(`${baseUrl}delete-event`, postData, {
-      headers,
-    });
+    try {
+      const res = await post("delete-event", postData);
 
-    const data = await res?.data;
-
-    if (data.error === false) {
       fetchData();
+      dispatch(clearItems());
+
       updateToast({
         type: "delete",
       });
 
       setLoader(false);
-      dispatch(clearItems());
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error 404 Not Found",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -96,33 +95,30 @@ const ManageEvents = () => {
     form.append("end_date", mediaInfo.end_date);
     type === "modify" && form.append("id", `${id}`);
 
-    const token = Cookies.get("token");
+    try {
+      const res = await post(
+        `${type == "modify" ? `update-event` : `create-event`}`,
+        form,
+        "multipart/form-data"
+      );
 
-    const res = await axios.post(
-      `${
-        type == "modify" ? `${baseUrl}update-event` : `${baseUrl}create-event`
-      }`,
-      form,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
-        title: `Event ${type === "modify" ? "updated!" : "added!"}`,
+        title: `Media ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
       });
 
       setLoader(false);
       dispatch(clearItems());
       dispatch(setFileName(""));
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -136,7 +132,7 @@ const ManageEvents = () => {
           <Loader />
         ) : (
           <div className="card-wrapper">
-            {events.map((event) => {
+            {events?.map((event) => {
               return (
                 <Card
                   key={event.id}

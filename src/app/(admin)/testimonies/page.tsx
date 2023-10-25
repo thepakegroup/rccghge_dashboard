@@ -15,8 +15,9 @@ import Image from "next/image";
 import { useEffect, useState, Fragment, useMemo, useCallback } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import UpdateTestimonyModal from "@/components/Testimonies/UpdateTestimonyModal";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { post, remove } from "@/helper/apiFetch";
 
 export interface EditItem {
   id: number;
@@ -40,11 +41,11 @@ const Testimonials = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}testimonies/{sort}/{page}`,
+    url: `testimonies/{sort}/{page}`,
     method: "client",
   });
 
-  const testimonies: testimonyI[] = data?.message.data;
+  const testimonies: testimonyI[] = data?.message?.data;
 
   // Search Functionality
   const testimonyData = useMemo(() => {
@@ -86,21 +87,22 @@ const Testimonials = () => {
   const deleteTestimony = async () => {
     setLoader(true);
 
-    const token = Cookies.get("token");
-    const res = await axios.delete(`${baseUrl}testimonies/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await remove(`testimonies/${id}`);
 
-    const data = await res?.data;
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
+
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error 404 Not Found",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -122,33 +124,24 @@ const Testimonials = () => {
       id: editItemId,
     };
 
-    const token = Cookies.get("token");
-    const res = await axios.post(`${baseUrl}testimonies/update`, updateData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await post(`testimonies/update`, updateData);
 
-    const data = await res?.data;
-    if (data?.error === false) {
+      setLoader(false);
       fetchData();
+
       updateToast({
         title: `Testimony updated!`,
         info: title,
       });
+    } catch (error) {
+      setLoader(false);
 
-      setLoader(false);
-      return;
-    }
-    if (data?.error === true) {
       updateToast({
-        title: `Testimony not updated!`,
-        type: "delete",
-        info: data?.message,
+        title: `Error! Testimony not updated`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
       });
-      setLoader(false);
-      return;
     }
   };
 
@@ -156,26 +149,25 @@ const Testimonials = () => {
   const publishTestimony = async (published: boolean, id: number) => {
     setLoader(true);
 
-    const token = Cookies.get("token");
-    const res = await axios.post(
-      `${baseUrl}testimonies/publish`,
-      JSON.stringify({ id, published: !published }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const res = await post(`testimonies/publish`, {
+        id,
+        published: !published,
+      });
 
-    const data = await res?.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `${published ? "Unpublished" : "Published"}`,
       });
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error! Testimony not published`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -274,7 +266,7 @@ const Testimonials = () => {
           <Loader />
         ) : (
           <section className="mt-4 card-wrapper">
-            {testimonyData.sort(sortGroup)?.map((testimony) => {
+            {testimonyData?.sort(sortGroup)?.map((testimony) => {
               const { title, published, content, created_at } = testimony;
               return (
                 <Card

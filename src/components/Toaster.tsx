@@ -29,7 +29,9 @@ const Toaster = () => {
         <div className="fixed left-1/2 -translate-x-1/2 bottom-6 z-[80]">
           <div
             className={`flex-center gap-2 p-4 bg-gray-50 border ${
-              type === "delete" ? "border-[#DA2B2B]" : "border-[#073364]"
+              type === "delete" || type === "error"
+                ? "border-[#DA2B2B]"
+                : "border-[#073364]"
             } rounded-lg w-[18rem] md:w-[29rem]`}
           >
             <Image

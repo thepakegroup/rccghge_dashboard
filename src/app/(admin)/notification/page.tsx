@@ -3,11 +3,12 @@
 import React, { useMemo } from "react";
 import { useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
 import Loader from "@/components/Loader";
+import { post } from "@/helper/apiFetch";
 
 const NotificationPage = () => {
   const updateToast = useUpdateToast();
@@ -22,16 +23,6 @@ const NotificationPage = () => {
     content: "",
   });
 
-  // Header and token
-  const token = Cookies.get("token");
-
-  const headers = useMemo(() => {
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-  }, [token]);
-
   // Send Notification
   const handleSubmit = async (e: React.FormEvent) => {
     setLoader(true);
@@ -42,21 +33,14 @@ const NotificationPage = () => {
       type: noticeType,
     };
 
-    const res = await axios.post(
-      `${baseUrl}admin/send-notice`,
-      JSON.stringify(notice),
-      {
-        headers,
-      }
-    );
+    try {
+      const res = await post(`admin/send-notice`, notice);
 
-    const data = await res.data;
-
-    if (data.error === false) {
       updateToast({
         title: "Admin Notice Added!",
-        info: data.message,
+        info: noticeInfo.title,
       });
+
       setNoticeType("");
       setNoticeInfo((info) => {
         return {
@@ -65,7 +49,16 @@ const NotificationPage = () => {
           content: "",
         };
       });
+
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 

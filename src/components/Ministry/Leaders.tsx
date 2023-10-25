@@ -19,12 +19,12 @@ import {
 import ProfileModification from "./ProfileModification";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios, { AxiosError } from "axios";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName } from "@/store/slice/mediaItems";
 import { useEffect, useState } from "react";
+import { post, remove } from "@/helper/apiFetch";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -53,32 +53,30 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
   // Fetch All leaders
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}leaders`,
+    url: `leaders`,
     method: "client",
   });
   const leaders: leadersI[] = data?.message;
 
-  const token = Cookies.get("token");
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-
   const removeLeader = async () => {
     setLoader(true);
-    const res = await axios.delete(`${baseUrl}leader/${id}`, {
-      headers,
-    });
 
-    const data = await res?.data;
+    try {
+      const res = await remove(`leader/${id}`);
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -87,8 +85,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     setImg(file);
   };
 
-  // console.log(img);
-
+  // Create and Update
   const updateLeader = async (leaderInfo: any) => {
     setLoader(true);
     const form = new FormData();
@@ -108,25 +105,17 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     form.append("full_story_about", leaderInfo.full_story_about);
     action === "edit" && form.append("id", `${id}`);
 
-    const token = Cookies.get("token");
+    try {
+      const res = await post(
+        `${currAction ? `${baseUrl}update-leader` : `${baseUrl}create-leader`}`,
+        form,
+        "multipart/form-data"
+      );
 
-    const res = await axios.post(
-      `${currAction ? `${baseUrl}update-leader` : `${baseUrl}create-leader`}`,
-      form,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = res.data;
-
-    if (data.error === false) {
       fetchData();
       setCurrAction(false);
       setImg("");
+
       updateToast({
         title: `Church leader ${currAction ? "updated" : "added"}`,
         info: leaderInfo.name,
@@ -148,6 +137,14 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       dispatch(setFileName(""));
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
