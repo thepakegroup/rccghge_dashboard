@@ -63,6 +63,12 @@ export const loginSchema = yup.object({
   email: yup
     .string()
     .email("Enter a valid email")
+    .test("is-valid-email", "Email is not valid", function (value) {
+      if (!value) return true; // The field is not required, so an empty value is valid
+
+      const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      return regex.test(value);
+    })
     .required("Email is required"),
   password: yup.string().required("Password is required"),
 });
