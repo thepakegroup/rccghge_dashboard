@@ -17,8 +17,9 @@ import {
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
 import Cookies from "js-cookie";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { baseUrl } from "@/util/constants";
+import { post, remove } from "@/helper/apiFetch";
 
 const OurMission = ({ currentSection }: { currentSection: string }) => {
   const { section } = useAppSelector((state) => state.content);
@@ -30,10 +31,11 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
 
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
+  const [loader, setLoader] = useState(false);
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}oms/all`,
+    url: `oms/all`,
     method: "client",
   });
 
@@ -48,18 +50,25 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
 
   // Delete
   const deleteMission = async () => {
-    const res = await axios.delete(`${baseUrl}om/${id}`, {
-      headers,
-    });
+    setLoader(true);
 
-    const data = await res?.data;
+    try {
+      const res = await remove(`om/${id}`);
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
-      return;
+
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -72,18 +81,14 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       category,
       ...(btnType == "edit" && id !== undefined ? { id } : {}),
     };
+    setLoader(true);
 
-    const res = await axios.post(
-      `${btnType == "edit" ? `${baseUrl}update-om` : `${baseUrl}create-om`}`,
-      serviceData,
-      {
-        headers,
-      }
-    );
+    try {
+      const res = await post(
+        `${btnType == "edit" ? `update-om` : `create-om`}`,
+        serviceData
+      );
 
-    const data = await res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Our Mission/Belief ${
@@ -91,6 +96,8 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
         }`,
         info: title,
       });
+
+      setLoader(false);
 
       dispatch(
         setMission({
@@ -101,8 +108,14 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
           btnType: "add",
         })
       );
+    } catch (error) {
+      setLoader(false);
 
-      return;
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -238,7 +251,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
         </button>
       </div>
 
-      {loading ? (
+      {loading || loader ? (
         <Loader />
       ) : (
         <div className="flex flex-col gap-2 mt-3">

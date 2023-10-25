@@ -11,8 +11,9 @@ import { useAppSelector } from "@/store/hooks";
 import { baseUrl } from "@/util/constants";
 import { settingI } from "@/util/interface/settings";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { post, remove } from "@/helper/apiFetch";
 
 const Settings = () => {
   const type = useGetTypeOfModal();
@@ -23,7 +24,7 @@ const Settings = () => {
   const { id } = useAppSelector((state) => state.mediaItems);
 
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}settings`,
+    url: `settings`,
     method: "client",
   });
 
@@ -52,17 +53,9 @@ const Settings = () => {
       id,
     };
 
-    const res = await axios.post(
-      `${baseUrl}update-setting`,
-      JSON.stringify(settingData),
-      {
-        headers,
-      }
-    );
+    try {
+      const res = await post(`update-setting`, settingData);
 
-    const data = await res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Setting updated!`,
@@ -70,25 +63,37 @@ const Settings = () => {
       });
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
   // Delete Setting
   const deleteSetting = async () => {
     setLoader(true);
-    const res = await axios.delete(`${baseUrl}setting/${id}`, {
-      headers,
-    });
 
-    const data = await res?.data;
+    try {
+      const res = await remove(`setting/${id}`);
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -97,17 +102,10 @@ const Settings = () => {
     e.preventDefault();
 
     setLoader(true);
-    const res = await axios.post(
-      `${baseUrl}create-setting`,
-      JSON.stringify({ name, value }),
-      {
-        headers,
-      }
-    );
 
-    const data = await res.data;
+    try {
+      const res = await post(`create-setting`, { name, value });
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Setting added!`,
@@ -117,6 +115,14 @@ const Settings = () => {
       setValue("");
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 

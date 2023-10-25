@@ -13,8 +13,9 @@ import { adminI } from "@/util/interface/admin";
 import Image from "next/image";
 import { useEffect, useState, Fragment, useMemo } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { post, remove } from "@/helper/apiFetch";
 
 const Admin = () => {
   const type = useGetTypeOfModal();
@@ -41,7 +42,7 @@ const Admin = () => {
 
   // Load All Admins
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}admins`,
+    url: `admins`,
     method: "client",
   });
   const admins: adminI[] = data?.message;
@@ -68,17 +69,13 @@ const Admin = () => {
     setLoader(true);
     const adminLevel = level === "admin" ? "2" : "1";
 
-    const res = await axios.post(
-      `${baseUrl}admin/create`,
-      JSON.stringify({ email, password, level: adminLevel }),
-      {
-        headers,
-      }
-    );
+    try {
+      const res = await post(`admin/create`, {
+        email,
+        password,
+        level: adminLevel,
+      });
 
-    const data = await res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: "Admin added!",
@@ -88,25 +85,37 @@ const Admin = () => {
       setLevel("admin");
       setEmail("");
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
   // Delete Admin
   const deleteAdmin = async () => {
     setLoader(true);
-    const res = await axios.delete(`${baseUrl}admin/${id}`, {
-      headers,
-    });
 
-    const data = await res?.data;
+    try {
+      const res = await remove(`admin/${id}`);
 
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
       });
 
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -118,20 +127,27 @@ const Admin = () => {
       id,
     };
 
-    const res = await fetch(`/api/updateAdmin`, {
-      method: "POST",
-      body: JSON.stringify(adminData),
-    });
+    try {
+      const res = await post(`admin/update`, adminData);
 
-    const data = await res.json();
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: "Admin updated!",
         info: adminInfo.email,
       });
+
+      setPassword("");
+      setLevel("admin");
+      setEmail("");
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 

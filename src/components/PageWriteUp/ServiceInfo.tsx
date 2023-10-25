@@ -31,7 +31,7 @@ const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
 
   return (
     <div className="flex-center justify-between bg-[#F2F2F2] rounded-lg p-4">
-      <div className="font-semibold max-w-[70%] md:max-w-full">
+      <div className="font-semibold md:max-w-[70%] max-w-full">
         <h2 className="text-base">{name}</h2>
         <span className="text-sm text-ash-300">{serviceTime}</span>
       </div>

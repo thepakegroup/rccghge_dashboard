@@ -19,9 +19,10 @@ import {
 } from "@/store/slice/mediaItems";
 import { baseUrl, labels } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import UpdateModal from "@/components/Home/UpdateModal";
+import { post } from "@/helper/apiFetch";
 
 export interface EditItem {
   id: number;
@@ -45,16 +46,9 @@ export default function Home() {
   const [loader, setLoader] = useState(false);
 
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}load-all-media`,
+    url: `load-all-media`,
     method: "client",
   });
-
-  const token = Cookies.get("token");
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
 
   const postData = {
     ids: items,
@@ -73,19 +67,25 @@ export default function Home() {
   // Delete Media
   const handleRemoveMedia = async () => {
     setLoader(true);
-    const res = await axios.post(`${baseUrl}remove-media`, postData, {
-      headers,
-    });
 
-    const data = await res?.data;
+    try {
+      const res = await post("remove-media", postData);
 
-    if (data.error === false) {
       fetchData();
       dispatch(clearItems());
+
       updateToast({
         type: "delete",
       });
+
       setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      updateToast({
+        type: "error",
+        title: "Error 404 Not Found",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -102,28 +102,13 @@ export default function Home() {
     form.append("link", mediaInfo.mediaLink);
     type === "modify" && form.append("id", `${id}`);
 
-    const token = Cookies.get("token");
+    try {
+      const res = await post(
+        `${type == "modify" ? `update-media` : `upload-media`}`,
+        form,
+        "multipart/form-data"
+      );
 
-    // for (const [key, value] of form.entries()) {
-    //   console.log(key, value);
-    // }
-
-    const res = await axios.post(
-      `${
-        type == "modify" ? `${baseUrl}update-media` : `${baseUrl}upload-media`
-      }`,
-      form,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Media ${type === "modify" ? "updated!" : "added!"}`,
@@ -131,22 +116,17 @@ export default function Home() {
       });
 
       setLoader(false);
-
       dispatch(clearItems());
       dispatch(setFileName(""));
       dispatch(setMediaFile(""));
+    } catch (error) {
+      setLoader(false);
 
-      return;
-    }
-
-    if (data?.error === true) {
       updateToast({
         title: `Error`,
-        type: "delete",
-        info: data.message,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
       });
-      setLoader(false);
-      return;
     }
   };
 

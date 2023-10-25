@@ -15,11 +15,12 @@ import {
 import GroupProfileModal from "./GroupProfileModal";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
+import { post, remove } from "@/helper/apiFetch";
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const dispatch = useAppDispatch();
@@ -61,39 +62,45 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   // Fetch All Group
   const getGroupByCategory = useCallback(
     async (category: string) => {
-      const res = await axios.post(
-        `${baseUrl}groups`,
-        JSON.stringify({ category, page: 1 }),
-        {
-          headers,
-        }
-      );
-
-      const data = await res.data;
-      if (data.error === false) {
+      try {
+        const res = await post(`groups`, { category, page: 1 });
         setLoading(false);
+
+        const data = await res.data;
         setGroups(data?.message?.data);
+      } catch (error) {
+        setLoading(false);
+
+        updateToast({
+          type: "error",
+          title: "Error!",
+          info: `${(error as AxiosError)?.message}`,
+        });
       }
     },
-    [headers]
+    [updateToast]
   );
 
   // Delete Group
   const removeGroup = async () => {
     setLoading(true);
-    const res = await axios.delete(`${baseUrl}group/${id}`, {
-      headers,
-    });
 
-    const data = await res?.data;
-
-    if (data.error === false) {
+    try {
+      const res = await remove(`group/${id}`);
       getGroupByCategory(category);
       updateToast({
         type: "delete",
       });
 
       setLoading(false);
+    } catch (error) {
+      setLoading(false);
+
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -131,19 +138,14 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     form.append("description", groupInfo.description);
     currAction && form.append("id", `${id}`);
 
-    const res = await axios.post(
-      `${currAction ? `${baseUrl}update-group` : `${baseUrl}create-group`}`,
-      form,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const res = await post(
+        `${currAction ? `${baseUrl}update-group` : `${baseUrl}create-group`}`,
+        form,
+        "multipart/form-data"
+      );
 
-    const data = res.data;
-    if (data.error === false) {
+      setLoading(false);
       getGroupByCategory(category);
       setCurrAction(false);
       setImg("");
@@ -167,13 +169,13 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           groupImgName: "",
         })
       );
-      return;
-    }
+    } catch (error) {
+      setLoading(false);
 
-    if (data.error === true) {
       updateToast({
-        title: `${data.message}`,
-        info: data.message,
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
       });
     }
   };

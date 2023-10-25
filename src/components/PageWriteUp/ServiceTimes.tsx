@@ -15,9 +15,8 @@ import {
 } from "@/store/slice/service";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { baseUrl } from "@/util/constants";
+import axios, { AxiosError } from "axios";
+import { post, remove } from "@/helper/apiFetch";
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -26,6 +25,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
+  const [loader, setLoader] = useState(false);
   const {
     name,
     startTime,
@@ -36,32 +36,31 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   } = useAppSelector((state) => state.service);
 
   const { data, loading, fetchData } = useFetchData({
-    url: `${baseUrl}service-times`,
+    url: `service-times`,
     method: "client",
   });
 
   const services: serviceTime[] = data?.message;
 
-  // Token and Headers
-  const token = Cookies.get("token");
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-
   // Delete Service
   const deleteService = async () => {
-    const res = await axios.delete(`${baseUrl}service-time/${id}`, {
-      headers,
-    });
+    setLoader(true);
+    try {
+      const res = await remove(`service-time/${id}`);
 
-    const data = await res?.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         type: "delete",
+      });
+
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        type: "error",
+        title: "Error!",
+        info: `${(error as AxiosError)?.message}`,
       });
     }
   };
@@ -76,27 +75,21 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
       service_description: description,
       ...(btnType == "edit" && editId !== undefined ? { id: editId } : {}),
     };
+    setLoader(true);
 
-    const res = await axios.post(
-      `${
-        btnType == "edit"
-          ? `${baseUrl}update-service-times`
-          : `${baseUrl}create-service-time`
-      }`,
-      serviceData,
-      {
-        headers,
-      }
-    );
+    try {
+      const res = await post(
+        `${btnType == "edit" ? `update-service-times` : `create-service-time`}`,
+        serviceData
+      );
 
-    const data = await res.data;
-
-    if (data.error === false) {
       fetchData();
       updateToast({
         title: `Service time ${btnType === "edit" ? "updated" : "added!"}`,
         info: name,
       });
+
+      setLoader(false);
 
       dispatch(
         setService({
@@ -108,6 +101,14 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
           id: null,
         })
       );
+    } catch (error) {
+      setLoader(false);
+
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
     }
   };
 
@@ -160,6 +161,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
           <span>Description</span>
           <textarea
             onChange={(e) => dispatch(setDiscriptionService(e.target.value))}
+            value={description}
             rows={10}
             className="input"
           />
@@ -185,7 +187,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
             </svg>
           </span>
         </button>
-        {loading ? (
+        {loading || loader ? (
           <Loader />
         ) : (
           <div className="flex flex-col gap-2">
