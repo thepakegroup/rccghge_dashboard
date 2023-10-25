@@ -3,22 +3,20 @@
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ImageUpload from "../ImageUpload";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { setModalToggle } from "@/store/slice/Modal";
 import { eventSchema2 } from "@/helper/schema";
 import { eventI } from "@/util/interface/events";
-import { format } from "date-fns";
+import Datepicker from "react-tailwindcss-datepicker";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
   buttonText: string;
   editItemId: number | null;
   onResetEditId: () => void;
-  // handleImageChange: (file: File) => void;
   editItemData: eventI | null;
 }
 
@@ -26,7 +24,6 @@ const UpdateModal = ({
   buttonText,
   handleSubmitEvent,
   editItemId,
-  // handleImageChange = () => {},
   editItemData,
   onResetEditId,
 }: modalI) => {
@@ -55,31 +52,67 @@ const UpdateModal = ({
     setImg(file);
   };
 
+  // Start date
+  const [start, setStart] = useState({
+    startDate: null,
+    endDate: null,
+  });
+
+  // Start date
+  const [end, setEnd] = useState({
+    startDate: null,
+    endDate: null,
+  });
+
+  // Check in order to display prev date data
+  const refStart = useMemo(() => start, []);
+  const refEnd = useMemo(() => end, []);
+
+  const handleStartChange = (value: any) => {
+    setStart(value);
+  };
+
+  const handleEndChange = (value: any) => {
+    setEnd(value);
+  };
+
+  // convert to ISO
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
     const isoDateString = dateObject?.toISOString();
     return isoDateString;
   };
 
+  // onSubmit Form
   const onSubmit = (data: any) => {
+    let selectedStartDate =
+      start.startDate ||
+      new Date(editItemData?.start_date as string).toDateString();
+    let selectedEndDate =
+      end.endDate || new Date(editItemData?.end_date as string).toDateString();
+
     const mediaInfo = {
       banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,
-      start_date: toIsoStringDate(data.startDate),
-      end_date: data.endDate !== "" && toIsoStringDate(data.endDate),
+      start_date: toIsoStringDate(selectedStartDate),
+      end_date: data.endDate !== "" && toIsoStringDate(selectedEndDate),
     };
-
     handleSubmitEvent(mediaInfo);
     handleCloseModal();
   };
 
+  const [isStart, setIsStart] = useState(false);
+  const [isEnd, setIsEnd] = useState(false);
+
   useEffect(() => {
     dispatch(setMediaFile(null));
 
+    start === refStart ? setIsStart(true) : setIsStart(false);
+    end === refEnd ? setIsEnd(true) : setIsEnd(false);
     // dispatch(setFileName(''));
-  }, [dispatch, editItemData]);
+  }, [dispatch, editItemData, refStart, start, refEnd, end]);
 
   return (
     <>
@@ -125,32 +158,55 @@ const UpdateModal = ({
                       {errors.eventTitle?.message}
                     </p>
                   </label>
+
+                  {/* Start Date */}
                   <label htmlFor="start" className="input-field">
                     <span>Start Date</span>
-                    <input
-                      type="date"
-                      id="start"
-                      defaultValue={editItemData?.start_date}
-                      {...register("startDate")}
-                      className="input"
+
+                    <Datepicker
+                      value={
+                        isStart
+                          ? {
+                              startDate: new Date(
+                                editItemData?.start_date as string
+                              ),
+                              endDate: new Date(
+                                editItemData?.start_date as string
+                              ),
+                            }
+                          : start
+                      }
+                      onChange={handleStartChange}
+                      asSingle={true}
+                      useRange={false}
+                      popoverDirection="down"
+                      inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
                     />
-                    <p className="text-xs text-red-600">
-                      {errors.startDate?.message}
-                    </p>
                   </label>
 
+                  {/* End Date */}
                   <label htmlFor="end" className="input-field">
                     <span>End Date</span>
-                    <input
-                      type="date"
-                      id="end"
-                      defaultValue={editItemData?.end_date}
-                      {...register("endDate")}
-                      className="input"
+
+                    <Datepicker
+                      value={
+                        isEnd
+                          ? {
+                              startDate: new Date(
+                                editItemData?.end_date as string
+                              ),
+                              endDate: new Date(
+                                editItemData?.end_date as string
+                              ),
+                            }
+                          : end
+                      }
+                      onChange={handleEndChange}
+                      asSingle={true}
+                      useRange={false}
+                      popoverDirection="down"
+                      inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
                     />
-                    <p className="text-xs text-red-600">
-                      {errors.endDate?.message}
-                    </p>
                   </label>
 
                   <label htmlFor="location" className="input-field">

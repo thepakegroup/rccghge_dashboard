@@ -77,6 +77,7 @@ const UpdateModal = ({
       setDescription(editItemData.short_description);
       setMediaType(editItemData.type);
     }
+
     dispatch(setMediaFile(null));
   }, [editItemData, dispatch]);
 

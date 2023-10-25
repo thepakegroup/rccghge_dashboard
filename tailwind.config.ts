@@ -5,8 +5,10 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
   theme: {
+    darkMode: false,
     extend: {
       backgroundImage: {
         "side-bar-bg": "linear-gradient(180deg, #084386 0%, #072E5A 100%)",
@@ -33,6 +35,7 @@ const config: Config = {
       },
     },
   },
+
   plugins: [
     function ({ addUtilities }: { addUtilities: any }) {
       addUtilities(

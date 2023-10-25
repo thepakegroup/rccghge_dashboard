@@ -7,15 +7,7 @@ import ProfileCard from "./ProfileCard";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import DeleteModal from "../DeleteModal";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
-import {
-  setDescription,
-  setFullStory,
-  setLeaderInfo,
-  setName,
-  setPosition,
-  setQualification,
-  setTitle,
-} from "@/store/slice/leader";
+import { setLeaderInfo } from "@/store/slice/leader";
 import ProfileModification from "./ProfileModification";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
@@ -25,6 +17,9 @@ import ImageUpload from "../ImageUpload";
 import { setFileName } from "@/store/slice/mediaItems";
 import { useEffect, useState } from "react";
 import { post, remove } from "@/helper/apiFetch";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { leaderSchema } from "@/helper/schema";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -43,6 +38,16 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     leaderImg: file,
   } = useAppSelector((state) => state.leader);
 
+  const {
+    register,
+    handleSubmit,
+    formState,
+    reset,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm({
+    resolver: yupResolver(leaderSchema),
+  });
+
   const [currEditItemID, setCurrEditItemID] = useState<number | undefined>(
     undefined
   );
@@ -58,6 +63,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   });
   const leaders: leadersI[] = data?.message;
 
+  // Delete A leader
   const removeLeader = async () => {
     setLoader(true);
 
@@ -116,6 +122,16 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       setCurrAction(false);
       setImg("");
 
+      if (res.data?.error) {
+        updateToast({
+          title: `Church leader ${
+            currAction ? "update error" : "create error"
+          }`,
+          info: `${res.data?.message}`,
+        });
+        return;
+      }
+
       updateToast({
         title: `Church leader ${currAction ? "updated" : "added"}`,
         info: leaderInfo.name,
@@ -134,6 +150,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           leaderImgName: "",
         })
       );
+
       dispatch(setFileName(""));
 
       setLoader(false);
@@ -148,29 +165,32 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
     }
   };
 
-  const leaderInfo: leadersI = {
-    name,
-    title,
-    qualification,
-    position,
-    short_description: description,
-    full_story_about: fullStory,
+  const handleCreateLeader = (data: any) => {
+    if (img === "") {
+      updateToast({
+        title: "Image cannot be empty",
+        info: "Please select an image!",
+      });
+      return;
+    }
+
+    const leaderInfo: leadersI = {
+      name: data.name,
+      title: data.title,
+      qualification: data.qualification,
+      position: data.position,
+      short_description: data.description,
+      full_story_about: data.fullStory,
+    };
+
+    updateLeader(leaderInfo);
+
+    if (formState.isSubmitSuccessful) {
+      reset();
+    }
   };
 
   useEffect(() => {
-    dispatch(
-      setLeaderInfo({
-        name: "",
-        title: "",
-        qualification: "",
-        position: "",
-        description: "",
-        fullStory: "",
-        action: "add",
-        leaderImg: null,
-        leaderImgName: "",
-      })
-    );
     dispatch(setFileName(""));
   }, [dispatch]);
 
@@ -183,77 +203,52 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       <div className="bg-white rounded-lg py-6 px-7 md:max-h-[40rem] md:overflow-y-auto overflow-x-hidden">
         <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
         <ImageUpload handleImageChange={handleImageChange} section="leader" />
-        <div className="flex flex-col gap-[1.19rem]">
+        <form
+          className="flex flex-col gap-[1.19rem]"
+          onSubmit={handleSubmit(handleCreateLeader)}
+        >
           <label htmlFor="name" className="input-field">
             <span>Name</span>
-            <input
-              onChange={(e) => dispatch(setName(e.target.value))}
-              // value={name}
-              required
-              name="name"
-              type="text"
-              className="input"
-            />
+            <input {...register("name")} type="text" className="input" />
+            <p className="text-xs text-red-600">{errors.name?.message}</p>
           </label>
 
           <label htmlFor="title" className="input-field">
             <span>Title</span>
-            <input
-              onChange={(e) => dispatch(setTitle(e.target.value))}
-              // value={title}
-              name="title"
-              required
-              type="text"
-              className="input"
-            />
+            <input {...register("title")} type="text" className="input" />
+            <p className="text-xs text-red-600">{errors.title?.message}</p>
           </label>
           <label htmlFor="qualification" className="input-field">
             <span>Qualification</span>
             <input
-              onChange={(e) => dispatch(setQualification(e.target.value))}
-              // value={qualification}
-              name="qualification"
+              {...register("qualification")}
               type="text"
-              required
               className="input"
             />
+            <p className="text-xs text-red-600">
+              {errors.qualification?.message}
+            </p>
           </label>
           <label htmlFor="position" className="input-field">
             <span>Position</span>
-            <input
-              onChange={(e) => dispatch(setPosition(e.target.value))}
-              // value={position}
-              name="position"
-              type="text"
-              required
-              className="input"
-            />
+            <input {...register("position")} type="text" className="input" />
+            <p className="text-xs text-red-600">{errors.position?.message}</p>
           </label>
           <label htmlFor="description" className="input-field">
             <span>Short description</span>
-            <input
-              onChange={(e) => dispatch(setDescription(e.target.value))}
-              // value={description}
-              name="description"
-              type="text"
-              required
-              className="input"
-            />
+            <input {...register("description")} type="text" className="input" />
+            <p className="text-xs text-red-600">
+              {errors.description?.message}
+            </p>
           </label>
           <label htmlFor="fullStory" className="input-field">
             <span>Full story</span>
-            <textarea
-              onChange={(e) => dispatch(setFullStory(e.target.value))}
-              // value={fullStory}
-              name="fullStory"
-              rows={5}
-              required
-              className="input"
-            />
+            <textarea {...register("fullStory")} rows={5} className="input" />
+            <p className="text-xs text-red-600">{errors.fullStory?.message}</p>
           </label>
 
           <button
-            onClick={() => updateLeader(leaderInfo)}
+            type="submit"
             className="flex-center gap-2 bg-secondary-02 rounded-md max-w-max text-white text-sm px-4 py-2"
           >
             <span>Upload</span>
@@ -265,7 +260,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
               className="cursor-pointer"
             />
           </button>
-        </div>
+        </form>
       </div>
       {loading || loader ? (
         <Loader />

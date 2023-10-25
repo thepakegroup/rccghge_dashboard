@@ -4,7 +4,7 @@ import Image from "next/image";
 import ModalWrapper from "../ModalWrapper";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import Datepicker from "react-tailwindcss-datepicker";
 import useCloseModal from "@/hooks/closeModal";
 import { useEffect, useState } from "react";
 import ImageUpload from "../ImageUpload";
@@ -42,6 +42,29 @@ modalI) => {
     resolver: yupResolver(eventSchema1),
   });
 
+  // Start date
+  const [start, setStart] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+
+  // Start date
+  const [end, setEnd] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+
+  const handleStartChange = (value: any) => {
+    setStart(value);
+  };
+
+  const handleEndChange = (value: any) => {
+    setEnd(value);
+  };
+
+  // console.log("Start: ", new Date(start.startDate).toDateString());
+  // console.log("End: ", new Date(end.endDate).toDateString());
+
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
     const isoDateString = dateObject?.toISOString();
@@ -57,13 +80,16 @@ modalI) => {
       return;
     }
 
+    let selectedStartDate = new Date(start.startDate).toDateString();
+    let selectedEndDate = new Date(end.endDate).toDateString();
+
     const mediaInfo = {
       banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,
-      start_date: toIsoStringDate(data.startDate),
-      end_date: data.endDate !== "" && toIsoStringDate(data.endDate),
+      start_date: toIsoStringDate(selectedStartDate),
+      end_date: data.endDate !== "" && toIsoStringDate(selectedEndDate),
     };
 
     handleSubmitEvent(mediaInfo);
@@ -112,28 +138,33 @@ modalI) => {
                 {errors.eventTitle?.message}
               </p>
             </label>
+
+            {/* Start Date */}
             <label htmlFor="start" className="input-field">
               <span>Start Date</span>
-              <input
-                type="date"
-                id="start"
-                {...register("startDate")}
-                className="input"
+
+              <Datepicker
+                value={start}
+                onChange={handleStartChange}
+                asSingle={true}
+                useRange={false}
+                popoverDirection="down"
+                inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
               />
-              <p className="text-xs text-red-600">
-                {errors.startDate?.message}
-              </p>
             </label>
 
+            {/* End Date */}
             <label htmlFor="end" className="input-field">
               <span>End Date</span>
-              <input
-                type="date"
-                id="end"
-                {...register("endDate")}
-                className="input"
+
+              <Datepicker
+                value={end}
+                onChange={handleEndChange}
+                asSingle={true}
+                useRange={false}
+                popoverDirection="down"
+                inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
               />
-              <p className="text-xs text-red-600">{errors.endDate?.message}</p>
             </label>
 
             <label htmlFor="location" className="input-field">
