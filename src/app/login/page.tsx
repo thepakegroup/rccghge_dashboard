@@ -8,10 +8,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Cookies from "js-cookie";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/helper/schema";
 import { useForm } from "react-hook-form";
+import { post } from "@/helper/apiFetch";
 
 const Login = () => {
   const router = useRouter();
@@ -35,27 +36,34 @@ const Login = () => {
     };
 
     setLoading(true);
+    let dataRes;
 
-    const res = await axios.post(`${baseUrl}admin/login`, login);
-    const dataRes = await res.data;
+    try {
+      const res = await post(`admin/login`, login);
+      dataRes = await res.data;
 
-    if (dataRes.error === false) {
-      const token = dataRes.token.token;
+      if (dataRes.error === true) {
+        setLoading(false);
+        updateToast({
+          title: `Please provide valid credentials`,
+          type: "error",
+          info: `${dataRes?.message}`,
+        });
+        return;
+      }
+
+      const token = dataRes?.token?.token;
       Cookies.set("token", token, { expires: 2 });
 
       router.push("/");
-      return;
-    }
+    } catch (error) {
+      setLoading(false);
 
-    dataRes.error && setLoading(false);
-
-    if (dataRes.error === true) {
       updateToast({
-        title: dataRes.message,
-        info: "Please provide valid credentials",
+        title: `Error`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
       });
-
-      return;
     }
   };
 
