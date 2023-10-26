@@ -54,9 +54,12 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
     onEditClick();
   };
 
+  const [imageURL, setImageURL] = useState(`${baseUrl}load-media/${img}`);
+
   useEffect(() => {
     items.length === 0 ? setCheck(false) : null;
-  }, [items.length]);
+    setImageURL(`${baseUrl}load-media/${img}`);
+  }, [items.length, img]);
 
   return (
     <div
@@ -76,11 +79,7 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
           />
         </div>
       </div>
-      <img
-        src={`${baseUrl}load-media/${img}`}
-        alt=""
-        className=" w-full h-28 object-contain"
-      />
+      <img src={imageURL} alt="" className=" w-full h-28 object-contain" />
       {/* <Image
         src={`${baseUrl}load-media/${img}`}
         alt=""
