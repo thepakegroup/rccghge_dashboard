@@ -76,13 +76,18 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
           />
         </div>
       </div>
-      <Image
+      <img
+        src={`${baseUrl}load-media/${img}`}
+        alt=""
+        className=" w-full h-28 object-contain"
+      />
+      {/* <Image
         src={`${baseUrl}load-media/${img}`}
         alt=""
         height={100}
         width={200}
         className=" w-full h-28 object-contain"
-      />
+      /> */}
       <div className="flex justify-end">
         <div className="flex-center gap-[0.91rem]">
           <button onClick={handleEdit}>
