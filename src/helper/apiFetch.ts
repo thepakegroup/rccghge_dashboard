@@ -1,4 +1,4 @@
-// api.js
+"use client";
 
 import useUpdateToast from "@/hooks/updateToast";
 import axios from "axios";

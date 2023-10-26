@@ -39,7 +39,7 @@ const Login = () => {
     let dataRes;
 
     try {
-      const res = await post(`admin/login`, login);
+      const res = await axios.post(`${baseUrl}admin/login`, login);
       dataRes = await res.data;
 
       if (dataRes.error === true) {
