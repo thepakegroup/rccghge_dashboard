@@ -70,9 +70,7 @@ const UpdateModal = ({
     if (editItemData) {
       setName(editItemData.name);
       setMediaLink((info) => {
-        return editItemData?.link === "undefined"
-          ? "test link"
-          : editItemData?.link;
+        return editItemData?.link === "undefined" ? "" : editItemData?.link;
       });
       setDescription(editItemData.short_description);
       setMediaType(editItemData.type);
@@ -140,6 +138,9 @@ const UpdateModal = ({
                         onChange={(e) => setName(e.target.value)}
                         value={name}
                         type="text"
+                        disabled={
+                          editItemData?.type !== "SOCIAL_MEDIA" ? true : false
+                        }
                         className="input"
                       />
                     </label>

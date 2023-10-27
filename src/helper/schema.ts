@@ -15,9 +15,9 @@ export const eventSchema2 = yup.object({
 
 // Home Schema
 export const mediaSchema = yup.object({
-  name: yup.string().required("This field is required"),
-  mediaLink: yup.string().required("This field is required"),
-  description: yup.string().required("This field is required"),
+  name: yup.string().required("Media name is required"),
+  mediaLink: yup.string(),
+  description: yup.string(),
 });
 
 // Home Schema

@@ -18,10 +18,18 @@ interface cardI {
   img: string;
   id: number;
   home?: boolean;
+  type: string;
   onEditClick?: () => void;
 }
 
-const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
+const Card = ({
+  title,
+  img,
+  id,
+  home,
+  onEditClick = () => {},
+  type,
+}: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
 
@@ -97,9 +105,13 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
               <Image src="icons/link.svg" alt="" width={24} height={24} />
             </button>
           )}
-          <button onClick={handleDelete}>
-            <Image src="icons/delete.svg" alt="" width={24} height={24} />
-          </button>
+          {type === "SOCIAL_MEDIA" ? (
+            <button onClick={handleDelete}>
+              <Image src="icons/delete.svg" alt="" width={24} height={24} />
+            </button>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>
