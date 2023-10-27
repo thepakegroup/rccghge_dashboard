@@ -99,7 +99,7 @@ export default function Home() {
     form.append("name", mediaInfo.name);
     form.append("media_type", mediaInfo.media_type);
     form.append("short_description", mediaInfo.short_description);
-    form.append("link", mediaInfo.mediaLink);
+    form.append("link", mediaInfo.link);
     type === "modify" && form.append("id", `${id}`);
 
     try {
@@ -161,6 +161,7 @@ export default function Home() {
                           id={media.id}
                           key={media.id}
                           home={true}
+                          type={media.type}
                           onEditClick={() => setCurrEditItemID(media.id)}
                         />
                       )

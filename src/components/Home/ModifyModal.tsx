@@ -13,6 +13,7 @@ import useUpdateToast from "@/hooks/updateToast";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { mediaSchema } from "@/helper/schema";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
 
 interface modalI {
   handleMSubmit: (mediaInfo: any) => void;
@@ -38,6 +39,17 @@ const ModifyModal = ({ buttonText, handleMSubmit }: modalI) => {
   const handleImageChange = (file: File) => {
     setImg(file);
   };
+
+  // Conditional Validation
+  mediaSchema.fields.mediaLink =
+    mediaType === "SOCIAL_MEDIA"
+      ? yup.string().required("Media link is required")
+      : yup.string();
+
+  mediaSchema.fields.description =
+    mediaType === "SOCIAL_MEDIA"
+      ? yup.string().required("Media description is required")
+      : yup.string();
 
   const handleSubmitForm = (data: any) => {
     // console.log(data);
