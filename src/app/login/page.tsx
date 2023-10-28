@@ -53,7 +53,7 @@ const Login = () => {
       }
 
       const token = dataRes?.token?.token;
-      localStorage.setItem("email", dataRes?.email);
+      window.localStorage.setItem("email", dataRes?.email);
       Cookies.set("token", token, { expires: 2 });
 
       router.push("/");

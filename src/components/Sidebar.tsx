@@ -46,7 +46,7 @@ const Sidebar = () => {
 
     if (data.error === false) {
       Cookies.remove("token");
-      localStorage.removeItem("email");
+      window.localStorage.removeItem("email");
       router.replace("/login");
       setLoader(false);
       handleCloseModal();
