@@ -4,7 +4,6 @@ import Image from "next/image";
 import ModalWrapper from "../ModalWrapper";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Datepicker from "react-tailwindcss-datepicker";
 import useCloseModal from "@/hooks/closeModal";
 import { useEffect, useState } from "react";
 import ImageUpload from "../ImageUpload";
@@ -12,6 +11,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { eventSchema1 } from "@/helper/schema";
 import useUpdateToast from "@/hooks/updateToast";
+import { DateTimePicker } from "../DateTimePicker";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
@@ -43,16 +43,10 @@ modalI) => {
   });
 
   // Start date
-  const [start, setStart] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
+  const [start, setStart] = useState(new Date());
 
   // Start date
-  const [end, setEnd] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
+  const [end, setEnd] = useState(new Date());
 
   const handleStartChange = (value: any) => {
     setStart(value);
@@ -61,9 +55,6 @@ modalI) => {
   const handleEndChange = (value: any) => {
     setEnd(value);
   };
-
-  // console.log("Start: ", new Date(start.startDate).toDateString());
-  // console.log("End: ", new Date(end.endDate).toDateString());
 
   const toIsoStringDate = (dateString: string) => {
     const dateObject = new Date(dateString);
@@ -80,8 +71,8 @@ modalI) => {
       return;
     }
 
-    let selectedStartDate = new Date(start.startDate).toDateString();
-    let selectedEndDate = new Date(end.endDate).toDateString();
+    let selectedStartDate = new Date(start).toLocaleString();
+    let selectedEndDate = new Date(end).toLocaleString();
 
     const mediaInfo = {
       banner: img,
@@ -143,28 +134,14 @@ modalI) => {
             <label htmlFor="start" className="input-field">
               <span>Start Date</span>
 
-              <Datepicker
-                value={start}
-                onChange={handleStartChange}
-                asSingle={true}
-                useRange={false}
-                popoverDirection="down"
-                inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
-              />
+              <DateTimePicker date={start} onDateChange={handleStartChange} />
             </label>
 
             {/* End Date */}
             <label htmlFor="end" className="input-field">
               <span>End Date</span>
 
-              <Datepicker
-                value={end}
-                onChange={handleEndChange}
-                asSingle={true}
-                useRange={false}
-                popoverDirection="down"
-                inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
-              />
+              <DateTimePicker date={end} onDateChange={handleEndChange} />
             </label>
 
             <label htmlFor="location" className="input-field">

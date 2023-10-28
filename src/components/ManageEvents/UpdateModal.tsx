@@ -10,7 +10,7 @@ import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import { setModalToggle } from "@/store/slice/Modal";
 import { eventSchema2 } from "@/helper/schema";
 import { eventI } from "@/util/interface/events";
-import Datepicker from "react-tailwindcss-datepicker";
+import { DateTimePicker } from "../DateTimePicker";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
@@ -53,20 +53,10 @@ const UpdateModal = ({
   };
 
   // Start date
-  const [start, setStart] = useState({
-    startDate: null,
-    endDate: null,
-  });
+  const [start, setStart] = useState<Date | null>(null);
 
   // Start date
-  const [end, setEnd] = useState({
-    startDate: null,
-    endDate: null,
-  });
-
-  // Check in order to display prev date data
-  const refStart = useMemo(() => start, []);
-  const refEnd = useMemo(() => end, []);
+  const [end, setEnd] = useState<Date | null>(null);
 
   const handleStartChange = (value: any) => {
     setStart(value);
@@ -77,19 +67,16 @@ const UpdateModal = ({
   };
 
   // convert to ISO
-  const toIsoStringDate = (dateString: string) => {
-    const dateObject = new Date(dateString);
+  const toIsoStringDate = (dateString: string | null) => {
+    const dateObject = new Date(dateString as string);
     const isoDateString = dateObject?.toISOString();
     return isoDateString;
   };
 
   // onSubmit Form
   const onSubmit = (data: any) => {
-    let selectedStartDate =
-      start.startDate ||
-      new Date(editItemData?.start_date as string).toDateString();
-    let selectedEndDate =
-      end.endDate || new Date(editItemData?.end_date as string).toDateString();
+    let selectedStartDate = start && start.toLocaleString();
+    let selectedEndDate = end && end.toLocaleString();
 
     const mediaInfo = {
       banner: img,
@@ -99,20 +86,21 @@ const UpdateModal = ({
       start_date: toIsoStringDate(selectedStartDate),
       end_date: data.endDate !== "" && toIsoStringDate(selectedEndDate),
     };
+
     handleSubmitEvent(mediaInfo);
     handleCloseModal();
   };
 
-  const [isStart, setIsStart] = useState(false);
-  const [isEnd, setIsEnd] = useState(false);
-
   useEffect(() => {
     dispatch(setMediaFile(null));
 
-    start === refStart ? setIsStart(true) : setIsStart(false);
-    end === refEnd ? setIsEnd(true) : setIsEnd(false);
+    if (editItemData) {
+      setStart(new Date(editItemData.start_date));
+      setEnd(new Date(editItemData.end_date));
+    }
+
     // dispatch(setFileName(''));
-  }, [dispatch, editItemData, refStart, start, refEnd, end]);
+  }, [dispatch, editItemData]);
 
   return (
     <>
@@ -163,24 +151,9 @@ const UpdateModal = ({
                   <label htmlFor="start" className="input-field">
                     <span>Start Date</span>
 
-                    <Datepicker
-                      value={
-                        isStart
-                          ? {
-                              startDate: new Date(
-                                editItemData?.start_date as string
-                              ),
-                              endDate: new Date(
-                                editItemData?.start_date as string
-                              ),
-                            }
-                          : start
-                      }
-                      onChange={handleStartChange}
-                      asSingle={true}
-                      useRange={false}
-                      popoverDirection="down"
-                      inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
+                    <DateTimePicker
+                      date={start}
+                      onDateChange={handleStartChange}
                     />
                   </label>
 
@@ -188,25 +161,7 @@ const UpdateModal = ({
                   <label htmlFor="end" className="input-field">
                     <span>End Date</span>
 
-                    <Datepicker
-                      value={
-                        isEnd
-                          ? {
-                              startDate: new Date(
-                                editItemData?.end_date as string
-                              ),
-                              endDate: new Date(
-                                editItemData?.end_date as string
-                              ),
-                            }
-                          : end
-                      }
-                      onChange={handleEndChange}
-                      asSingle={true}
-                      useRange={false}
-                      popoverDirection="down"
-                      inputClassName="bg-transparent text-black outline-none focus:outline-none p-4  rounded-md border text-base placeholder:text-sm w-full"
-                    />
+                    <DateTimePicker date={end} onDateChange={handleEndChange} />
                   </label>
 
                   <label htmlFor="location" className="input-field">

@@ -8,11 +8,9 @@ import { useFetchData } from "@/hooks/fetchData";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import useUpdateToast from "@/hooks/updateToast";
 import { useAppSelector } from "@/store/hooks";
-import { baseUrl } from "@/util/constants";
 import { settingI } from "@/util/interface/settings";
 import { useEffect, useMemo, useState } from "react";
 import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
 import { post, remove } from "@/helper/apiFetch";
 
 const Settings = () => {
@@ -34,16 +32,6 @@ const Settings = () => {
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [sortSettings, setSortSettings] = useState<settingI[]>(settings);
   const [sorted, setSorted] = useState(false);
-
-  // Header and token
-  const token = Cookies.get("token");
-
-  const headers = useMemo(() => {
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-  }, [token]);
 
   // Update Setting
   const updateSettings = async (settingInfo: any) => {
