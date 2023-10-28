@@ -53,8 +53,9 @@ const Login = () => {
       }
 
       const token = dataRes?.token?.token;
-      window.localStorage.setItem("email", dataRes?.email);
+      const email = dataRes?.email;
       Cookies.set("token", token, { expires: 2 });
+      Cookies.set("email", email, { expires: 2 });
 
       router.push("/");
     } catch (error) {

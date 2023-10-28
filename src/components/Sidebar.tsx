@@ -46,7 +46,7 @@ const Sidebar = () => {
 
     if (data.error === false) {
       Cookies.remove("token");
-      window.localStorage.removeItem("email");
+      Cookies.remove("email");
       router.replace("/login");
       setLoader(false);
       handleCloseModal();
@@ -118,6 +118,8 @@ const Sidebar = () => {
     setIsOpen(false);
   };
 
+  // console.log(Cookies.get("email"));
+
   return (
     <>
       <aside
@@ -186,7 +188,7 @@ const Sidebar = () => {
               <div className="">
                 <p className="text-sm font-bold text-secondary-01">Logout</p>
                 <span className="text-xs font-medium">
-                  {window.localStorage.getItem("email")}
+                  {Cookies.get("email")}
                 </span>
               </div>
             </div>
