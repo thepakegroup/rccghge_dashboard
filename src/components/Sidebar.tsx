@@ -17,9 +17,11 @@ const Sidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
+  const user_email = Cookies.get("email");
 
   const [isOpen, setIsOpen] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [email, setEmail] = useState("");
 
   // Header and token
   const token = Cookies.get("token");
@@ -61,7 +63,9 @@ const Sidebar = () => {
         ? dispatch(setIsSidebarToggle(false))
         : dispatch(setIsSidebarToggle(true));
     });
-  }, [dispatch]);
+
+    setEmail(user_email as string);
+  }, [dispatch, user_email]);
 
   const navItems = [
     {
@@ -187,9 +191,7 @@ const Sidebar = () => {
               />
               <div className="">
                 <p className="text-sm font-bold text-secondary-01">Logout</p>
-                <span className="text-xs font-medium">
-                  {Cookies.get("email")}
-                </span>
+                <span className="text-xs font-medium">{email}</span>
               </div>
             </div>
           </div>
