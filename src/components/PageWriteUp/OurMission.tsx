@@ -184,9 +184,9 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
                         id="Vector"
                         d="M4.375 7.1875L10 12.8125L15.625 7.1875"
                         stroke="#686868"
-                        stroke-width="2.25"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="2.25"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </g>
                   </svg>

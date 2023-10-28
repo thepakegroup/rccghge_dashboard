@@ -104,7 +104,7 @@ const ManageEvents = () => {
 
       fetchData();
       updateToast({
-        title: `Media ${type === "modify" ? "updated!" : "added!"}`,
+        title: `Event ${type === "modify" ? "updated!" : "added!"}`,
         info: mediaInfo.name,
       });
 

@@ -17,7 +17,6 @@ const Sidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.sideBar.isSidebarOpen);
 
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState("");
 
   const [isOpen, setIsOpen] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -47,6 +46,7 @@ const Sidebar = () => {
 
     if (data.error === false) {
       Cookies.remove("token");
+      localStorage.removeItem("email");
       router.replace("/login");
       setLoader(false);
       handleCloseModal();
@@ -61,8 +61,6 @@ const Sidebar = () => {
         ? dispatch(setIsSidebarToggle(false))
         : dispatch(setIsSidebarToggle(true));
     });
-
-    setEmail(Cookies.get("email") as string);
   }, [dispatch]);
 
   const navItems = [
@@ -185,9 +183,11 @@ const Sidebar = () => {
                 height={24}
                 className="cursor-pointer"
               />
-              <div className="capitalize">
+              <div className="">
                 <p className="text-sm font-bold text-secondary-01">Logout</p>
-                <span className="text-xs font-medium">{email}</span>
+                <span className="text-xs font-medium">
+                  {localStorage.getItem("email")}
+                </span>
               </div>
             </div>
           </div>
