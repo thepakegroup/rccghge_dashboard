@@ -186,7 +186,7 @@ const Sidebar = () => {
               <div className="">
                 <p className="text-sm font-bold text-secondary-01">Logout</p>
                 <span className="text-xs font-medium">
-                  {localStorage.getItem("email")}
+                  {window.localStorage.getItem("email")}
                 </span>
               </div>
             </div>
