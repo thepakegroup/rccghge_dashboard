@@ -6,8 +6,8 @@ import { AppProvider } from "@/components/Provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RCCG Dashboard App",
-  description: "RCCG Dashboard Application",
+  title: "RCCG HGE Dashboard",
+  description: "RCCG HGE Dashboard",
 };
 
 export default function RootLayout({
