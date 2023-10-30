@@ -22,11 +22,22 @@ const NotificationPage = () => {
     title: "",
     content: "",
   });
+  const [errorTxt, setErrorTxt] = useState(false);
 
   // Send Notification
   const handleSubmit = async (e: React.FormEvent) => {
+    if (
+      noticeType === "" ||
+      noticeInfo.content === "" ||
+      noticeInfo.title === ""
+    ) {
+      setErrorTxt(true);
+      return;
+    }
+
     setLoader(true);
     e.preventDefault();
+
     const notice = {
       messageTitle: noticeInfo.title,
       messageBody: noticeInfo.content,
@@ -41,6 +52,7 @@ const NotificationPage = () => {
         info: noticeInfo.title,
       });
 
+      setErrorTxt(false);
       setNoticeType("");
       setNoticeInfo((info) => {
         return {
@@ -146,6 +158,11 @@ const NotificationPage = () => {
                     </Transition>
                   </div>
                 </Listbox>
+                {errorTxt && noticeType === "" ? (
+                  <p className="text-xs text-red-600">Select notice type </p>
+                ) : (
+                  ""
+                )}
               </label>
               <label htmlFor="title" className="input-field">
                 <span>Notice title</span>
@@ -162,6 +179,14 @@ const NotificationPage = () => {
                     });
                   }}
                 />
+                {errorTxt && noticeInfo.title === "" ? (
+                  <p className="text-xs text-red-600">
+                    {" "}
+                    Notice title is required
+                  </p>
+                ) : (
+                  ""
+                )}
               </label>
               <label htmlFor="description" className="input-field">
                 <span>Notice content</span>
@@ -177,6 +202,14 @@ const NotificationPage = () => {
                   rows={10}
                   className="input"
                 />
+                {errorTxt && noticeInfo.content === "" ? (
+                  <p className="text-xs text-red-600">
+                    {" "}
+                    Notice content is required{" "}
+                  </p>
+                ) : (
+                  ""
+                )}
               </label>
               <button
                 className="w-full bg-[#1063C6] text-white rounded-md px-6 py-4"

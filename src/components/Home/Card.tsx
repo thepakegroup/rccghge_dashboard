@@ -78,23 +78,22 @@ const Card = ({
       <div>
         <div className="flex-center justify-between">
           <span>{title}</span>
-          <input
-            onChange={handleCheck}
-            type="checkbox"
-            checked={items.length === 0 ? false : check}
-            name=""
-            className=" h-5 w-5 cursor-pointer"
-          />
+          {type === "SOCIAL_MEDIA" ? (
+            <input
+              onChange={handleCheck}
+              type="checkbox"
+              checked={items.length === 0 ? false : check}
+              name=""
+              className=" h-5 w-5 cursor-pointer"
+            />
+          ) : (
+            ""
+          )}
         </div>
       </div>
+
       <img src={imageURL} alt="" className=" w-full h-28 object-contain" />
-      {/* <Image
-        src={`${baseUrl}load-media/${img}`}
-        alt=""
-        height={100}
-        width={200}
-        className=" w-full h-28 object-contain"
-      /> */}
+
       <div className="flex justify-end">
         <div className="flex-center gap-[0.91rem]">
           <button onClick={handleEdit}>
