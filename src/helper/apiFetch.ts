@@ -15,7 +15,7 @@ const post_headers = {
 };
 
 const api = axios.create({
-  baseURL: "https://api.kouakoudomagni.com/",
+  baseURL: "https://https://www.staging.api.kouakoudomagni.com/",
 });
 
 // Request interceptors

@@ -28,7 +28,7 @@
   }
 
   select::-ms-expand {
-    display: none;
+    display: none !important;
   }
 }
 

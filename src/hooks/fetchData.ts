@@ -18,7 +18,7 @@ export const useFetchData = ({ url, method }: fetchI) => {
     const token = Cookies.get("token");
 
     const api = axios.create({
-      baseURL: "https://api.kouakoudomagni.com/",
+      baseURL: "https://https://www.staging.api.kouakoudomagni.com/",
     });
 
     api.interceptors.response.use(
