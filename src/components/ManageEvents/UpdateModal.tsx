@@ -11,6 +11,8 @@ import { setModalToggle } from "@/store/slice/Modal";
 import { eventSchema2 } from "@/helper/schema";
 import { eventI } from "@/util/interface/events";
 import { DateTimePicker } from "../DateTimePicker";
+import { isBefore } from "date-fns";
+import useUpdateToast from "@/hooks/updateToast";
 
 interface modalI {
   handleSubmitEvent: (mediaInfo: any) => void;
@@ -36,6 +38,7 @@ const UpdateModal = ({
   });
 
   const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
   const isModalOpen = useAppSelector((state) => state.modal.isModalOpen);
 
   const handleCloseModal = () => {
@@ -67,7 +70,7 @@ const UpdateModal = ({
   };
 
   // convert to ISO
-  const toIsoStringDate = (dateString: string | null) => {
+  const toIsoStringDate = (dateString: string | Date | null) => {
     const dateObject = new Date(dateString as string);
     const isoDateString = dateObject?.toISOString();
     return isoDateString;
@@ -75,16 +78,22 @@ const UpdateModal = ({
 
   // onSubmit Form
   const onSubmit = (data: any) => {
-    let selectedStartDate = start && start.toLocaleString();
-    let selectedEndDate = end && end.toLocaleString();
+    if (isBefore(end as Date, start as Date)) {
+      updateToast({
+        title: `Date Error`,
+        type: "error",
+        info: `Your end date cannot be before the start date!`,
+      });
+      return;
+    }
 
     const mediaInfo = {
       banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,
-      start_date: toIsoStringDate(selectedStartDate),
-      end_date: data.endDate !== "" && toIsoStringDate(selectedEndDate),
+      start_date: toIsoStringDate(start && start),
+      end_date: data.endDate !== "" && toIsoStringDate(end && end),
     };
 
     handleSubmitEvent(mediaInfo);
@@ -154,6 +163,7 @@ const UpdateModal = ({
                     <DateTimePicker
                       date={start}
                       onDateChange={handleStartChange}
+                      minDate={new Date()}
                     />
                   </label>
 
@@ -161,7 +171,11 @@ const UpdateModal = ({
                   <label htmlFor="end" className="input-field">
                     <span>End Date</span>
 
-                    <DateTimePicker date={end} onDateChange={handleEndChange} />
+                    <DateTimePicker
+                      date={end}
+                      onDateChange={handleEndChange}
+                      minDate={start ? start : new Date()}
+                    />
                   </label>
 
                   <label htmlFor="location" className="input-field">

@@ -25,12 +25,12 @@ CustomInput.displayName = "CustomInput";
 const DateTimePicker = ({
   date,
   onDateChange,
+  minDate,
 }: {
   date: Date | null;
   onDateChange: any;
+  minDate: Date;
 }) => {
-  const [selectedDate, setSelectedDate] = useState(date);
-
   const datePickerRef = useRef<any>(null);
 
   const handleOpenIconClick = () => {
@@ -39,36 +39,26 @@ const DateTimePicker = ({
     }
   };
 
-  const handleStartDateChange = (date: Date) => {
-    setSelectedDate(date);
-    if (onDateChange) {
-      onDateChange(date);
-    }
-  };
-
-  useEffect(() => {
-    setSelectedDate(date);
-  }, [date]);
+  const handleStartDateChange = (date: Date) => onDateChange(date);
 
   return (
     <div className="flex gap-3 items-center w-full">
       <div className="input flex gap-3 justify-between">
         <DatePicker
-          selected={selectedDate}
+          selected={date}
           onChange={handleStartDateChange}
-          selectsStart
-          startDate={selectedDate}
           showTimeSelect
           showPopperArrow={false}
           customInput={
             <CustomInput
-              value={selectedDate}
+              value={date}
               onClick={() => {}}
               placeholder="Select Date"
             />
           }
           timeFormat="HH:mm"
-          timeIntervals={15}
+          minDate={minDate}
+          timeIntervals={5}
           timeCaption="Time"
           dateFormat="MMMM d, yyyy h:mm aa"
           placeholderText="Select Start Date"
