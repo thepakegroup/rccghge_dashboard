@@ -56,9 +56,10 @@ modalI) => {
     setEnd(value);
   };
 
-  const toIsoStringDate = (dateString: string) => {
+  const toIsoStringDate = (dateString: string | Date) => {
     const dateObject = new Date(dateString);
     const isoDateString = dateObject?.toISOString();
+
     return isoDateString;
   };
 
@@ -71,16 +72,13 @@ modalI) => {
       return;
     }
 
-    let selectedStartDate = new Date(start).toLocaleString();
-    let selectedEndDate = new Date(end).toLocaleString();
-
     const mediaInfo = {
       banner: img,
       title: data.eventTitle,
       location: data.location,
       short_description: data.description,
-      start_date: toIsoStringDate(selectedStartDate),
-      end_date: data.endDate !== "" && toIsoStringDate(selectedEndDate),
+      start_date: toIsoStringDate(start),
+      end_date: data.endDate !== "" && toIsoStringDate(end),
     };
 
     handleSubmitEvent(mediaInfo);
@@ -134,14 +132,22 @@ modalI) => {
             <label htmlFor="start" className="input-field">
               <span>Start Date</span>
 
-              <DateTimePicker date={start} onDateChange={handleStartChange} />
+              <DateTimePicker
+                date={start}
+                onDateChange={handleStartChange}
+                minDate={new Date()}
+              />
             </label>
 
             {/* End Date */}
             <label htmlFor="end" className="input-field">
               <span>End Date</span>
 
-              <DateTimePicker date={end} onDateChange={handleEndChange} />
+              <DateTimePicker
+                date={end}
+                onDateChange={handleEndChange}
+                minDate={start ? start : new Date()}
+              />
             </label>
 
             <label htmlFor="location" className="input-field">

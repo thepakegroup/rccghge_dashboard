@@ -51,9 +51,6 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
     dispatch(setFileName(img));
     handleButton("modify");
 
-    console.log(`${baseUrl}event-image/${img}`);
-    console.log(baseUrl);
-
     onEditClick();
   };
 
