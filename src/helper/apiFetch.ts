@@ -15,6 +15,7 @@ const post_headers = {
 };
 
 const api = axios.create({
+  // baseURL: "https://www.staging.api.kouakoudomagni.com/",
   baseURL: "https://api.kouakoudomagni.com/",
 });
 
