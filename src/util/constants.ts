@@ -1,3 +1,4 @@
+// export const baseUrl = "https://www.staging.api.kouakoudomagni.com/";
 export const baseUrl = "https://api.kouakoudomagni.com/";
 export const adminBaseUrl = `${baseUrl}admin/`;
 

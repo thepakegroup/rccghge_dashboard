@@ -195,6 +195,11 @@ const Settings = () => {
           })}
         </div>
       )}
+
+      {sortSettings && !sortSettings.length ? (
+        <p className="w-full text-center pt-10">No Settings Found!</p>
+      ) : null}
+
       {type == "modify" && (
         <EditSettings
           onResetEditId={() => {

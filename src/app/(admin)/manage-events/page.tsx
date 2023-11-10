@@ -145,6 +145,11 @@ const ManageEvents = () => {
           </div>
         )}
       </section>
+
+      {events && !events.length ? (
+        <p className="w-full text-center pt-10">No Events Found!</p>
+      ) : null}
+
       {currEditItemID && (
         <UpdateModal
           editItemId={currEditItemID}
