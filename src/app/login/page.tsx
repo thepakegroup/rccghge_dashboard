@@ -78,12 +78,20 @@ const Login = () => {
           <div className="flex justify-center mb-[1.35875rem]">
             <div className="max-w-max bg-white p-[0.465rem] rounded-md">
               <Image
-                src="/images/logo1.png"
+                src="/images/logo_big.png"
                 priority
                 alt=""
-                width={119.58}
-                height={62.57}
-                className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
+                width={254}
+                height={54}
+                className="hidden md:block"
+              />
+              <Image
+                src="/images/logo_small.png"
+                priority
+                alt=""
+                width={54}
+                height={54}
+                className=" md:hidden"
               />
             </div>
           </div>
@@ -96,50 +104,46 @@ const Login = () => {
               <label htmlFor="email" className="input-field relative">
                 <span>Email Address</span>
                 <div className="relative">
-                  <input
-                    type="email"
-                    {...register("email")}
-                    className="input"
-                    placeholder="Enter your admin email"
-                  />
-                  <Image
-                    src="icons/mail.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                    className="absolute top-1/2 -translate-y-1/2 right-3"
-                  />
+                  <div className="input flex justify-between items-center gap-1">
+                    <input
+                      type="email"
+                      {...register("email")}
+                      className="w-full outline-none border-none"
+                      placeholder="Enter your admin email"
+                    />
+                    <Image src="icons/mail.svg" alt="" width={20} height={20} />
+                  </div>
                 </div>
                 <p className="text-xs text-red-600">{errors.email?.message}</p>
               </label>
               <label htmlFor="password" className="input-field flex-1 relative">
                 <span>Password</span>
                 <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
-                    className="input"
-                    // required
-                  />
-                  {showPassword ? (
-                    <Image
-                      src="icons/eyeoff.svg"
-                      alt=""
-                      width={20}
-                      height={20}
-                      className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
-                      onClick={() => setShowPassword(!showPassword)}
+                  <div className="input flex justify-between items-center gap-1">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      {...register("password")}
+                      className="w-full outline-none border-none"
+                      // required
                     />
-                  ) : (
-                    <Image
-                      src="icons/eye.svg"
-                      alt=""
-                      width={20}
-                      height={20}
-                      className="absolute top-1/2 -translate-y-1/2 right-3 cursor-pointer"
-                      onClick={() => setShowPassword(!showPassword)}
-                    />
-                  )}
+                    {showPassword ? (
+                      <Image
+                        src="icons/eyeoff.svg"
+                        alt=""
+                        width={20}
+                        height={20}
+                        onClick={() => setShowPassword(!showPassword)}
+                      />
+                    ) : (
+                      <Image
+                        src="icons/eye.svg"
+                        alt=""
+                        width={20}
+                        height={20}
+                        onClick={() => setShowPassword(!showPassword)}
+                      />
+                    )}
+                  </div>
                 </div>
                 <p className="text-xs text-red-600">
                   {errors.password?.message}
