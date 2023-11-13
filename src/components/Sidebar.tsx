@@ -56,7 +56,9 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    // dispatch(setIsSidebarToggle(true));
+    if (window.innerWidth > 1024) {
+      dispatch(setIsSidebarToggle(true));
+    }
 
     window.addEventListener("resize", () => {
       window && window.innerWidth < 1024
