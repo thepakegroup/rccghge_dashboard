@@ -78,20 +78,12 @@ const Login = () => {
           <div className="flex justify-center mb-[1.35875rem]">
             <div className="max-w-max bg-white p-[0.465rem] rounded-md">
               <Image
-                src="/images/logo_big.png"
+                src="/images/logo1.png"
                 priority
                 alt=""
-                width={254}
-                height={54}
-                className="hidden md:block"
-              />
-              <Image
-                src="/images/logo_small.png"
-                priority
-                alt=""
-                width={54}
-                height={54}
-                className=" md:hidden"
+                width={119.58}
+                height={62.57}
+                className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
               />
             </div>
           </div>
