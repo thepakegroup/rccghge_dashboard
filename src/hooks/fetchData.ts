@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { baseUrl } from "@/util/constants";
 
 interface fetchI {
   url: string;
@@ -18,8 +19,7 @@ export const useFetchData = ({ url, method }: fetchI) => {
     const token = Cookies.get("token");
 
     const api = axios.create({
-      // baseURL: "https://www.staging.api.kouakoudomagni.com/",
-      baseURL: "https://api.kouakoudomagni.com/",
+      baseURL: baseUrl,
     });
 
     api.interceptors.response.use(
