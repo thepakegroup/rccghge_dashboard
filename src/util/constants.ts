@@ -1,5 +1,4 @@
-// export const baseUrl = "https://www.staging.api.kouakoudomagni.com/";
-export const baseUrl = "https://api.kouakoudomagni.com/";
+export const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export const adminBaseUrl = `${baseUrl}admin/`;
 
 export const labels = [

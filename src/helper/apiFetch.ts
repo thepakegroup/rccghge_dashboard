@@ -1,6 +1,7 @@
 "use client";
 
 import useUpdateToast from "@/hooks/updateToast";
+import { baseUrl } from "@/util/constants";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -15,8 +16,7 @@ const post_headers = {
 };
 
 const api = axios.create({
-  // baseURL: "https://www.staging.api.kouakoudomagni.com/",
-  baseURL: "https://api.kouakoudomagni.com/",
+  baseURL: baseUrl,
 });
 
 // Request interceptors
