@@ -8,7 +8,6 @@ import { useFetchData } from "@/hooks/fetchData";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import useUpdateToast from "@/hooks/updateToast";
 import { useAppSelector } from "@/store/hooks";
-import { baseUrl } from "@/util/constants";
 import { adminI } from "@/util/interface/admin";
 import Image from "next/image";
 import { useEffect, useState, Fragment, useMemo } from "react";

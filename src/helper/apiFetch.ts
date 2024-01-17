@@ -10,6 +10,7 @@ const headers = {
   "content-Type": "application/json",
   Authorization: `Bearer ${token}`,
 };
+
 const post_headers = {
   "content-Type": "multipart/form-data",
   Authorization: `Bearer ${token}`,
