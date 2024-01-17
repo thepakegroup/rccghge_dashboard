@@ -4,8 +4,6 @@ import React, { useMemo } from "react";
 import { useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
-import { baseUrl } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
 import Loader from "@/components/Loader";
 import { post } from "@/helper/apiFetch";

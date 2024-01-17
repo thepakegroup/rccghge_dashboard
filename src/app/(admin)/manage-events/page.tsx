@@ -13,10 +13,10 @@ import { clearItems, setFileName } from "@/store/slice/mediaItems";
 import { eventI } from "@/util/interface/events";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { baseUrl } from "@/util/constants";
 import { useEffect, useState } from "react";
 import UpdateModal from "@/components/ManageEvents/UpdateModal";
 import { post } from "@/helper/apiFetch";
+import PaginationButtons from "@/components/PaginationButtons";
 
 const ManageEvents = () => {
   const type = useGetTypeOfModal();
@@ -26,10 +26,11 @@ const ManageEvents = () => {
   const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
   const [loader, setLoader] = useState(false);
   const { items, file, id } = useAppSelector((state) => state.mediaItems);
+  const [currentPage, setCurrentPage] = useState(1);
 
   //Fetch All Data
-  const { data, loading, fetchData } = useFetchData({
-    url: `events/{page}`,
+  const { data, loading, fetchData, metadata } = useFetchData({
+    url: `events/${currentPage}`,
     method: "client",
   });
 
@@ -122,8 +123,15 @@ const ManageEvents = () => {
     }
   };
 
+  // Pagination
+  const totalPages = metadata?.last_page;
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
   return (
-    <section>
+    <section className="relative min-h-[88vh]">
       <div className="flex justify-end mt-2">
         <AddItemButton title="Add event" />
       </div>
@@ -149,6 +157,17 @@ const ManageEvents = () => {
       {events && !events.length ? (
         <p className="w-full text-center pt-10">No Events Found!</p>
       ) : null}
+
+      {/* Pagination */}
+      {events?.length > 0 && (
+        <div className="absolute bottom-0 right-[45%]">
+          <PaginationButtons
+            totalPages={totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      )}
 
       {currEditItemID && (
         <UpdateModal

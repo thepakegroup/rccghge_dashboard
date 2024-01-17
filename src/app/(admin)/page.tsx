@@ -17,7 +17,7 @@ import {
   setFileName,
   setMediaFile,
 } from "@/store/slice/mediaItems";
-import { baseUrl, labels } from "@/util/constants";
+import { labels } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
