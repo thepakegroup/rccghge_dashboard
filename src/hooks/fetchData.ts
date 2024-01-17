@@ -12,6 +12,7 @@ interface fetchI {
 
 export const useFetchData = ({ url, method }: fetchI) => {
   const [data, setData] = useState<any>();
+  const [metadata, setMetadata] = useState<any>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
 
@@ -62,6 +63,7 @@ export const useFetchData = ({ url, method }: fetchI) => {
 
       const data = await res?.data;
       setData(data);
+      setMetadata(data?.message?.meta);
 
       setLoading(false);
     } catch (error) {
@@ -76,5 +78,5 @@ export const useFetchData = ({ url, method }: fetchI) => {
     fetchData();
   }, []);
 
-  return { data, loading, error, fetchData };
+  return { data, loading, error, fetchData, metadata };
 };

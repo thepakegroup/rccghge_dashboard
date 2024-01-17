@@ -9,7 +9,6 @@ import { useFetchData } from "@/hooks/fetchData";
 import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import useUpdateToast from "@/hooks/updateToast";
 import { useAppSelector } from "@/store/hooks";
-import { baseUrl } from "@/util/constants";
 import { testimonyI } from "@/util/interface/testimony";
 import Image from "next/image";
 import { useEffect, useState, Fragment, useMemo, useCallback } from "react";
@@ -18,6 +17,7 @@ import UpdateTestimonyModal from "@/components/Testimonies/UpdateTestimonyModal"
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { post, remove } from "@/helper/apiFetch";
+import PaginationButtons from "@/components/PaginationButtons";
 
 export interface EditItem {
   id: number;
@@ -34,14 +34,15 @@ const Testimonials = () => {
   const type = useGetTypeOfModal();
   const updateToast = useUpdateToast();
   const { id } = useAppSelector((state) => state.testimony);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<testimonyI | null>(null);
   const [loader, setLoader] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  const { data, loading, fetchData } = useFetchData({
-    url: `testimonies/{sort}/{page}`,
+  const { data, loading, fetchData, metadata } = useFetchData({
+    url: `testimonies/${currentPage}`,
     method: "client",
   });
 
@@ -50,8 +51,8 @@ const Testimonials = () => {
   // Search Functionality
   const testimonyData = useMemo(() => {
     if (searchValue) {
-      return testimonies.filter((item) => {
-        return item.title.toLowerCase().includes(searchValue.toLowerCase());
+      return testimonies?.filter((item) => {
+        return item?.title.toLowerCase().includes(searchValue.toLowerCase());
       });
     }
 
@@ -171,8 +172,15 @@ const Testimonials = () => {
     }
   };
 
+  // Pagination
+  const totalPages = metadata?.last_page;
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
   return (
-    <section>
+    <section className="relative min-h-[88vh]">
       {/* <div className="flex justify-end mt-2">
         <AddItemButton title="Add testimony" />
       </div> */}
@@ -270,13 +278,13 @@ const Testimonials = () => {
               const { title, published, content, created_at } = testimony;
               return (
                 <Card
-                  key={testimony.id}
+                  key={testimony?.id}
                   title={title}
                   published={published}
                   content={content}
                   createdAt={created_at}
                   id={testimony.id}
-                  onEditClick={() => setCurrEditItemID(testimony.id)}
+                  onEditClick={() => setCurrEditItemID(testimony?.id)}
                   publishTestimony={publishTestimony}
                 />
               );
@@ -285,9 +293,20 @@ const Testimonials = () => {
         )}
       </section>
 
-      {testimonyData && !testimonyData.length ? (
+      {testimonyData && !testimonyData?.length ? (
         <p className="w-full text-center pt-10">No Testimonies Found!</p>
       ) : null}
+
+      {/* Pagination */}
+      {testimonyData?.length > 0 && (
+        <div className="absolute bottom-0 right-[45%]">
+          <PaginationButtons
+            totalPages={totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      )}
 
       {currEditItemID && (
         <UpdateTestimonyModal
