@@ -101,6 +101,18 @@ const Sidebar = () => {
       link: "/ministry",
     },
     {
+      title: "socials",
+      info: "manage accounts",
+      icon: "icons/minister.svg",
+      link: "/socials",
+    },
+    {
+      title: "sermon subscriptions",
+      info: "manage subscriptions",
+      icon: "icons/minister.svg",
+      link: "/subscriptions",
+    },
+    {
       title: "page settings",
       info: "manage site settings",
       icon: "icons/settings.svg",
