@@ -19,7 +19,7 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
   );
   const dispatch = useAppDispatch();
 
-  const kb = file && file?.size / 1024;
+  const kb = file && file?.size / 10240;
 
   const upload = (
     <div className="flex-center md:flex-col gap-2 relative cursor-pointer">

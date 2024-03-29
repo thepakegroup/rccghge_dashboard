@@ -14,7 +14,7 @@ import axios, { AxiosError } from "axios";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
-import { post, remove } from "@/helper/apiFetch";
+import { get, post, remove } from "@/helper/apiFetch";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { groupSchema } from "@/helper/schema";
@@ -59,7 +59,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   // Fetch All Group
   const getGroupByCategory = useCallback(async (category: string) => {
     try {
-      const res = await post(`groups`, { category, page: 1 });
+      const res = await get(`groups?category=${category}&page=${1}`);
       setLoading(false);
 
       const data = await res.data;

@@ -7,7 +7,20 @@ import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
 import React, { ReactElement } from "react";
 import { FileUploader } from "react-drag-drop-files";
 
-const fileTypes = ["JPG", "PNG", "GIF", "SVG", "JPEG", "WEBP", "HEIF", "TIFF"];
+const fileTypes = [
+  "JPG",
+  "PNG",
+  "GIF",
+  "SVG",
+  "JPEG",
+  "WEBP",
+  "HEIF",
+  "TIFF",
+  "mp4",
+  "mov",
+  "mkv",
+  "webm",
+];
 
 function DragDrop({
   section,
