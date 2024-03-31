@@ -26,6 +26,8 @@ const Nav = () => {
     "/manage-events": "manage events",
     "/page-writeup": "page writeup",
     "/ministry": "ministry",
+    "/socials": "socials",
+    "/subscriptions": "subscriptions",
     "/settings": "page settings",
     "/admin": "admin",
   };
