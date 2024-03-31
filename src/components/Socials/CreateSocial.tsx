@@ -1,21 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import ImageUpload from "../ImageUpload";
 import { Listbox, Transition } from "@headlessui/react";
 import useUpdateToast from "@/hooks/updateToast";
-import { Socials } from "@/util/interface/socials";
 import { post } from "@/helper/apiFetch";
 import { AxiosError } from "axios";
 
 interface Props {
   onClose: () => void;
-  selectedAccount: Socials;
   fetchData: any;
 }
 
-const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
+const CreateSocial = ({ onClose, fetchData }: Props) => {
   const updateToast = useUpdateToast();
   const formData = new FormData();
   const [loading, setLoading] = useState(false);
@@ -31,12 +29,12 @@ const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
       });
       return true;
     }
-    // if (img === "") {
-    //   updateToast({
-    //     info: `Select an image`,
-    //   });
-    //   return true;
-    // }
+    if (img === "") {
+      updateToast({
+        info: `Select an image`,
+      });
+      return true;
+    }
     if (mediaType === "") {
       updateToast({
         info: `Select a media type`,
@@ -58,34 +56,25 @@ const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
     setImg(file);
   };
 
-  useEffect(() => {
-    setMediaLink(selectedAccount?.media_link);
-    setMediaName(selectedAccount?.social_media_type);
-    setMediaType(selectedAccount?.media_type);
-    // setImg(selectedAccount?.media_thumbnail);
-  }, [selectedAccount]);
-
   // handle submit
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (checkData()) {
       return;
     }
 
     setLoading(true);
 
-    formData.append("id", selectedAccount?.id as unknown as string);
     formData.append("social_media_type", mediaName);
     formData.append("media_link", mediaLink);
     formData.append("media_type", mediaType);
-    img && formData.append("media_thumbnail", img as Blob, img.name as string);
+    formData.append("media_thumbnail", img as Blob, img.name as string);
 
     try {
       const res = await post(`social-connect`, formData, "multipart/form-data");
 
       updateToast({
-        title: `${"Updated Successfully."}`,
+        title: `${"Created Successfully."}`,
       });
 
       setLoading(false);
@@ -95,17 +84,18 @@ const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
       setLoading(false);
 
       updateToast({
-        title: `Error! Social post not updated.`,
+        title: `Error! Social post not created.`,
         type: "error",
         info: `${(error as AxiosError)?.message}`,
       });
     }
   };
+
   return (
     <section className="modal-wrapper w-full">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="modal modal-content overflow-x-hidden max-h-[500px] md:max-h-[561px]"
+        className="modal modal-content overflow-x-hidden max-h-[600px] md:max-h-[561px]"
       >
         <div className="flex-center justify-end font-semibold text-base text-orange">
           <button onClick={onClose} className="flex-center gap-2 ">
@@ -272,7 +262,7 @@ const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
             }`}
             type="submit"
           >
-            {loading ? "Updating..." : "Update"}
+            {loading ? "Creating..." : "Create"}
           </button>
         </form>
       </div>
@@ -280,7 +270,7 @@ const EditSocial = ({ onClose, selectedAccount, fetchData }: Props) => {
   );
 };
 
-export default EditSocial;
+export default CreateSocial;
 
 const labels = [
   {

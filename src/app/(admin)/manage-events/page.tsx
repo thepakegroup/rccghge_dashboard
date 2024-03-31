@@ -88,7 +88,7 @@ const ManageEvents = () => {
     const form = new FormData();
 
     mediaInfo.banner &&
-      form.append("banner", mediaInfo.banner as Blob, mediaInfo.nammer?.name);
+      form.append("banner", mediaInfo.banner as Blob, mediaInfo.banner?.name);
     form.append("title", mediaInfo.title);
     form.append("location", mediaInfo.location);
     form.append("short_description", mediaInfo.short_description);
