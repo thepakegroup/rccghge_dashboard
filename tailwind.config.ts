@@ -37,6 +37,8 @@ const config: Config = {
   },
 
   plugins: [
+    require("@tailwindcss/forms"),
+
     function ({ addUtilities }: { addUtilities: any }) {
       addUtilities(
         {
