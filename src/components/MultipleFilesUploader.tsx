@@ -37,9 +37,13 @@ function DragDropFile({
 
 export default DragDropFile;
 
-export const MultipleImageUploader = () => {
-  const [files, setFiles] = useState<File[]>([]);
-
+export const MultipleImageUploader = ({
+  files,
+  setFiles,
+}: {
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+}) => {
   const handleChange = (newFiles: FileList) => {
     const filesArray = Array.from(newFiles);
     setFiles([...files, ...filesArray]);
@@ -50,8 +54,6 @@ export const MultipleImageUploader = () => {
     updatedFiles.splice(index, 1);
     setFiles(updatedFiles);
   };
-
-  console.log(files);
 
   const upload = (
     <div className="flex-center md:flex-col gap-2 relative cursor-pointer">

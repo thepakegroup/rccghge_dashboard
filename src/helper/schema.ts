@@ -49,3 +49,38 @@ export const groupSchema = yup.object({
   name: yup.string().required("Name is required"),
   description: yup.string().required("Description is required"),
 });
+
+// landing page schema
+export const landingPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+  mission_vision: yup.boolean().required(),
+  ministries: yup.boolean().required(),
+});
+
+// i am new page schema
+export const IAmNewPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
+
+// services schema
+export const ServicesPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+});
+
+// give schema
+export const GivePageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+});
+
+// landing page schema
+export const MinistriesSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+  mission_vision: yup.boolean().required(),
+  ministries: yup.boolean().required(),
+});
