@@ -28,7 +28,8 @@ const Nav = () => {
     "/ministry": "ministry",
     "/socials": "socials",
     "/subscriptions": "subscriptions",
-    "/settings": "page settings",
+    "/settings": "app settings",
+    "/page_settings": "page settings",
     "/admin": "admin",
   };
 

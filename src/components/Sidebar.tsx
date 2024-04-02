@@ -113,10 +113,16 @@ const Sidebar = () => {
       link: "/subscriptions",
     },
     {
+      title: "app settings",
+      info: "manage app settings",
+      icon: "icons/settings.svg",
+      link: "/settings",
+    },
+    {
       title: "page settings",
       info: "manage site settings",
       icon: "icons/settings.svg",
-      link: "/settings",
+      link: "/page_settings",
     },
     {
       title: "admin",
