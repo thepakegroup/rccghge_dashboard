@@ -1,18 +1,35 @@
 "use client";
 
-import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
-import {
-  IAmNewPageSchema,
-  ServicesPageSchema,
-  landingPageSchema,
-} from "@/helper/schema";
+import { ServicesPageSchema } from "@/helper/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ImageUpload from "../ImageUpload";
+import { useFetchData } from "@/hooks/fetchData";
+import { IAmNewPage } from "@/util/interface/settings";
+import useUpdateToast from "@/hooks/updateToast";
+import { post } from "@/helper/apiFetch";
+import { AxiosError } from "axios";
+import Image from "next/image";
 
 const Services = () => {
+  const formData = new FormData();
+  const updateToast = useUpdateToast();
+
   const [img, setImg] = useState<File | any>("");
+  const [loading, setLoading] = useState(false);
+
+  // get all social connect
+  const {
+    data,
+    loading: page_loading,
+    fetchData,
+  } = useFetchData({
+    url: `page-setting/info?name=our_service`,
+    method: "client",
+  });
+
+  const page_data: IAmNewPage = data?.data;
 
   // HandleImage
   const handleImageChange = (file: File) => {
@@ -22,16 +39,48 @@ const Services = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(ServicesPageSchema),
   });
 
+  useEffect(() => {
+    fetchData();
+
+    setValue("header_text", page_data?.settings?.settings?.heading_text);
+  }, [page_data?.settings?.settings?.heading_text]);
+
   const onIAmNewPageSubmit: SubmitHandler<{
     header_text: string;
-  }> = (data) => {
-    console.log(img);
-    console.log(data);
+  }> = async (data) => {
+    setLoading(true);
+
+    formData.append("heading_text", data?.header_text);
+    img && formData.append("image_slides", img as Blob, img.name as string);
+
+    try {
+      const res = await post(
+        `page-setting/service-page`,
+        formData,
+        "multipart/form-data"
+      );
+
+      updateToast({
+        title: `${"Setting updated successfully."}`,
+      });
+
+      setLoading(false);
+      fetchData();
+    } catch (error) {
+      setLoading(false);
+
+      updateToast({
+        title: `Error! Settings not updated.`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
+    }
   };
 
   return (
@@ -46,8 +95,22 @@ const Services = () => {
           Add background image
         </h3>
 
-        <div className="md:max-w-[60%] mx-auto">
-          <ImageUpload handleImageChange={handleImageChange} />
+        <div className="flex flex-col md:flex-row gap-3 items-center">
+          <div className="w-full md:max-w-[60%] mx-auto">
+            <ImageUpload handleImageChange={handleImageChange} />
+          </div>
+
+          {page_data?.slides?.[0]?.image_url && (
+            <div className="md:max-w-[30%] relative max-h-[225px]">
+              <Image
+                src={page_data?.slides?.[0]?.image_url}
+                alt=""
+                width={305}
+                height={225}
+                className="rounded-[10px] !w-full !h-[225px]"
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -73,9 +136,11 @@ const Services = () => {
 
         <button
           type="submit"
-          className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md"
+          className={`bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md ${
+            loading && "animate-pulse"
+          }`}
         >
-          Update Page Settings
+          {loading ? "Updating..." : "Update Page Settings"}
         </button>
       </form>
     </div>

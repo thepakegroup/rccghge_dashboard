@@ -1,21 +1,81 @@
 "use client";
 
 import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
+import { post } from "@/helper/apiFetch";
 import { landingPageSchema } from "@/helper/schema";
+import { useFetchData } from "@/hooks/fetchData";
+import useUpdateToast from "@/hooks/updateToast";
+import { IAmNewPage } from "@/util/interface/settings";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useState } from "react";
+import { AxiosError } from "axios";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import ConfirmDeleteImage from "./ConfirmDeleteImage";
 
 const LandingPage = () => {
+  const formData = new FormData();
+  const updateToast = useUpdateToast();
+
   const [files, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
+
+  // get all social connect
+  const {
+    data,
+    loading: page_loading,
+    fetchData,
+  } = useFetchData({
+    url: `page-setting/info?name=landing_page`,
+    method: "client",
+  });
+
+  const page_data: IAmNewPage = data?.data;
+
+  // console.log(page_data);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(landingPageSchema),
   });
+
+  useEffect(() => {
+    fetchData();
+
+    setValue("header_text", page_data?.settings?.settings?.heading_text);
+    setValue(
+      "service_times",
+      page_data?.settings?.settings?.our_service_times === "true" ? true : false
+    );
+    setValue(
+      "mission_vision",
+      page_data?.settings?.settings?.our_mission_vision === "true"
+        ? true
+        : false
+    );
+    setValue(
+      "ministries",
+      page_data?.settings?.settings?.our_ministries === "true" ? true : false
+    );
+    setValue(
+      "events",
+      page_data?.settings?.settings?.our_upcoming_events === "true"
+        ? true
+        : false
+    );
+  }, [
+    page_data?.settings?.settings?.heading_text,
+    page_data?.settings?.settings?.our_service_times,
+    page_data?.settings?.settings?.our_upcoming_events,
+    page_data?.settings?.settings?.our_ministries,
+    page_data?.settings?.settings?.our_mission_vision,
+  ]);
 
   const onLandingPageSubmit: SubmitHandler<{
     header_text: string;
@@ -23,9 +83,47 @@ const LandingPage = () => {
     events: boolean;
     mission_vision: boolean;
     ministries: boolean;
-  }> = (data) => {
-    console.log(files);
-    console.log(data);
+  }> = async (data) => {
+    setLoading(true);
+
+    formData.append("our_upcoming_events", data?.events ? "true" : "false");
+    formData.append(
+      "our_service_times",
+      data?.service_times ? "true" : "false"
+    );
+    formData.append("our_ministries", data?.ministries ? "true" : "false");
+    formData.append(
+      "our_mission_vision",
+      data?.mission_vision ? "true" : "false"
+    );
+    formData.append("heading_text", data?.header_text);
+
+    files.forEach((file) => {
+      formData.append("image_slides", file, file.name);
+    });
+
+    try {
+      const res = await post(
+        `page-setting/landing-page`,
+        formData,
+        "multipart/form-data"
+      );
+
+      updateToast({
+        title: `${"Setting updated successfully."}`,
+      });
+
+      setLoading(false);
+      fetchData();
+    } catch (error) {
+      setLoading(false);
+
+      updateToast({
+        title: `Error! Settings not updated.`,
+        type: "error",
+        info: `${(error as AxiosError)?.message}`,
+      });
+    }
   };
 
   return (
@@ -40,8 +138,38 @@ const LandingPage = () => {
           Add carousel images
         </h3>
 
-        <div className="md:max-w-[60%] mx-auto">
-          <MultipleImageUploader files={files} setFiles={setFiles} />
+        <div className="flex flex-col gap-3 items-center">
+          <div className="md:max-w-[60%] mx-auto">
+            <MultipleImageUploader files={files} setFiles={setFiles} />
+          </div>
+          <div className="flex flex-wrap gap-2 w-full">
+            {page_data?.slides &&
+              page_data?.slides?.map((img) => (
+                <div key={img?.id} className=" relative max-h-[225px]">
+                  <Image
+                    src={img?.image_url}
+                    alt=""
+                    width={305}
+                    height={225}
+                    className="rounded-[10px] !w-full max-w-[305px] !h-[225px]"
+                  />
+                  <button
+                    onClick={() => {
+                      setSelectedImageId(img?.id);
+                      setShowDelete(true);
+                    }}
+                    className="absolute top-2 right-2 p-1  bg-white cursor-pointer rounded"
+                  >
+                    <Image
+                      src="icons/delete.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                    />
+                  </button>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
 
@@ -125,11 +253,24 @@ const LandingPage = () => {
 
         <button
           type="submit"
-          className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md"
+          className={`bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md ${
+            loading && "animate-pulse"
+          }`}
         >
-          Update Page Settings
+          {loading ? "Updating..." : "Update Page Settings"}
         </button>
       </form>
+
+      {showDelete && (
+        <ConfirmDeleteImage
+          onClose={() => {
+            setSelectedImageId(null);
+            setShowDelete(false);
+          }}
+          selectedImageId={selectedImageId as number}
+          fetchData={fetchData}
+        />
+      )}
     </div>
   );
 };

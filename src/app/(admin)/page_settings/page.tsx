@@ -1,5 +1,6 @@
 "use client";
 
+import AboutUs from "@/components/PageSettings/AboutUs";
 import Give from "@/components/PageSettings/Give";
 import IAmNew from "@/components/PageSettings/IAmNew";
 import LandingPage from "@/components/PageSettings/LandingPage";
@@ -12,11 +13,11 @@ const PageSettings = () => {
 
   return (
     <section className="relative min-h-[88vh] w-full ">
-      <div className="flex justify-between items-center pt-[51px]">
+      <div className="flex gap-10 md:gap-20 items-center justify-between pt-[51px] min-w-[90vw] overflow-x-auto">
         {pages.map((p) => {
           return (
             <li
-              className={`list-none cursor-pointer font-medium text-xl text-[#030229] ${
+              className={`list-none cursor-pointer font-medium !min-w-fit text-xl text-[#030229] ${
                 selectedPage === p.title
                   ? "border-b-[2px] border-[#E77400]"
                   : null
@@ -33,12 +34,12 @@ const PageSettings = () => {
       {/* Components */}
       <div className="py-[35px]">
         {selectedPage === "Landing Page" && <LandingPage />}
-        {selectedPage === "About Us" && <LandingPage />}
+        {selectedPage === "About Us" && <AboutUs />}
         {selectedPage === "I'm New" && <IAmNew />}
         {selectedPage === "Services" && <Services />}
         {selectedPage === "Give" && <Give />}
         {selectedPage === "Our Ministries" && <Ministries />}
-        {selectedPage === "Connect" && <LandingPage />}
+        {/* {selectedPage === "Connect" && <LandingPage />} */}
       </div>
     </section>
   );
@@ -65,7 +66,7 @@ const pages = [
   {
     title: "Our Ministries",
   },
-  {
-    title: "Connect",
-  },
+  // {
+  //   title: "Connect",
+  // },
 ];

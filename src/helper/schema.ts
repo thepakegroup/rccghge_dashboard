@@ -84,3 +84,42 @@ export const MinistriesSchema = yup.object({
   mission_vision: yup.boolean().required(),
   ministries: yup.boolean().required(),
 });
+
+// our story schema
+export const OurStoryPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
+
+// our pastors schema
+export const OurPastorsPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
+
+// our mission schema
+export const OurMissionPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
+
+// our belief schema
+export const OurBeliefPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
+
+// rccg worldwide schema
+export const RCCGWorldWidePageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+  service_times: yup.boolean().required(),
+  events: yup.boolean().required(),
+});
