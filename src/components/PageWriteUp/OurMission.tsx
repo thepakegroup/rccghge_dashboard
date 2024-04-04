@@ -254,6 +254,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
                 key={ourMission.id}
                 title={ourMission.title}
                 description={ourMission.description}
+                category={ourMission?.category}
                 id={ourMission.id}
               />
             );
