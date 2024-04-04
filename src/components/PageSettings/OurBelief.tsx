@@ -1,6 +1,6 @@
 "use client";
 
-import { OurBeliefPageSchema, OurMissionPageSchema } from "@/helper/schema";
+import { OurBeliefPageSchema } from "@/helper/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";

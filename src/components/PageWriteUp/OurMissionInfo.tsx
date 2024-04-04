@@ -4,15 +4,23 @@ import { setDeleteFunc } from "@/store/slice/content";
 import { setEditMediaId } from "@/store/slice/mediaItems";
 import { setMission } from "@/store/slice/mission";
 import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
 
 interface infoI {
   title: string;
   description: string;
+  setCat: Dispatch<SetStateAction<string>>;
   category: string;
   id: number;
 }
 
-const OurMissionInfo = ({ title, description, id, category }: infoI) => {
+const OurMissionInfo = ({
+  title,
+  description,
+  id,
+  category,
+  setCat,
+}: infoI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
@@ -26,6 +34,9 @@ const OurMissionInfo = ({ title, description, id, category }: infoI) => {
   const handleEdit = () => {
     handleButton("modify");
     dispatch(setEditMediaId(id));
+
+    setCat(category);
+
     dispatch(
       setMission({
         title,
