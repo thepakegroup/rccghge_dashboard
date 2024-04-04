@@ -16,22 +16,27 @@ import {
 } from "@/store/slice/mission";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import Cookies from "js-cookie";
-import axios, { AxiosError } from "axios";
-import { baseUrl } from "@/util/constants";
+import { AxiosError } from "axios";
 import { post, remove } from "@/helper/apiFetch";
 
 const OurMission = ({ currentSection }: { currentSection: string }) => {
-  const { section } = useAppSelector((state) => state.content);
   const type = useGetTypeOfModal();
+  const dispatch = useAppDispatch();
+  const updateToast = useUpdateToast();
 
+  const { section } = useAppSelector((state) => state.content);
   const { title, category, description, btnType } = useAppSelector(
     (state) => state.mission
   );
 
-  const dispatch = useAppDispatch();
-  const updateToast = useUpdateToast();
   const [loader, setLoader] = useState(false);
+
+  const [cat, setCat] = useState("all");
+  const sortOptions = [
+    { name: "All", value: "all" },
+    { name: "Our Mission", value: "our-mission" },
+    { name: "Our Belief", value: "our-belief" },
+  ];
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { data, loading, fetchData } = useFetchData({
@@ -40,13 +45,6 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   });
 
   const ourMissions: ourMissionI[] = data?.message;
-
-  const token = Cookies.get("token");
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
 
   // Delete
   const deleteMission = async () => {
@@ -73,15 +71,15 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
   };
 
   // Update and Create
-
   const updateMission = async () => {
+    setLoader(true);
+
     const serviceData = {
       title,
       description,
       category,
       ...(btnType == "edit" && id !== undefined ? { id } : {}),
     };
-    setLoader(true);
 
     try {
       const res = await post(
@@ -90,6 +88,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       );
 
       fetchData();
+
       updateToast({
         title: `Our Mission/Belief ${
           btnType === "edit" ? "updated" : "added!"
@@ -99,6 +98,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
 
       setLoader(false);
 
+      setCat("all");
       dispatch(
         setMission({
           title: "",
@@ -118,13 +118,6 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
       });
     }
   };
-
-  const [cat, setCat] = useState("all");
-  const sortOptions = [
-    { name: "All", value: "all" },
-    { name: "Our Mission", value: "our-mission" },
-    { name: "Our Belief", value: "our-belief" },
-  ];
 
   useEffect(() => {
     // fetchData();
@@ -261,6 +254,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
                 key={ourMission.id}
                 title={ourMission.title}
                 description={ourMission.description}
+                category={ourMission?.category}
                 id={ourMission.id}
               />
             );
