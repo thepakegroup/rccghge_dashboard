@@ -6,6 +6,7 @@ import OurStory from "./OurStory";
 import OurPastors from "./OurPastors";
 import OurMission from "./OurMission";
 import OurBelief from "./OurBelief";
+import RCCGWorldWide from "./RCCGWorldWide";
 
 const AboutUs = () => {
   const [selectedSection, setSelectedSection] = useState("");
@@ -64,6 +65,6 @@ const sections = [
   },
   {
     title: "RCCG Worldwide",
-    display: <OurStory />,
+    display: <RCCGWorldWide />,
   },
 ];

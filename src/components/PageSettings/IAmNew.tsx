@@ -31,8 +31,6 @@ const IAmNew = () => {
 
   const page_data: IAmNewPage = data?.data;
 
-  console.log(page_data);
-
   // HandleImage
   const handleImageChange = (file: File) => {
     setImg(file);
@@ -72,14 +70,6 @@ const IAmNew = () => {
     service_times: boolean;
     events: boolean;
   }> = async (data) => {
-    // check for image
-    // if (img === "") {
-    //   updateToast({
-    //     info: `Select an image`,
-    //   });
-    //   return;
-    // }
-
     setLoading(true);
 
     formData.append("our_upcoming_events", data?.events ? "true" : "false");

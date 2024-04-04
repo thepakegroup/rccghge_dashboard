@@ -255,6 +255,7 @@ const OurMission = ({ currentSection }: { currentSection: string }) => {
                 title={ourMission.title}
                 description={ourMission.description}
                 category={ourMission?.category}
+                setCat={setCat}
                 id={ourMission.id}
               />
             );

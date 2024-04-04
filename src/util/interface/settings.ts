@@ -18,6 +18,7 @@ export interface IAmNewPageSettings {
 
 export interface SettingsSettings {
   heading_text: string;
+  description_text: string;
   our_service_times: string;
   our_upcoming_events: string;
   our_mission_vision: string;
