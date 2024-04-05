@@ -2,7 +2,6 @@
 
 import { remove } from "@/helper/apiFetch";
 import useUpdateToast from "@/hooks/updateToast";
-import { Socials } from "@/util/interface/socials";
 import { AxiosError } from "axios";
 import Image from "next/image";
 import { useState } from "react";
