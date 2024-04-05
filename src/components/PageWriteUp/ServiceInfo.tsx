@@ -11,9 +11,10 @@ interface infoI {
   serviceTime: string;
   id: number;
   description: string;
+  image: string;
 }
 
-const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
+const ServiceInfo = ({ name, serviceTime, id, description, image }: infoI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
@@ -30,20 +31,33 @@ const ServiceInfo = ({ name, serviceTime, id, description }: infoI) => {
   };
 
   return (
-    <div className="flex-center justify-between bg-[#F2F2F2] rounded-lg p-4">
-      <div className="font-semibold md:max-w-[70%] max-w-full">
-        <h2 className="text-base">{name}</h2>
-        <span className="text-sm text-ash-300">{serviceTime}</span>
+    <section className="flex flex-col gap-3 border border-gray-300 p-4 rounded">
+      {image && (
+        <div className=" relative max-h-[225px]">
+          <Image
+            src={image}
+            alt=""
+            width={305}
+            height={225}
+            className="rounded-[10px] !w-full !h-[225px]"
+          />
+        </div>
+      )}
+      <div className="flex-center justify-between bg-[#F2F2F2] rounded-lg p-4">
+        <div className="font-semibold md:max-w-[70%] max-w-full">
+          <h2 className="text-base">{name}</h2>
+          <span className="text-sm text-ash-300">{serviceTime}</span>
+        </div>
+        <div className="flex-center justify-end gap-6 flex-[30%]">
+          <button onClick={handleEdit}>
+            <Image src="icons/edit.svg" alt="" width={24} height={24} />
+          </button>
+          <button onClick={handleDelete}>
+            <Image src="icons/delete.svg" alt="" width={24} height={24} />
+          </button>
+        </div>
       </div>
-      <div className="flex-center justify-end gap-6 flex-[30%]">
-        <button onClick={handleEdit}>
-          <Image src="icons/edit.svg" alt="" width={24} height={24} />
-        </button>
-        <button onClick={handleDelete}>
-          <Image src="icons/delete.svg" alt="" width={24} height={24} />
-        </button>
-      </div>
-    </div>
+    </section>
   );
 };
 
