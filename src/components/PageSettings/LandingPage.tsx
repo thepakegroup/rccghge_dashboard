@@ -114,6 +114,7 @@ const LandingPage = () => {
       });
 
       setLoading(false);
+      setFiles([]);
       fetchData();
     } catch (error) {
       setLoading(false);
