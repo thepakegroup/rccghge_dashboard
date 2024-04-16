@@ -2,19 +2,17 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import OurStory from "./OurStory";
-import OurPastors from "./OurPastors";
-import OurMission from "./OurMission";
-import OurBelief from "./OurBelief";
-import RCCGWorldWide from "./RCCGWorldWide";
+import GetInTouch from "./GetInTouch";
+import NeedARide from "./NeedARide";
+import PrayerRequest from "./PrayerRequest";
 
-const AboutUs = () => {
+const Connect = () => {
   const [selectedSection, setSelectedSection] = useState("");
 
   return (
     <section className="flex flex-col gap-[27px]">
       <h1 className="text-lg font-semibold text-[#030229]">
-        About us drop down list
+        Connect drop down list
       </h1>
 
       {/* Dropdowns */}
@@ -44,27 +42,19 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default Connect;
 
 const sections = [
   {
-    title: "Our Story",
-    display: <OurStory />,
+    title: "Get In Touch",
+    display: <GetInTouch />,
   },
   {
-    title: "Our Pastors",
-    display: <OurPastors />,
+    title: "Need A Ride",
+    display: <NeedARide />,
   },
   {
-    title: "Our Mission",
-    display: <OurMission />,
-  },
-  {
-    title: "Our Beliefs",
-    display: <OurBelief />,
-  },
-  {
-    title: "RCCG Worldwide",
-    display: <RCCGWorldWide />,
+    title: "Prayer Requests",
+    display: <PrayerRequest />,
   },
 ];

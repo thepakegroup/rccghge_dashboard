@@ -123,3 +123,22 @@ export const RCCGWorldWidePageSchema = yup.object({
   service_times: yup.boolean().required(),
   events: yup.boolean().required(),
 });
+
+// get in touch schema
+export const GetInTouchPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+});
+
+// need a ride schema
+export const NeedARidePageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+});
+
+// prayer request schema
+export const PrayerRequestPageSchema = yup.object({
+  header_text: yup.string().required("Header text is required"),
+  sub_header_text: yup.string().required("Header text is required"),
+  events: yup.boolean().required(),
+});

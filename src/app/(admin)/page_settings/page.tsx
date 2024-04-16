@@ -1,6 +1,7 @@
 "use client";
 
 import AboutUs from "@/components/PageSettings/AboutUs";
+import Connect from "@/components/PageSettings/Connect";
 import Give from "@/components/PageSettings/Give";
 import IAmNew from "@/components/PageSettings/IAmNew";
 import LandingPage from "@/components/PageSettings/LandingPage";
@@ -39,7 +40,7 @@ const PageSettings = () => {
         {selectedPage === "Services" && <Services />}
         {selectedPage === "Give" && <Give />}
         {selectedPage === "Our Ministries" && <Ministries />}
-        {/* {selectedPage === "Connect" && <LandingPage />} */}
+        {selectedPage === "Connect" && <Connect />}
       </div>
     </section>
   );
@@ -66,7 +67,7 @@ const pages = [
   {
     title: "Our Ministries",
   },
-  // {
-  //   title: "Connect",
-  // },
+  {
+    title: "Connect",
+  },
 ];
