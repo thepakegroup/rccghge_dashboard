@@ -125,6 +125,12 @@ const Sidebar = () => {
       link: "/page_settings",
     },
     {
+      title: "Ministry Settings",
+      info: "manage ministries and departments",
+      icon: "icons/minister.svg",
+      link: "/ministry-departments",
+    },
+    {
       title: "admin",
       info: "add & remove admins",
       icon: "icons/admin.svg",
@@ -173,7 +179,7 @@ const Sidebar = () => {
                 <li key={title}>
                   <Link
                     href={`${link}`}
-                    className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary ${
+                    className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary mb-2 ${
                       pathname === link && "bg-secondary"
                     }`}
                     onClick={handleToggle}

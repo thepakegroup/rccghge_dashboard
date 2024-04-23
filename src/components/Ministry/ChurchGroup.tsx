@@ -212,6 +212,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       name: data.name,
       category: cat,
       description: data.description,
+      ministry_code: data.ministry_code,
     };
 
     updateGroup(groupInfo);
@@ -234,7 +235,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           : "hidden md:block"
       }`}
     >
-      <div className="bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
+      <div className="overflow-auto bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
         <ImageUpload handleImageChange={handleImageChange} section="group" />
         <form
@@ -315,6 +316,21 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
                 </Transition>
               </div>
             </Listbox>
+          </label>
+          <label htmlFor="ministry_code">
+            <span>Ministry Code</span>
+            <input
+              type="text"
+              className="input"
+              {...register("ministry_code")}
+            />
+            <span className="text-sm text-fade-ash">
+              e.g for youth ministry, type youth_ministry
+            </span>
+            <br />
+            <small className="text-xs text-red-600">
+              {errors.ministry_code?.message}
+            </small>
           </label>
           <label htmlFor="description" className="input-field">
             <span>Description</span>

@@ -221,6 +221,17 @@ const GroupProfileModal = ({
                 </div>
               </Listbox>
             </label>
+            <label htmlFor="ministry_code">
+              <span>Ministry Code</span>
+              <input type="text" className="input" />
+              <span className="text-sm text-fade-ash">
+                e.g for youth ministry, type youth_ministry
+              </span>
+              <br />
+              <small className="text-xs text-red-600">
+                {/* {errors.ministry_code?.message} */}
+              </small>
+            </label>
             <label htmlFor="description" className="input-field">
               <span>Description</span>
               <textarea
