@@ -80,6 +80,14 @@
   }
 }
 
+.ministry-departments-pagination li a {
+  @apply bg-white px-4 py-2 rounded-md text-secondary-02 text-sm;
+}
+
+.ministry-departments-pagination li a[aria-current="page"] {
+  @apply bg-orange text-white;
+}
+
 .loader {
   width: 48px;
   height: 48px;

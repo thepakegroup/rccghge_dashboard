@@ -33,6 +33,9 @@ const config: Config = {
       boxShadow: {
         modalShadow: "0px 4px 25px 0px rgba(0, 0, 0, 0.15)",
       },
+      fontFamily: {
+        "play-fair-display": "'Playfair Display', serif",
+      },
     },
   },
 

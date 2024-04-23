@@ -48,6 +48,7 @@ export const leaderSchema = yup.object({
 export const groupSchema = yup.object({
   name: yup.string().required("Name is required"),
   description: yup.string().required("Description is required"),
+  ministry_code: yup.string().required("Ministry code is required"),
 });
 
 // landing page schema
