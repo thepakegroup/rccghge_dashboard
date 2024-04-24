@@ -15,6 +15,7 @@ const WellnessMinistryPage = () => {
     select: (data) => data.data,
     staleTime: 3000,
   });
+  wellness_ministry && console.log(wellness_ministry);
   //
   return (
     <div className="px-4">

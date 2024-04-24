@@ -1,36 +1,7 @@
 // Redirect Link function
 export const redirectLink = (group: any) => {
   const ministry_code = group?.ministry_code?.toLowerCase();
-  const church_office = ministry_code === "church_office_ministry";
-  const men_ministry = ministry_code === "mens_ministry";
-  const music_ministry = ministry_code === "media_publication_ministry";
-  const women_ministry = ministry_code === "womens_ministry";
-  const marriage_counselling =
-    ministry_code === "pre-marital-marriage-department";
-  const prayer_ministry = ministry_code === "prayer_ministry";
-  const evangelism = ministry_code === "evangelism_ministry";
-  const choir_embassy = ministry_code === "embassy_choir_ministry";
-  const drama_ministry = "drama_ministry";
-  const connect_ministry = ministry_code === "connect_ministry";
-  const wellness_ministry = ministry_code === "wellness_ministry";
-  const young_adults = ministry_code === "young_adult";
-  // const youth_ministry = ministry_code === "youth_ministry";
-  const children_ministry = ministry_code === "children_ministry";
-  // department links here
-  const media_publication = ministry_code === "media_publication_ministry";
-  const it_department = ministry_code === "it_department";
-  const greeters_department = ministry_code === "greeters_department";
-  const holy_police_department = ministry_code === "holy_police_deparment";
-  const protocol_department = ministry_code === "protocol_department";
-  const believers_department = ministry_code === "believers_membership";
-  const ushering_department = ministry_code === "ushering_department";
-  const sunday_school_department = ministry_code === "sunday_school_ministry";
-  const technical_department = ministry_code === "technical_ministry";
-  const transportation_department =
-    ministry_code === "transportation_department";
-  const public_relations = ministry_code === "public_relations_ministry";
-  const follow_up_department = ministry_code === "follow_up_ministry";
-  const sanitation_department = ministry_code === "sanitation_ministry";
+  //
   switch (ministry_code) {
     case "church_office_ministry":
       return "/ministry-departments/church-office-ministry";
@@ -86,63 +57,9 @@ export const redirectLink = (group: any) => {
       return "/ministry-departments/follow-up-ministry";
     case "sanitation_ministry":
       return "/ministry-departments/sanitation-ministry";
+    case "teenage_ministry":
+      return "/ministry-departments/teenage-ministry";
     default:
       return `/not-found`;
   }
-  // return `/ministry-departments/${ministry_code}`;
-  // return `/ministry-departments/${
-  //   church_office
-  //     ? "church-office"
-  //     : men_ministry
-  //     ? "men-ministry"
-  //     : music_ministry
-  //     ? "music-ministry"
-  //     : women_ministry
-  //     ? "women-ministry"
-  //     : marriage_counselling
-  //     ? "marriage-counselling"
-  //     : prayer_ministry
-  //     ? "prayer-ministry"
-  //     : evangelism
-  //     ? "evangelism-ministry"
-  //     : choir_embassy
-  //     ? "choir-embassy"
-  //     : drama_ministry
-  //     ? "drama-ministry"
-  //     : connect_ministry
-  //     ? "connect-ministry"
-  //     : wellness_ministry
-  //     ? "wellness-ministry"
-  //     : young_adults
-  //     ? "young-adults"
-  //     : children_ministry
-  //     ? "children-ministry"
-  //     : media_publication
-  //     ? "media-publication"
-  //     : it_department
-  //     ? "it-department"
-  //     : greeters_department
-  //     ? "greeters-department"
-  //     : holy_police_department
-  //     ? "holy-police-department"
-  //     : protocol_department
-  //     ? "protocol-department"
-  //     : believers_department
-  //     ? "believers-department"
-  //     : ushering_department
-  //     ? "ushering-department"
-  //     : sunday_school_department
-  //     ? "sunday-school-department"
-  //     : technical_department
-  //     ? "technical-department"
-  //     : transportation_department
-  //     ? "transportation-department"
-  //     : public_relations
-  //     ? "public-relations"
-  //     : follow_up_department
-  //     ? "follow-up-department"
-  //     : sanitation_department
-  //     ? "sanitation-department"
-  //     : "department"
-  // }`;
 };

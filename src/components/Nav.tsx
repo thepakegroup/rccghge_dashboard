@@ -53,7 +53,7 @@ const Nav = () => {
     >
       <div className="flex-center gap-5">
         <Image
-          src="icons/hamburger.svg"
+          src="/icons/hamburger.svg"
           alt=""
           width={24}
           height={24}
@@ -69,7 +69,7 @@ const Nav = () => {
             items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
           }`}
         >
-          <Image src="icons/delete.svg" alt="" width={18} height={18} />
+          <Image src="/icons/delete.svg" alt="" width={18} height={18} />
           <span>{items.length === 1 ? "Delete" : "Delete All"}</span>
         </button>
         <button
@@ -78,7 +78,7 @@ const Nav = () => {
             items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
           }`}
         >
-          <Image src="icons/edit.svg" alt="" width={18} height={18} />
+          <Image src="/icons/edit.svg" alt="" width={18} height={18} />
           <span>{items.length === 1 ? "Uncheck" : "Uncheck All"}</span>
         </button>
         <button
@@ -88,7 +88,7 @@ const Nav = () => {
           }`}
         >
           <span>Add media</span>
-          <Image src="icons/plus.svg" alt="" width={18} height={18} />
+          <Image src="/icons/plus.svg" alt="" width={18} height={18} />
         </button>
       </div>
     </nav>
