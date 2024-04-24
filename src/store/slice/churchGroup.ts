@@ -9,6 +9,7 @@ export interface groupI {
   banner?: any;
   groupImg?: File | null;
   groupImgName?: string;
+  ministry_code?: string;
 }
 
 const groupSlice = createSlice({
