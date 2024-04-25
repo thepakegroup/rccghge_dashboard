@@ -6,12 +6,14 @@ export const Button = ({
   label,
   onClick,
   type,
+  disabled,
 }: {
   className?: string;
   icon?: ReactNode;
   label?: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }) => {
   return (
     <button
