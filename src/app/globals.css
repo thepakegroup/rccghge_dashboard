@@ -99,6 +99,10 @@
   animation: rotation 1s linear infinite;
 }
 
+.btn-loader {
+  @apply h-[25px] w-[25px] border-[2.8px] border-solid border-white border-b-transparent rounded-full inline-block box-border animate-spin;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
