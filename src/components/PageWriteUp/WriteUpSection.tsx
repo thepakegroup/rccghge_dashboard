@@ -22,7 +22,12 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { post, remove } from "@/helper/apiFetch";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 
 const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();

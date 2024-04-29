@@ -11,7 +11,6 @@ import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
@@ -22,34 +21,35 @@ const QuillEditor = dynamic(() => import("react-quill"), {
   ),
 });
 
-const CommonOnePages = () => {
-  const params = useParams();
+const DramaMinistryPage = () => {
   // states
-  const [slidersPreview, setSlidersPreview] = useState<any>([]);
+  const [selectedBgImages, setSelectedBgImages] = useState<any>([]);
+  const [bgImgPreview, setBgImgPreview] = useState<any>([]);
   const [slidersSelected, setSlidersSelected] = useState<any>([]);
-
+  const [slidersPreview, setSlidersPreview] = useState<any>([]);
   //
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   //
-  // get page data info
   const {
-    data: common_one_data,
-    isLoading: common_one_loading,
+    data: drama_ministry,
+    isLoading: loadingTeenageInfo,
     refetch: getBackPageInfo,
   } = useQuery({
-    queryKey: [`${params.ministry_code}`],
+    queryKey: ["drama_ministry"],
     queryFn: async () => {
-      const res = await get(`/ministry-page/common-1/${params.ministry_code}`);
-      setSlidersPreview(
-        res.data.data?.sliders.map((url: any) => url?.item_url)
+      const res = await get(`/ministry-page/drama-page`);
+      const bgImages = res.data?.data.sliders.map((url: any) => url?.item_url);
+      const carousels = res.data?.data.carousel.map(
+        (url: any) => url?.item_url
       );
+      setSlidersPreview(carousels);
+      setBgImgPreview(bgImages);
       return res.data;
     },
     select: (data) => data.data,
     staleTime: 3000,
   });
-  common_one_data && console.log(common_one_data);
   // form configs
   const {
     register,
@@ -58,17 +58,39 @@ const CommonOnePages = () => {
     setValue,
   } = useForm({
     values: {
-      heading_text: common_one_data?.settings?.settings?.heading_text,
+      heading_text: drama_ministry?.settings?.settings?.heading_text,
+      heading_description:
+        drama_ministry?.settings?.settings?.heading_description,
       body: {
-        title: common_one_data?.settings?.settings?.body?.title,
-        content: common_one_data?.settings?.settings?.body?.content,
+        title: drama_ministry?.settings?.settings?.body?.title,
+        content: drama_ministry?.settings?.settings?.body?.content,
       },
     },
   });
+  // handles bg image drop upload
+  const handleBgImageDrop = (files: FileList) => {
+    setBgImgPreview(drama_ministry?.sliders.map((url: any) => url.item_url));
+    const fileArray = Array.from(files);
+    fileArray.forEach((file: any) => {
+      setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
+    });
+    setSelectedBgImages([...fileArray]);
+  };
+  // handle bg image upload
+  const uploadBgImage = (event: any) => {
+    setBgImgPreview(drama_ministry?.sliders.map((url: any) => url.item_url));
+    const files = event.target.files;
+    console.log(Array.from(files));
+    const fileArray = Array.from(files);
+    fileArray.forEach((file: any) => {
+      setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
+    });
+    setSelectedBgImages([...fileArray]);
+  };
   // handles sliders image drop upload
   const handleSliderDrop = (files: FileList) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      drama_ministry?.carousel.map((url: any) => url?.item_url)
     );
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
@@ -79,7 +101,7 @@ const CommonOnePages = () => {
   // handle sliders image upload
   const uploadSliderImage = (event: any) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      drama_ministry?.carousel.map((url: any) => url?.item_url)
     );
     const files = event.target.files;
     const fileArray = Array.from(files);
@@ -95,17 +117,22 @@ const CommonOnePages = () => {
     setEditing(true);
     try {
       const formData = new FormData();
-      formData.append("page_name", params.ministry_code as string);
       formData.append("heading_text", data.heading_text);
+      formData.append("heading_description", data.heading_description);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
+      if (selectedBgImages.length > 0) {
+        selectedBgImages.forEach((file: any) => {
+          formData.append("background_images", file);
+        });
+      }
       if (slidersSelected.length > 0) {
         slidersSelected.forEach((file: any) => {
           formData.append("carousel_images", file);
         });
       }
       const res = await post(
-        "/ministry-page/common-1",
+        "/ministry-page/drama/compose",
         formData,
         "multipart/form-data"
       );
@@ -132,26 +159,81 @@ const CommonOnePages = () => {
       setDeleting(false);
     }
   };
+
   //
   return (
     <div className="relative px-4 mb-8">
-      <GoBack
-        header={(params.ministry_code as string)
-          .replace("_", " ")
-          .toUpperCase()}
-      />
+      <GoBack header="Drama Ministry" />
       {/*  */}
       <div className="mt-8">
         <h3 className="font-play-fair-display font-semibold text-lg">
           Manage header content
         </h3>
         {/* form */}
-        {common_one_loading && <PageLoader />}
-        {common_one_data && (
+        {drama_ministry && <PageLoader />}
+        {drama_ministry && (
           <form
             className="mt-5 flex flex-col gap-3"
             onSubmit={handleSubmit(editPage)}
           >
+            {/* Image input */}
+            <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
+              <h4 className="font-play-fair-display font-semibold mb-3">
+                Add Background Image
+              </h4>
+              <label
+                className="flex flex-col gap-1 cursor-pointer justify-center items-center"
+                htmlFor="bg_image"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  handleBgImageDrop(e.dataTransfer.files);
+                }}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  id="bg_image"
+                  multiple
+                  onChange={uploadBgImage}
+                />
+                <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
+                  <UploadImgIcon />
+                  <div className="flex items-center gap-1">
+                    <p className="text-orange">Click to upload</p>
+                    <p>or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-fade-ash">
+                    SVG, PNG, JPG or GIF (max. 800x400px)
+                  </p>
+                </div>
+              </label>
+              <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
+                {bgImgPreview?.map((url: any) => (
+                  <div key={url} className="relative w-[150px] h-[90px]">
+                    <Image
+                      src={url}
+                      alt={url}
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                    <div
+                      className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                      onClick={(event: any) => {
+                        const imgId = drama_ministry?.sliders?.find(
+                          (item: any) => item.item_url === url
+                        );
+                        removeImage(imgId?.id);
+                      }}
+                    >
+                      <CancelIcon />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             {/* Header text */}
             <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
               <label className="flex flex-col gap-1" htmlFor="headerText">
@@ -163,6 +245,25 @@ const CommonOnePages = () => {
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                   {...register("heading_text", { required: true })}
+                />
+              </label>
+              <label
+                className="flex flex-col gap-1"
+                htmlFor="heading_description"
+              >
+                <h4 className="font-play-fair-display font-semibold">
+                  Heading description
+                </h4>
+                <QuillEditor
+                  className="write-editor"
+                  formats={formats}
+                  modules={modules}
+                  defaultValue={
+                    drama_ministry?.settings?.settings?.heading_description
+                  }
+                  onChange={(event: any) =>
+                    setValue("heading_description", event)
+                  }
                 />
               </label>
             </div>
@@ -193,7 +294,7 @@ const CommonOnePages = () => {
                     formats={formats}
                     modules={modules}
                     defaultValue={
-                      common_one_data?.settings?.settings?.body?.content
+                      drama_ministry?.settings?.settings?.body?.content
                     }
                     onChange={(event: any) => setValue("body.content", event)}
                   />
@@ -253,7 +354,7 @@ const CommonOnePages = () => {
                       <div
                         className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                         onClick={(event: any) => {
-                          const imgId = common_one_data?.carousel?.find(
+                          const imgId = drama_ministry?.carousel?.find(
                             (item: any) => item.item_url === url
                           );
                           removeImage(imgId?.id);
@@ -281,4 +382,4 @@ const CommonOnePages = () => {
   );
 };
 
-export default CommonOnePages;
+export default DramaMinistryPage;

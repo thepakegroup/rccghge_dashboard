@@ -11,7 +11,9 @@ export const GoBack = ({ header }: { header: string }) => {
       onClick={() => router.push(`/ministry-departments`)}
     >
       <ArrowLeftIcon />
-      <h3 className="font-semibold">{header}</h3>
+      <h3 className="font-semibold font-play-fair-display uppercase">
+        {header}
+      </h3>
     </div>
   );
 };

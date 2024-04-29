@@ -2,14 +2,25 @@
 
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
+import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
-import { get, post } from "@/helper/apiFetch";
+import { PageLoader } from "@/components/ministry-departments/page-loader";
+import { formats, modules } from "@/components/quill-config/confiig";
+import { get, post, remove } from "@/helper/apiFetch";
+import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import "react-quill/dist/quill.snow.css";
+const QuillEditor = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 const TeenageMinistryPage = () => {
   // states
   const [selectedBgImages, setSelectedBgImages] = useState<any>([]);
@@ -18,8 +29,13 @@ const TeenageMinistryPage = () => {
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
   //
   const [editing, setEditing] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
   //
-  const { data: teenage_ministry, isLoading: loadingTeenageInfo } = useQuery({
+  const {
+    data: teenage_ministry,
+    isLoading: loadingTeenageInfo,
+    refetch: getBackPageInfo,
+  } = useQuery({
     queryKey: ["teenage_ministry"],
     queryFn: async () => {
       const res = await get(`/ministry-page/teenage-page`);
@@ -39,6 +55,7 @@ const TeenageMinistryPage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     values: {
       heading_text: teenage_ministry?.settings?.settings?.heading_text,
@@ -52,7 +69,7 @@ const TeenageMinistryPage = () => {
   });
   // handles bg image drop upload
   const handleBgImageDrop = (files: FileList) => {
-    setBgImgPreview([]);
+    setBgImgPreview(teenage_ministry?.sliders.map((url: any) => url.item_url));
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
       setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
@@ -61,13 +78,8 @@ const TeenageMinistryPage = () => {
   };
   // handle bg image upload
   const uploadBgImage = (event: any) => {
-    setBgImgPreview([]);
+    setBgImgPreview(teenage_ministry?.sliders.map((url: any) => url.item_url));
     const files = event.target.files;
-    if (!files) {
-      return setBgImgPreview(
-        teenage_ministry?.sliders.map((url: any) => url.item_url)
-      );
-    }
     console.log(Array.from(files));
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
@@ -77,7 +89,9 @@ const TeenageMinistryPage = () => {
   };
   // handles sliders image drop upload
   const handleSliderDrop = (files: FileList) => {
-    setSlidersPreview([]);
+    setSlidersPreview(
+      teenage_ministry?.carousel.map((url: any) => url?.item_url)
+    );
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
       setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
@@ -86,13 +100,10 @@ const TeenageMinistryPage = () => {
   };
   // handle sliders image upload
   const uploadSliderImage = (event: any) => {
-    setSlidersPreview([]);
+    setSlidersPreview(
+      teenage_ministry?.carousel.map((url: any) => url?.item_url)
+    );
     const files = event.target.files;
-    if (!files) {
-      return setSlidersPreview(
-        teenage_ministry?.carousel.map((url: any) => url.item_url)
-      );
-    }
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
       setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
@@ -125,15 +136,32 @@ const TeenageMinistryPage = () => {
         formData,
         "multipart/form-data"
       );
+      if (res.statusText === "OK") {
+        await getBackPageInfo();
+      }
     } catch (error: any) {
       console.log(error);
     } finally {
       setEditing(false);
     }
   };
+  // handle remove (delete) image
+  const removeImage = async (id: number) => {
+    setDeleting(true);
+    try {
+      const res = await remove(`/ministry-page/image/${id}`);
+      if (res.statusText === "OK") {
+        await getBackPageInfo();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeleting(false);
+    }
+  };
   //
   return (
-    <div className="px-4 mb-8">
+    <div className="relative px-4 mb-8">
       <GoBack header="Teenage Ministry" />
       {/*  */}
       <div className="mt-8">
@@ -141,6 +169,7 @@ const TeenageMinistryPage = () => {
           Manage header content
         </h3>
         {/* form */}
+        {loadingTeenageInfo && <PageLoader />}
         {teenage_ministry && (
           <form
             className="mt-5 flex flex-col gap-3"
@@ -181,7 +210,7 @@ const TeenageMinistryPage = () => {
               </label>
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                 {bgImgPreview?.map((url: any) => (
-                  <div key={url} className="w-[150px] h-[90px]">
+                  <div key={url} className="relative w-[150px] h-[90px]">
                     <Image
                       src={url}
                       alt={url}
@@ -189,6 +218,17 @@ const TeenageMinistryPage = () => {
                       height={200}
                       className="w-full h-full object-cover rounded-md"
                     />
+                    <div
+                      className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                      onClick={(event: any) => {
+                        const imgId = teenage_ministry?.sliders?.find(
+                          (item: any) => item.item_url === url
+                        );
+                        removeImage(imgId?.id);
+                      }}
+                    >
+                      <CancelIcon />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -213,11 +253,16 @@ const TeenageMinistryPage = () => {
                 <h4 className="font-play-fair-display font-semibold">
                   Heading description
                 </h4>
-                <textarea
-                  id="heading_description"
-                  rows={5}
-                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
-                  {...register("heading_description", { required: true })}
+                <QuillEditor
+                  className="write-editor"
+                  formats={formats}
+                  modules={modules}
+                  defaultValue={
+                    teenage_ministry?.settings?.settings?.heading_description
+                  }
+                  onChange={(event: any) =>
+                    setValue("heading_description", event)
+                  }
                 />
               </label>
             </div>
@@ -243,11 +288,14 @@ const TeenageMinistryPage = () => {
                   <h4 className="font-play-fair-display font-semibold">
                     Description
                   </h4>
-                  <textarea
-                    id="description"
-                    className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
-                    rows={5}
-                    {...register("body.content", { required: true })}
+                  <QuillEditor
+                    className="write-editor"
+                    formats={formats}
+                    modules={modules}
+                    defaultValue={
+                      teenage_ministry?.settings?.settings?.body?.content
+                    }
+                    onChange={(event: any) => setValue("body.content", event)}
                   />
                 </label>
                 {/*  */}
@@ -294,7 +342,7 @@ const TeenageMinistryPage = () => {
                 </label>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                   {slidersPreview?.map((url: any) => (
-                    <div key={url} className="w-[150px] h-[90px]">
+                    <div key={url} className="relative w-[150px] h-[90px]">
                       <Image
                         src={url}
                         alt={url}
@@ -302,6 +350,17 @@ const TeenageMinistryPage = () => {
                         height={200}
                         className="w-full h-full object-cover rounded-md"
                       />
+                      <div
+                        className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                        onClick={(event: any) => {
+                          const imgId = teenage_ministry?.carousel?.find(
+                            (item: any) => item.item_url === url
+                          );
+                          removeImage(imgId?.id);
+                        }}
+                      >
+                        <CancelIcon />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -317,6 +376,7 @@ const TeenageMinistryPage = () => {
           </form>
         )}
       </div>
+      <DeletingImageLoader deleting={deleting} />
     </div>
   );
 };

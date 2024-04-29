@@ -46,7 +46,7 @@ const MinistryDepartmentsPage = () => {
         page={page}
       />
       {/* Groups Display */}
-      <div className="mt-8 grid grid-cols-1 min-[476px]:grid-cols-2 min-[768px]:grid-cols-3 min-[1240px]:gricd-cols-4 gap-4">
+      <div className="mt-8 grid grid-cols-1 min-[476px]:grid-cols-2 min-[768px]:grid-cols-3 min-[1240px]:gricd-cols-4 gap-4 mb-5">
         {loadingGroups &&
           [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((group) => {
             return <MinistryCardLoader key={group} />;
