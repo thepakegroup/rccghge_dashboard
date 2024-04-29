@@ -11,19 +11,15 @@ import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
-  loading: () => (
-    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
-  ),
+  loading: () => <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />,
 });
 
-const CommonOnePages = () => {
-  const params = useParams();
+const PrayerMinistryPage = () => {
   // states
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
   const [slidersSelected, setSlidersSelected] = useState<any>([]);
@@ -34,13 +30,13 @@ const CommonOnePages = () => {
   //
   // get page data info
   const {
-    data: common_one_data,
-    isLoading: common_one_loading,
+    data: prayer_ministry,
+    isLoading: loadingPrayerInfo,
     refetch: getBackPageInfo,
   } = useQuery({
-    queryKey: [`${params.ministry_code}`],
+    queryKey: ["prayer_ministry"],
     queryFn: async () => {
-      const res = await get(`/ministry-page/common-1/${params.ministry_code}`);
+      const res = await get(`/ministry-page/prayer-page`);
       setSlidersPreview(
         res.data.data?.sliders.map((url: any) => url?.item_url)
       );
@@ -49,7 +45,6 @@ const CommonOnePages = () => {
     select: (data) => data.data,
     staleTime: 3000,
   });
-  common_one_data && console.log(common_one_data);
   // form configs
   const {
     register,
@@ -58,17 +53,20 @@ const CommonOnePages = () => {
     setValue,
   } = useForm({
     values: {
-      heading_text: common_one_data?.settings?.settings?.heading_text,
+      heading_text: prayer_ministry?.settings?.settings?.heading_text,
+      subheading_text: prayer_ministry?.settings?.settings?.subheading_text,
+      heading_description:
+        prayer_ministry?.settings?.settings?.heading_description,
       body: {
-        title: common_one_data?.settings?.settings?.body?.title,
-        content: common_one_data?.settings?.settings?.body?.content,
+        title: prayer_ministry?.settings?.settings?.body?.title,
+        content: prayer_ministry?.settings?.settings?.body?.content,
       },
     },
   });
   // handles sliders image drop upload
   const handleSliderDrop = (files: FileList) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      prayer_ministry?.carousel.map((url: any) => url?.item_url)
     );
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
@@ -79,7 +77,7 @@ const CommonOnePages = () => {
   // handle sliders image upload
   const uploadSliderImage = (event: any) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      prayer_ministry?.carousel.map((url: any) => url?.item_url)
     );
     const files = event.target.files;
     const fileArray = Array.from(files);
@@ -95,13 +93,12 @@ const CommonOnePages = () => {
     setEditing(true);
     try {
       const formData = new FormData();
-      formData.append("page_name", params.ministry_code as string);
       formData.append("heading_text", data.heading_text);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
       if (slidersSelected.length > 0) {
         slidersSelected.forEach((file: any) => {
-          formData.append("carousel_images", file);
+          formData.append("background_images", file);
         });
       }
       const res = await post(
@@ -135,19 +132,15 @@ const CommonOnePages = () => {
   //
   return (
     <div className="relative px-4 mb-8">
-      <GoBack
-        header={(params.ministry_code as string)
-          .replace("_", " ")
-          .toUpperCase()}
-      />
+      <GoBack header="Prayer Ministry" />
       {/*  */}
       <div className="mt-8">
         <h3 className="font-play-fair-display font-semibold text-lg">
           Manage header content
         </h3>
         {/* form */}
-        {common_one_loading && <PageLoader />}
-        {common_one_data && (
+        {loadingPrayerInfo && <PageLoader />}
+        {prayer_ministry && (
           <form
             className="mt-5 flex flex-col gap-3"
             onSubmit={handleSubmit(editPage)}
@@ -163,6 +156,26 @@ const CommonOnePages = () => {
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                   {...register("heading_text", { required: true })}
+                />
+              </label>
+              {/*  */}
+              <label
+                className="flex flex-col gap-1"
+                htmlFor="heading_description"
+              >
+                <h4 className="font-play-fair-display font-semibold">
+                  Heading description
+                </h4>
+                <QuillEditor
+                  className="write-editor"
+                  formats={formats}
+                  modules={modules}
+                  defaultValue={
+                    prayer_ministry?.settings?.settings?.heading_description
+                  }
+                  onChange={(event: any) =>
+                    setValue("heading_description", event)
+                  }
                 />
               </label>
             </div>
@@ -193,13 +206,33 @@ const CommonOnePages = () => {
                     formats={formats}
                     modules={modules}
                     defaultValue={
-                      common_one_data?.settings?.settings?.body?.content
+                      prayer_ministry?.settings?.settings?.body?.content
                     }
                     onChange={(event: any) => setValue("body.content", event)}
                   />
                 </label>
                 {/*  */}
               </div>
+            </div>
+            {/*  */}
+            <div className="rounded-lg p-4 bg-white">
+              <label
+                className="flex flex-col gap-1"
+                htmlFor="heading_description"
+              >
+                <h4 className="font-play-fair-display font-semibold">
+                  Sub-Heading Text
+                </h4>
+                <QuillEditor
+                  className="write-editor"
+                  formats={formats}
+                  modules={modules}
+                  defaultValue={
+                    prayer_ministry?.settings?.settings?.subheading_text
+                  }
+                  onChange={(event: any) => setValue("subheading_text", event)}
+                />
+              </label>
             </div>
             {/* Carousel Images Input */}
             <div className="flex flex-col gap-2">
@@ -253,7 +286,7 @@ const CommonOnePages = () => {
                       <div
                         className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                         onClick={(event: any) => {
-                          const imgId = common_one_data?.carousel?.find(
+                          const imgId = prayer_ministry?.carousel?.find(
                             (item: any) => item.item_url === url
                           );
                           removeImage(imgId?.id);
@@ -281,4 +314,4 @@ const CommonOnePages = () => {
   );
 };
 
-export default CommonOnePages;
+export default PrayerMinistryPage;
