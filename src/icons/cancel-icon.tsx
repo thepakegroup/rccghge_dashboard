@@ -1,9 +1,11 @@
 export const CancelIcon = ({
   stroke = "#fa5252",
   className,
+  onClick,
 }: {
   stroke?: string;
   className?: string;
+  onClick?: () => void;
 }) => {
   return (
     <svg
@@ -12,6 +14,7 @@ export const CancelIcon = ({
       height="22"
       viewBox="0 0 24 24"
       className={className}
+      onClick={onClick}
     >
       <path
         fill="none"

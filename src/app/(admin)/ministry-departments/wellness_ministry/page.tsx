@@ -265,9 +265,13 @@ const WellnessMinistry = () => {
                   defaultValue={
                     wellness_ministry?.settings?.settings?.heading_description
                   }
-                  onChange={(event: any) =>
-                    setValue("heading_description", event)
-                  }
+                  onChange={(event: any) => {
+                    if (event === "<p><br></p>") {
+                      return setValue("heading_description", " ");
+                    } else {
+                      setValue("heading_description", event);
+                    }
+                  }}
                 />
               </label>
             </div>
