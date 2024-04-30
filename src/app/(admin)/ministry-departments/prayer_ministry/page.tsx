@@ -16,7 +16,9 @@ import { useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
-  loading: () => <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
 });
 
 const PrayerMinistryPage = () => {
@@ -145,6 +147,68 @@ const PrayerMinistryPage = () => {
             className="mt-5 flex flex-col gap-3"
             onSubmit={handleSubmit(editPage)}
           >
+            {/* Carousel Images Input */}
+            <div className="flex flex-col gap-2">
+              <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
+                <h4 className="font-play-fair-display font-semibold mb-1">
+                  Add Background Image
+                </h4>
+                <label
+                  className="flex flex-col gap-1 cursor-pointer justify-center items-center"
+                  htmlFor="img_carousel"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    handleSliderDrop(e.dataTransfer.files);
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    id="img_carousel"
+                    onChange={uploadSliderImage}
+                    multiple
+                  />
+                  <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
+                    <UploadImgIcon />
+                    <div className="flex items-center gap-1">
+                      <p className="text-orange">Click to upload</p>
+                      <p>or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-fade-ash">
+                      SVG, PNG, JPG or GIF (max. 800x400px)
+                    </p>
+                  </div>
+                </label>
+                <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
+                  {slidersPreview?.map((url: any) => (
+                    <div key={url} className="relative w-[150px] h-[90px]">
+                      <Image
+                        src={url}
+                        alt={url}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                      <div
+                        className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                        onClick={(event: any) => {
+                          const imgId = prayer_ministry?.carousel?.find(
+                            (item: any) => item.item_url === url
+                          );
+                          removeImage(imgId?.id);
+                        }}
+                      >
+                        <CancelIcon />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
             {/* Header text */}
             <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
               <label className="flex flex-col gap-1" htmlFor="headerText">
@@ -173,9 +237,13 @@ const PrayerMinistryPage = () => {
                   defaultValue={
                     prayer_ministry?.settings?.settings?.heading_description
                   }
-                  onChange={(event: any) =>
-                    setValue("heading_description", event)
-                  }
+                  onChange={(event: any) => {
+                    if (event === "<p><br></p>") {
+                      return setValue("heading_description", " ");
+                    } else {
+                      setValue("heading_description", event);
+                    }
+                  }}
                 />
               </label>
             </div>
@@ -233,71 +301,6 @@ const PrayerMinistryPage = () => {
                   onChange={(event: any) => setValue("subheading_text", event)}
                 />
               </label>
-            </div>
-            {/* Carousel Images Input */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-play-fair-display font-semibold mb-2 mt-3">
-                Image Carousel
-              </h4>
-              <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
-                <h4 className="font-play-fair-display font-semibold mb-1">
-                  Add Image
-                </h4>
-                <label
-                  className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-                  htmlFor="img_carousel"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    handleSliderDrop(e.dataTransfer.files);
-                  }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    id="img_carousel"
-                    onChange={uploadSliderImage}
-                    multiple
-                  />
-                  <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-                    <UploadImgIcon />
-                    <div className="flex items-center gap-1">
-                      <p className="text-orange">Click to upload</p>
-                      <p>or drag and drop</p>
-                    </div>
-                    <p className="text-xs text-fade-ash">
-                      SVG, PNG, JPG or GIF (max. 800x400px)
-                    </p>
-                  </div>
-                </label>
-                <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
-                  {slidersPreview?.map((url: any) => (
-                    <div key={url} className="relative w-[150px] h-[90px]">
-                      <Image
-                        src={url}
-                        alt={url}
-                        width={200}
-                        height={200}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                      <div
-                        className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
-                        onClick={(event: any) => {
-                          const imgId = prayer_ministry?.carousel?.find(
-                            (item: any) => item.item_url === url
-                          );
-                          removeImage(imgId?.id);
-                        }}
-                      >
-                        <CancelIcon />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
             <Button
               icon={editing ? <BtnLoader /> : null}

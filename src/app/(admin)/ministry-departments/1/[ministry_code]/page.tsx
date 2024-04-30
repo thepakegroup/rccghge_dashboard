@@ -152,63 +152,11 @@ const CommonOnePages = () => {
             className="mt-5 flex flex-col gap-3"
             onSubmit={handleSubmit(editPage)}
           >
-            {/* Header text */}
-            <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
-              <label className="flex flex-col gap-1" htmlFor="headerText">
-                <h4 className="font-play-fair-display font-semibold mb-3">
-                  Header Text
-                </h4>
-                <input
-                  id="headerText"
-                  type="text"
-                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                  {...register("heading_text", { required: true })}
-                />
-              </label>
-            </div>
-            {/* Body texts */}
-            <div>
-              <h3 className="font-play-fair-display font-semibold text-lg mb-1">
-                Body content
-              </h3>
-              <div className="flex flex-col gap-4 rounded-lg p-4 bg-white">
-                <label className="flex flex-col gap-1" htmlFor="bodyTitle">
-                  <h4 className="font-play-fair-display font-semibold">
-                    Title
-                  </h4>
-                  <input
-                    id="bodyTitle"
-                    type="text"
-                    className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                    {...register("body.title", { required: true })}
-                  />
-                </label>
-                {/*  */}
-                <label className="flex flex-col gap-1" htmlFor="description">
-                  <h4 className="font-play-fair-display font-semibold">
-                    Description
-                  </h4>
-                  <QuillEditor
-                    className="write-editor"
-                    formats={formats}
-                    modules={modules}
-                    defaultValue={
-                      common_one_data?.settings?.settings?.body?.content
-                    }
-                    onChange={(event: any) => setValue("body.content", event)}
-                  />
-                </label>
-                {/*  */}
-              </div>
-            </div>
             {/* Carousel Images Input */}
             <div className="flex flex-col gap-2">
-              <h4 className="font-play-fair-display font-semibold mb-2 mt-3">
-                Image Carousel
-              </h4>
               <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
                 <h4 className="font-play-fair-display font-semibold mb-1">
-                  Add Image
+                  Add Background Image
                 </h4>
                 <label
                   className="flex flex-col gap-1 cursor-pointer justify-center items-center"
@@ -264,6 +212,55 @@ const CommonOnePages = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+            {/* Header text */}
+            <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
+              <label className="flex flex-col gap-1" htmlFor="headerText">
+                <h4 className="font-play-fair-display font-semibold mb-3">
+                  Header Text
+                </h4>
+                <input
+                  id="headerText"
+                  type="text"
+                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
+                  {...register("heading_text", { required: true })}
+                />
+              </label>
+            </div>
+            {/* Body texts */}
+            <div>
+              <h3 className="font-play-fair-display font-semibold text-lg mb-1">
+                Body content
+              </h3>
+              <div className="flex flex-col gap-4 rounded-lg p-4 bg-white">
+                <label className="flex flex-col gap-1" htmlFor="bodyTitle">
+                  <h4 className="font-play-fair-display font-semibold">
+                    Title
+                  </h4>
+                  <input
+                    id="bodyTitle"
+                    type="text"
+                    className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
+                    {...register("body.title", { required: true })}
+                  />
+                </label>
+                {/*  */}
+                <label className="flex flex-col gap-1" htmlFor="description">
+                  <h4 className="font-play-fair-display font-semibold">
+                    Description
+                  </h4>
+                  <QuillEditor
+                    className="write-editor"
+                    formats={formats}
+                    modules={modules}
+                    defaultValue={
+                      common_one_data?.settings?.settings?.body?.content
+                    }
+                    onChange={(event: any) => setValue("body.content", event)}
+                  />
+                </label>
+                {/*  */}
               </div>
             </div>
             <Button

@@ -33,7 +33,7 @@ const DramaMinistryPage = () => {
   //
   const {
     data: drama_ministry,
-    isLoading: loadingTeenageInfo,
+    isLoading: loadingDramaInfo,
     refetch: getBackPageInfo,
   } = useQuery({
     queryKey: ["drama_ministry"],
@@ -170,7 +170,7 @@ const DramaMinistryPage = () => {
           Manage header content
         </h3>
         {/* form */}
-        {drama_ministry && <PageLoader />}
+        {loadingDramaInfo && <PageLoader />}
         {drama_ministry && (
           <form
             className="mt-5 flex flex-col gap-3"
@@ -261,9 +261,13 @@ const DramaMinistryPage = () => {
                   defaultValue={
                     drama_ministry?.settings?.settings?.heading_description
                   }
-                  onChange={(event: any) =>
-                    setValue("heading_description", event)
-                  }
+                  onChange={(event: any) => {
+                    if (event === "<p><br></p>") {
+                      return setValue("heading_description", " ");
+                    } else {
+                      setValue("heading_description", event);
+                    }
+                  }}
                 />
               </label>
             </div>
