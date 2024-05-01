@@ -72,7 +72,6 @@ const ChildrenMinistryPage = () => {
       );
     }
     const fileArray = Array.from(files);
-    console.log(fileArray);
     fileArray.forEach((file: any) => {
       setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
     });
@@ -96,7 +95,6 @@ const ChildrenMinistryPage = () => {
     );
     const files = event.target.files;
     const fileArray = Array.from(files);
-    console.log(fileArray);
     fileArray.forEach((file: any) => {
       setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
     });
@@ -281,17 +279,11 @@ const ChildrenMinistryPage = () => {
                   <h4 className="font-play-fair-display font-semibold mb-3">
                     Main Content
                   </h4>
-                  <QuillEditor
+                  <textarea
                     id="subheading_text"
-                    className="write-editor"
-                    formats={formats}
-                    modules={modules}
-                    defaultValue={
-                      children_ministry?.settings?.settings?.subheading_text
-                    }
-                    onChange={(event: any) =>
-                      setValue("subheading_text", event)
-                    }
+                    rows={4}
+                    className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                    {...register("subheading_text")}
                   />
                 </label>
               </div>

@@ -49,7 +49,6 @@ const CommonOnePages = () => {
     select: (data) => data.data,
     staleTime: 3000,
   });
-  common_one_data && console.log(common_one_data);
   // form configs
   const {
     register,

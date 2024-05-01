@@ -23,7 +23,7 @@ export const redirectLink = (group: any) => {
     "hospitality_care_department",
     "elders_minstry",
     "mens_ministry",
-    "music_ministry",
+    // "music_ministry",
   ];
   //
   const commone_two_pages = ["church_office_ministry", "technical_ministry"];

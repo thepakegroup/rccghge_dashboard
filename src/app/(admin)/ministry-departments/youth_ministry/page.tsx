@@ -72,7 +72,6 @@ const YouthMinistryPage = () => {
     },
     select: (data) => data.data,
   });
-  youth_ministry && console.log(youth_ministry);
   // drag and drop function
   const handleBgImageDrop = (files: FileList) => {
     const filesArray = Array.from(files);
@@ -274,17 +273,17 @@ const YouthMinistryPage = () => {
                   <h4 className="font-play-fair-display font-semibold mb-3">
                     Sub Content
                   </h4>
-                  <QuillEditor
-                    className="write-editor"
+                  <textarea
+                    id="subheading_text"
+                    rows={4}
+                    className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
                     defaultValue={pageInfo?.subheading_description}
                     onChange={(event: any) =>
                       setPageInfo((prev) => ({
                         ...prev,
-                        subheading_description: event,
+                        subheading_description: event.target.value,
                       }))
                     }
-                    formats={formats}
-                    modules={modules}
                   />
                 </label>
                 {/*  */}
@@ -309,6 +308,7 @@ const YouthMinistryPage = () => {
             <OurPrograms
               ourPrograms={youth_ministry?.programs}
               setShowOurPrograms={setShowOurPrograms}
+              getBackPageInfo={getBackPageInfo}
             />
           ) : (
             <MotionDiv
