@@ -62,12 +62,15 @@ export const OurMission = ({
     values: {
       mission_vision_media: ourMission?.media_url,
       our_mission: {
+        title: ourMission?.our_mission?.title,
         content: ourMission?.our_mission?.content,
       },
       our_vision: {
-        content: ourMission?.our_vission?.content,
+        title: ourMission?.our_vision?.title,
+        content: ourMission?.our_vision?.content,
       },
       our_events: {
+        title: ourMission?.our_events?.title,
         content: ourMission?.our_events?.content,
       },
     },
@@ -77,8 +80,11 @@ export const OurMission = ({
     setSaving(true);
     try {
       const formData = new FormData();
+      formData.append("our_mission[title]", data?.our_mission?.title);
+      formData.append("our_vision[title]", data?.our_vision?.title);
+      formData.append("our_events[title]", data?.our_events?.title);
       formData.append("our_mission[content]", data?.our_mission?.content);
-      formData.append("our_vission[content]", data?.our_vision?.content);
+      formData.append("our_vision[content]", data?.our_vision?.content);
       formData.append("our_events[content]", data?.our_events?.content);
       if (selectedImg) {
         formData.append("mission_vision_media", selectedImg);
@@ -171,52 +177,85 @@ export const OurMission = ({
           </div>
           {/* Header text */}
           <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
-            <label className="flex flex-col gap-1" htmlFor="ourMission">
-              <h4 className="font-play-fair-display font-semibold mb-3">
-                Our Mission
-              </h4>
-              <QuillEditor
-                className="write-editor"
-                formats={formats}
-                modules={modules}
-                defaultValue={ourMission?.our_mission?.content}
-                onChange={(e) => {
-                  setValue("our_mission.content", e);
-                }}
+            <h4 className="font-play-fair-display font-semibold mb-3">
+              Our Mission
+            </h4>
+            <label className="flex flex-col gap-1" htmlFor="ourMissionTitle">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Title
+              </p>
+              <input
+                id="ourMissionTitle"
+                type="text"
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_mission.title")}
+              />
+            </label>
+            <label className="flex flex-col gap-1" htmlFor="ourMissionContent">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Content
+              </p>
+              <textarea
+                id="ourMissionContent"
+                rows={4}
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_mission.content")}
               />
             </label>
           </div>
           {/*  */}
           <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
-            <label className="flex flex-col gap-1" htmlFor="ourMission">
-              <h4 className="font-play-fair-display font-semibold mb-3">
-                Our Vision
-              </h4>
-              <QuillEditor
-                className="write-editor"
-                formats={formats}
-                modules={modules}
-                defaultValue={ourMission?.our_vision?.content}
-                onChange={(e) => {
-                  setValue("our_vision.content", e);
-                }}
+            <h4 className="font-play-fair-display font-semibold mb-3">
+              Our Vision
+            </h4>
+            <label className="flex flex-col gap-1" htmlFor="ourVisionTitle">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Title
+              </p>
+              <input
+                id="ourVisionTitle"
+                type="text"
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_vision.title")}
+              />
+            </label>
+            <label className="flex flex-col gap-1" htmlFor="ourVisionContent">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Content
+              </p>
+              <textarea
+                id="ourVisionContent"
+                rows={4}
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_vision.content")}
               />
             </label>
           </div>
           {/*  */}
           <div className="rounded-lg p-4 bg-white flex flex-col gap-2">
-            <label className="flex flex-col gap-1" htmlFor="ourMission">
-              <h4 className="font-play-fair-display font-semibold mb-3">
-                Our Events
-              </h4>
-              <QuillEditor
-                className="write-editor"
-                formats={formats}
-                modules={modules}
-                defaultValue={ourMission?.our_events?.content}
-                onChange={(e) => {
-                  setValue("our_events.content", e);
-                }}
+            <h4 className="font-play-fair-display font-semibold mb-3">
+              Our Events
+            </h4>
+            <label className="flex flex-col gap-1" htmlFor="ourEventsTitle">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Title
+              </p>
+              <input
+                id="ourEventsTitle"
+                type="text"
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_events.title")}
+              />
+            </label>
+            <label className="flex flex-col gap-1" htmlFor="ourEventsContent">
+              <p className="font-play-fair-display font-normal  text-base mb-3">
+                Content
+              </p>
+              <textarea
+                id="ourEventsContent"
+                rows={4}
+                className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                {...register("our_events.content")}
               />
             </label>
           </div>
