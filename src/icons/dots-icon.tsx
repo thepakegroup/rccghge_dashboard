@@ -1,4 +1,4 @@
-export const DotsIcon = () => {
+export const DotsIcon = ({ onClick }: { onClick?: () => void }) => {
   return (
     <svg
       width="20"
@@ -6,6 +6,8 @@ export const DotsIcon = () => {
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      onClick={onClick}
+      className="cursor-pointer"
     >
       <path
         d="M8.33317 4.66683C8.33317 4.85092 8.18393 5.00016 7.99984 5.00016C7.81574 5.00016 7.6665 4.85092 7.6665 4.66683C7.6665 4.48273 7.81574 4.3335 7.99984 4.3335C8.18393 4.3335 8.33317 4.48273 8.33317 4.66683Z"

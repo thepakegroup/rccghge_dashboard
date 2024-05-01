@@ -68,7 +68,7 @@ const CommonOnePages = () => {
   // handles sliders image drop upload
   const handleSliderDrop = (files: FileList) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      common_one_data?.sliders.map((url: any) => url?.item_url)
     );
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
@@ -79,7 +79,7 @@ const CommonOnePages = () => {
   // handle sliders image upload
   const uploadSliderImage = (event: any) => {
     setSlidersPreview(
-      common_one_data?.carousel.map((url: any) => url?.item_url)
+      common_one_data?.sliders.map((url: any) => url?.item_url)
     );
     const files = event.target.files;
     const fileArray = Array.from(files);
@@ -201,7 +201,7 @@ const CommonOnePages = () => {
                       <div
                         className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                         onClick={(event: any) => {
-                          const imgId = common_one_data?.carousel?.find(
+                          const imgId = common_one_data?.sliders?.find(
                             (item: any) => item.item_url === url
                           );
                           removeImage(imgId?.id);
