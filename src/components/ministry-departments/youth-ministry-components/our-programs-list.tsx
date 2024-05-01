@@ -52,8 +52,8 @@ export const OurProgramsList = ({
               className="py-2 px-3 border-b cursor-pointer"
               onClick={() => {
                 setSetControls(false);
-                // setSelectedTeam(item);
-                // setShowUpdateTeam(true);
+                setSelectedProgram(item);
+                setShowUpdateProgram(true);
               }}
             >
               Edit

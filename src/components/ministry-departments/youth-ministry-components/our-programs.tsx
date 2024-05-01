@@ -1,18 +1,23 @@
 "use client";
 
 import { CancelIcon } from "@/icons/cancel-icon";
-import { MotionDiv } from "@/util/motion-exports";
+import { MotionDiv, MotionPresence } from "@/util/motion-exports";
 import { Dispatch, SetStateAction, useState } from "react";
 import { OurProgramsList } from "./our-programs-list";
 import { Button } from "@/components/base-components/button";
 import { BsPlus } from "react-icons/bs";
+import { NewProgramForm } from "./new-program-form";
+import { QueryObserverResult } from "@tanstack/react-query";
+import { UpdateProgramForm } from "./update-program-form";
 
 export const OurPrograms = ({
   ourPrograms,
   setShowOurPrograms,
+  getBackPageInfo,
 }: {
   ourPrograms: any;
   setShowOurPrograms: Dispatch<SetStateAction<boolean>>;
+  getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
   // states
   const [showNewProgramForm, setShowNewProgramForm] = useState<boolean>(false);
@@ -55,6 +60,21 @@ export const OurPrograms = ({
         icon={<BsPlus className="text-xl" />}
         onClick={() => setShowNewProgramForm(true)}
       />
+      <MotionPresence>
+        {showNewProgramForm && (
+          <NewProgramForm
+            setShowNewProgramForm={setShowNewProgramForm}
+            getBackPageInfo={getBackPageInfo}
+          />
+        )}
+        {showUpdateProgram && (
+          <UpdateProgramForm
+            getBackPageInfo={getBackPageInfo}
+            setShowUpdateProgram={setShowUpdateProgram}
+            selectedProgram={selectedProgram}
+          />
+        )}
+      </MotionPresence>
     </MotionDiv>
   );
 };

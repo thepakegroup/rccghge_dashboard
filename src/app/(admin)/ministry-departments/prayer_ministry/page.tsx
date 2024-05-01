@@ -282,14 +282,12 @@ const PrayerMinistryPage = () => {
                 <h4 className="font-play-fair-display font-semibold">
                   Sub-Heading Text
                 </h4>
-                <QuillEditor
-                  className="write-editor"
-                  formats={formats}
-                  modules={modules}
-                  defaultValue={
-                    prayer_ministry?.settings?.settings?.subheading_text
-                  }
-                  onChange={(event: any) => setValue("subheading_text", event)}
+
+                <textarea
+                  id="subheading_text"
+                  rows={4}
+                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
+                  {...register("subheading_text")}
                 />
               </label>
             </div>
