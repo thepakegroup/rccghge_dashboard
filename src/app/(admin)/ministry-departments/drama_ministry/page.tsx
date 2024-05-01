@@ -254,20 +254,11 @@ const DramaMinistryPage = () => {
                 <h4 className="font-play-fair-display font-semibold">
                   Heading description
                 </h4>
-                <QuillEditor
-                  className="write-editor"
-                  formats={formats}
-                  modules={modules}
-                  defaultValue={
-                    drama_ministry?.settings?.settings?.heading_description
-                  }
-                  onChange={(event: any) => {
-                    if (event === "<p><br></p>") {
-                      return setValue("heading_description", " ");
-                    } else {
-                      setValue("heading_description", event);
-                    }
-                  }}
+                <input
+                  id="heading_description"
+                  type="text"
+                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
+                  {...register("heading_description", { required: true })}
                 />
               </label>
             </div>

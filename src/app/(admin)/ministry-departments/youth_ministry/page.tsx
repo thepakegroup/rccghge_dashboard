@@ -5,10 +5,15 @@ import { Button } from "@/components/base-components/button";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
+import { Galleries } from "@/components/ministry-departments/youth-ministry-components/galleries";
+import { OurMission } from "@/components/ministry-departments/youth-ministry-components/our-mission";
+import { OurPrograms } from "@/components/ministry-departments/youth-ministry-components/our-programs";
+import { OurTeams } from "@/components/ministry-departments/youth-ministry-components/our-teams";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
+import { MotionDiv, MotionPresence } from "@/util/motion-exports";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -40,6 +45,11 @@ const YouthMinistryPage = () => {
   //
   const [deleting, setDeleting] = useState<boolean>(false);
   const [editing, setEditing] = useState<boolean>(false);
+  //
+  const [showGallery, setShowGallery] = useState<boolean>(false);
+  const [showOurMission, setShowOurMission] = useState<boolean>(false);
+  const [showOurPrograms, setShowOurPrograms] = useState<boolean>(false);
+  const [showOurTeam, setShowOurTeam] = useState<boolean>(false);
   //
   const {
     data: youth_ministry,
@@ -221,17 +231,17 @@ const YouthMinistryPage = () => {
                 <h4 className="font-play-fair-display font-semibold mb-3">
                   Header Description
                 </h4>
-                <QuillEditor
-                  className="write-editor"
+                <input
+                  id="heading_description"
+                  type="text"
+                  className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                   defaultValue={pageInfo?.heading_description}
                   onChange={(event: any) =>
                     setPageInfo((prev) => ({
                       ...prev,
-                      heading_description: event,
+                      heading_description: event.target.value,
                     }))
                   }
-                  formats={formats}
-                  modules={modules}
                 />
               </label>
               {/*  */}
@@ -282,45 +292,92 @@ const YouthMinistryPage = () => {
             </div>
           </form>
         )}
-        <div className="mt-6 flex flex-col gap-3">
-          <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
-            <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
-              Our mission, vision and events
-            </p>
-            <span className="cursor-pointer select-none text-orange">
-              Edit details
-            </span>
-          </div>
-          {/*  */}
-          <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
-            <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
-              Our programs
-            </p>
-            <span className="cursor-pointer select-none text-orange">
-              Edit details
-            </span>
-          </div>
-          {/*  */}
-          <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
-            <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
-              Our gallery
-            </p>
-            <span className="cursor-pointer select-none text-orange">
-              Edit details
-            </span>
-          </div>
-          {/*  */}
-          <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
-            <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
-              Our great team
-            </p>
-            <span className="cursor-pointer select-none text-orange">
-              Edit details
-            </span>
-          </div>
-          {/*  */}
-        </div>
+        <MotionPresence>
+          {youth_ministry && showOurMission ? (
+            <OurMission
+              ourMission={youth_ministry?.settings?.settings?.subsection}
+              getBackPageInfo={getBackPageInfo}
+              setShowOurMission={setShowOurMission}
+            />
+          ) : youth_ministry && showOurTeam ? (
+            <OurTeams
+              teams={youth_ministry?.teams}
+              getBackPageInfo={getBackPageInfo}
+              setShowOurTeam={setShowOurTeam}
+            />
+          ) : youth_ministry && showOurPrograms ? (
+            <OurPrograms
+              ourPrograms={youth_ministry?.programs}
+              setShowOurPrograms={setShowOurPrograms}
+            />
+          ) : (
+            <MotionDiv
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="mt-6 flex flex-col gap-3"
+            >
+              <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
+                <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
+                  Our mission, vision and events
+                </p>
+                <span
+                  className="cursor-pointer select-none text-orange"
+                  onClick={() => setShowOurMission(true)}
+                >
+                  Edit details
+                </span>
+              </div>
+              {/*  */}
+              <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
+                <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
+                  Our programs
+                </p>
+                <span
+                  className="cursor-pointer select-none text-orange"
+                  onClick={() => setShowOurPrograms(true)}
+                >
+                  Edit details
+                </span>
+              </div>
+              {/*  */}
+              <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
+                <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
+                  Our gallery
+                </p>
+                <span
+                  className="cursor-pointer select-none text-orange"
+                  onClick={() => setShowGallery(true)}
+                >
+                  Edit details
+                </span>
+              </div>
+              {/*  */}
+              <div className="flex justify-between items-center gap-2 bg-white rounded-lg p-4">
+                <p className="font-play-fair-display font-semibold text-black/70 text-sm select-none">
+                  Our great team
+                </p>
+                <span
+                  className="cursor-pointer select-none text-orange"
+                  onClick={() => setShowOurTeam(true)}
+                >
+                  Edit details
+                </span>
+              </div>
+              {/*  */}
+            </MotionDiv>
+          )}
+        </MotionPresence>
       </div>
+      <MotionPresence>
+        {youth_ministry && showGallery ? (
+          <Galleries
+            getBackPageInfo={getBackPageInfo}
+            gallery={youth_ministry?.gallery}
+            setShowGallery={setShowGallery}
+          />
+        ) : null}
+      </MotionPresence>
       <DeletingImageLoader deleting={deleting} />
       <Button
         className="mt-4 py-3"

@@ -13,7 +13,7 @@ export const CancelIcon = ({
       width="22"
       height="22"
       viewBox="0 0 24 24"
-      className={className}
+      className={`cursor-pointer ${className}`}
       onClick={onClick}
     >
       <path
