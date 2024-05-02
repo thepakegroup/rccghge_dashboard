@@ -195,11 +195,20 @@ export const OurMission = ({
               <p className="font-play-fair-display font-normal  text-base mb-3">
                 Content
               </p>
-              <textarea
+              {/* <textarea
                 id="ourMissionContent"
                 rows={4}
                 className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
                 {...register("our_mission.content")}
+              /> */}
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={ourMission?.our_mission?.content}
+                onChange={(event) => {
+                  setValue("our_mission.content", event);
+                }}
               />
             </label>
           </div>
@@ -223,11 +232,20 @@ export const OurMission = ({
               <p className="font-play-fair-display font-normal  text-base mb-3">
                 Content
               </p>
-              <textarea
+              {/* <textarea
                 id="ourVisionContent"
                 rows={4}
                 className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
                 {...register("our_vision.content")}
+              /> */}
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={ourMission?.our_vision?.content}
+                onChange={(event) => {
+                  setValue("our_vision.content", event);
+                }}
               />
             </label>
           </div>
@@ -251,11 +269,20 @@ export const OurMission = ({
               <p className="font-play-fair-display font-normal  text-base mb-3">
                 Content
               </p>
-              <textarea
+              {/* <textarea
                 id="ourEventsContent"
                 rows={4}
                 className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
                 {...register("our_events.content")}
+              /> */}
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={ourMission?.our_events?.content}
+                onChange={(event) => {
+                  setValue("our_events.content", event);
+                }}
               />
             </label>
           </div>
