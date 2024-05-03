@@ -1,13 +1,22 @@
 "use client";
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
+import { formats, modules } from "@/components/quill-config/confiig";
 import { post } from "@/helper/apiFetch";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
 import { QueryObserverResult } from "@tanstack/react-query";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
+import "react-quill/dist/quill.snow.css";
+const QuillEditor = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 
 export const UpdateProgramForm = ({
   getBackPageInfo,
@@ -26,7 +35,7 @@ export const UpdateProgramForm = ({
   );
 
   // form configs
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, setValue } = useForm({
     values: {
       name: selectedProgram?.name,
       description: selectedProgram?.description,
@@ -109,15 +118,18 @@ export const UpdateProgramForm = ({
             <h4 className="font-play-fair-display font-semibold">
               Description
             </h4>
-            <input
-              id="update_program_description"
-              type="text"
-              className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-              {...register("description", { required: true })}
+            <QuillEditor
+              defaultValue={selectedProgram?.description}
+              className="write-editor2"
+              formats={formats}
+              modules={modules}
+              onChange={(content: any) => {
+                setValue("description", content);
+              }}
             />
           </label>
           {/* image input */}
-          <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
+          <div className="py-5 mt-12 rounded-lg bg-white overflow-y-auto">
             <h4 className="font-play-fair-display font-semibold mb-1">
               Add Image
             </h4>
