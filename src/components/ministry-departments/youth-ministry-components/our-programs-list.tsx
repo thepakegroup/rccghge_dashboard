@@ -1,22 +1,44 @@
 "use client";
 
+import { remove } from "@/helper/apiFetch";
 import { Truncate } from "@/helper/truncate-text";
 import { DotsIcon } from "@/icons/dots-icon";
 import { MotionDiv, MotionPresence } from "@/util/motion-exports";
+import { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
+import { DeletingImageLoader } from "../deleting-image-loader";
 
 export const OurProgramsList = ({
   item,
   setShowUpdateProgram,
   setSelectedProgram,
+  getBackPageInfo,
 }: {
   item: any;
   setShowUpdateProgram: Dispatch<SetStateAction<boolean>>;
   setSelectedProgram: Dispatch<SetStateAction<any>>;
+  getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
   //states
   const [showControls, setSetControls] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  // delete program function
+  const removeProgram = async (id: any) => {
+    setDeleting(true);
+    try {
+      const res = await remove(`ministry-page/program/${id}`);
+      if (res.statusText === "OK") {
+        await getBackPageInfo();
+      }
+    } catch (error: any) {
+      console.log(error.response);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  //
   return (
     <div
       key={item?.id}
@@ -58,10 +80,16 @@ export const OurProgramsList = ({
             >
               Edit
             </div>
-            <div className="py-2 px-3 cursor-pointer">Delete</div>
+            <div
+              className="py-2 px-3 cursor-pointer"
+              onClick={() => removeProgram(item?.id)}
+            >
+              Delete
+            </div>
           </MotionDiv>
         )}
       </MotionPresence>
+      {deleting && <DeletingImageLoader deleting={deleting} />}
     </div>
   );
 };

@@ -46,6 +46,7 @@ export const OurTeams = ({
               item={item}
               setShowUpdateTeam={setShowUpdateTeam}
               setSelectedTeam={setSelectedTeam}
+              getBackPageInfo={getBackPageInfo}
             />
           );
         })}
