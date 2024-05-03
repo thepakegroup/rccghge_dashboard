@@ -50,6 +50,7 @@ export const OurPrograms = ({
               setShowUpdateProgram={setShowUpdateProgram}
               key={item?.id}
               item={item}
+              getBackPageInfo={getBackPageInfo}
             />
           );
         })}
