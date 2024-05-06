@@ -20,6 +20,8 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { BsPlus } from "react-icons/bs";
+import { MdDelete } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 
 const CommonTwoPages = () => {
   const params = useParams();
@@ -114,6 +116,21 @@ const CommonTwoPages = () => {
       setEditing(false);
     }
   };
+  // delete category function
+  const deleteCategory = async (item: any) => {
+    setDeleting(true);
+    try {
+      const res = await remove(`ministry-page/common-2/section/${item}`);
+      if (res.statusText === "OK") {
+        await getBackPageInfo();
+      }
+    } catch (error: any) {
+      console.log(error.response);
+    } finally {
+      setDeleting(false);
+    }
+  };
+  //
   //
   return (
     <div className="relative px-4 mb-8">
@@ -296,14 +313,18 @@ const CommonTwoPages = () => {
                             <span>Edit image</span>
                           </p>
                         </td>
-                        <td
-                          className="text-left border-collapse p-[15px] whitespace-nowrap cursor-pointer"
-                          onClick={() => {
-                            setToEdit(true);
-                            setSelectedCategory(item);
-                          }}
-                        >
-                          <DotsIcon />
+                        <td className="text-left text-lg flex items-center gap-2 border-collapse p-[15px] whitespace-nowrap">
+                          <MdDelete
+                            className="cursor-pointer text-red-500"
+                            onClick={() => deleteCategory(item?.id)}
+                          />
+                          <CiEdit
+                            className="cursor-pointer"
+                            onClick={() => {
+                              setToEdit(true);
+                              setSelectedCategory(item);
+                            }}
+                          />
                         </td>
                       </tr>
                     );
