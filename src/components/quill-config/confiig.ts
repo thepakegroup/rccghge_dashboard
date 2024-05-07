@@ -1,7 +1,8 @@
 export const modules = {
   toolbar: [
     [{ align: [] }, { align: "center" }, { align: "right" }],
-    [{ size: [] }],
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    // [{ size: [] }],
     ["bold", "italic", "underline", "strike", "blockquote"],
     [
       { list: "ordered" },

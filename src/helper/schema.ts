@@ -53,7 +53,7 @@ export const groupSchema = yup.object({
 
 // landing page schema
 export const landingPageSchema = yup.object({
-  header_text: yup.string().required("Header text is required"),
+  header_text: yup.mixed().required("Header text is required"),
   service_times: yup.boolean().required(),
   events: yup.boolean().required(),
   mission_vision: yup.boolean().required(),

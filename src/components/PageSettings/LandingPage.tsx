@@ -12,6 +12,15 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ConfirmDeleteImage from "./ConfirmDeleteImage";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+import { formats, modules } from "../quill-config/confiig";
+const QuillEditor = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 
 const LandingPage = () => {
   const formData = new FormData();
@@ -78,7 +87,7 @@ const LandingPage = () => {
   ]);
 
   const onLandingPageSubmit: SubmitHandler<{
-    header_text: string;
+    header_text: any;
     service_times: boolean;
     events: boolean;
     mission_vision: boolean;
@@ -183,10 +192,19 @@ const LandingPage = () => {
           <h3 className="text-lg font-medium text-[#030229]">Header Text</h3>
 
           <label htmlFor="">
-            <input
+            {/* <input
               {...register("header_text")}
               type="text"
               className="w-full border-[#D1D1D1] outline-none border rounded-[5px]"
+            /> */}
+            <QuillEditor
+              className="write-editor"
+              formats={formats}
+              modules={modules}
+              defaultValue={page_data?.settings?.settings?.heading_text}
+              onChange={(value) => {
+                setValue("header_text", value);
+              }}
             />
             <p className="text-xs text-red-600">
               {errors.header_text?.message}
