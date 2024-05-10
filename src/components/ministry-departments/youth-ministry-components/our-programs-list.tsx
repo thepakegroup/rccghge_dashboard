@@ -60,7 +60,10 @@ export const OurProgramsList = ({
         </div>
         <div title={item?.name}>{Truncate(item?.name, 14)}</div>
       </div>
-      <div title={item?.description}>{Truncate(item?.description, 8)}</div>
+      <div
+        title={item?.description}
+        dangerouslySetInnerHTML={{ __html: Truncate(item?.description, 8) }}
+      />
       <DotsIcon onClick={() => setSetControls(!showControls)} />
       <MotionPresence>
         {showControls && (
