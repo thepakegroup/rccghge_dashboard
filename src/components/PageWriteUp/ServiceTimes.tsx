@@ -18,6 +18,15 @@ import useUpdateToast from "@/hooks/updateToast";
 import { AxiosError } from "axios";
 import { post, remove } from "@/helper/apiFetch";
 import ImageUpload from "../ImageUpload";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+import { formats, modules } from "../quill-config/confiig";
+const QuillEditor = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -88,7 +97,8 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
     img && formData.append("image", img as Blob, img.name as string);
     formData.append("service_name", name as string);
-    formData.append("service_description", description as string);
+    formData.append("service_description", description);
+    // formData.append("service_description", description as string);
     formData.append(
       "service_period",
       `${convertTo12HourFormat(startTime as string)} ${convertTo12HourFormat(
@@ -189,11 +199,12 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         </div>
         <label htmlFor="description" className="input-field">
           <span>Description</span>
-          <textarea
-            onChange={(e) => dispatch(setDiscriptionService(e.target.value))}
+          <QuillEditor
+            className="write-editor"
+            formats={formats}
+            modules={modules}
             value={description}
-            rows={10}
-            className="input"
+            onChange={(event: any) => dispatch(setDiscriptionService(event))}
           />
         </label>
         <button
