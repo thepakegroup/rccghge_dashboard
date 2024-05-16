@@ -5,7 +5,7 @@ interface serviceI {
   startTime?: string;
   endTime?: string;
   id?: number | null;
-  description?: string;
+  description?: string | any | null;
   btnType?: "edit" | "add";
 }
 
