@@ -23,6 +23,11 @@ export interface SettingsSettings {
   our_upcoming_events: string;
   our_mission_vision: string;
   our_ministries: string;
+  give_section: {
+    give_header_text: string;
+    give_subheading: string;
+    give_bg_image: string;
+  };
 }
 
 export interface Slide {
