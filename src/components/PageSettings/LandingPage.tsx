@@ -16,6 +16,8 @@ import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { formats, modules } from "../quill-config/confiig";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
+import { GiveSectionEdits } from "./give_section_edits";
+import { MotionPresence } from "@/util/motion-exports";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -33,6 +35,9 @@ const LandingPage = () => {
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [give_bg, setGiveBg] = useState<any>(null);
   const [give_bg_prev, setGiveBgPrev] = useState<string>("");
+  const [give_subheading, setGiveSubheading] = useState<string>("");
+  const [give_header_text, setGiveHeaderText] = useState<string>("");
+  const [showGiveEdit, setShowGiveEdit] = useState<boolean>(false);
 
   // get all social connect
   const {
@@ -89,7 +94,17 @@ const LandingPage = () => {
 
   useEffect(() => {
     setGiveBgPrev(page_data?.settings?.settings?.give_section?.give_bg_image);
-  }, [page_data?.settings?.settings?.give_section?.give_bg_image]);
+    setGiveHeaderText(
+      page_data?.settings?.settings?.give_section?.give_header_text
+    );
+    setGiveSubheading(
+      page_data?.settings?.settings?.give_section?.give_subheading
+    );
+  }, [
+    page_data?.settings?.settings?.give_section?.give_bg_image,
+    page_data?.settings?.settings?.give_section?.give_header_text,
+    page_data?.settings?.settings?.give_section?.give_subheading,
+  ]);
 
   //
   const uploadGiveBg = (event: any) => {
@@ -129,6 +144,8 @@ const LandingPage = () => {
     });
 
     if (give_bg) formData.append("give_bg", give_bg);
+    formData.append("give_header_text", give_header_text);
+    formData.append("give_subheading", give_subheading);
 
     try {
       const res = await post(
@@ -293,54 +310,39 @@ const LandingPage = () => {
             </label>
           </div>
         </div>
-
         {/*  */}
-        <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
-          <h3 className="text-lg font-medium text-[#030229]">
-            Give card image
-          </h3>
-          <label
-            className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-            htmlFor="give_bg"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              setGiveBgPrev(URL.createObjectURL(e.dataTransfer.files[0]));
-              setGiveBg(e.dataTransfer.files[0]);
-            }}
+        <div className="flex items-center justify-between py-6 px-4 gap-4 bg-white rounded-md">
+          <div>
+            <h3 className="font-semibold text-lg md:text-xl">Give Section</h3>
+            <small className="text-xs text-fade-ash/80">
+              edit settings, save and proceed, then update page settings
+            </small>
+          </div>
+          <p
+            className="text-sm md:text-base text-orange cursor-pointer"
+            onClick={() => setShowGiveEdit(true)}
           >
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              id="give_bg"
-              onChange={uploadGiveBg}
-            />
-            <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-              <UploadImgIcon />
-              <div className="flex items-center gap-1">
-                <p className="text-orange">Click to upload</p>
-                <p>or drag and drop</p>
-              </div>
-              <p className="text-xs text-fade-ash">
-                SVG, PNG, JPG or GIF (max. 800x400px)
-              </p>
-            </div>
-          </label>
-          {give_bg_prev && (
-            <div className="w-[250px] h-[150px] mt-5 rounded-md overflow-hidden mx-auto">
-              <Image
-                src={give_bg_prev}
-                alt="give section image"
-                width={600}
-                height={300}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+            Edit settings
+          </p>
         </div>
         {/*  */}
-
+        <MotionPresence>
+          {showGiveEdit && (
+            <GiveSectionEdits
+              setGiveBg={setGiveBg}
+              setGiveBgPrev={setGiveBgPrev}
+              uploadGiveBg={uploadGiveBg}
+              give_bg={give_bg}
+              give_bg_prev={give_bg_prev}
+              setShowGiveEdit={setShowGiveEdit}
+              give_header_text={give_header_text}
+              setGiveHeaderText={setGiveHeaderText}
+              give_subheading={give_subheading}
+              setGiveSubHeading={setGiveSubheading}
+            />
+          )}
+        </MotionPresence>
+        {/*  */}
         <button
           type="submit"
           className={`bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md ${
