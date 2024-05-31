@@ -14,7 +14,7 @@ const PageSettings = () => {
 
   return (
     <section className="relative min-h-[88vh] w-full ">
-      <div className="flex gap-10 md:gap-20 items-center  pt-[51px] min-w-[90vw] md:min-w-[50vw] overflow-x-auto">
+      <div className="flex gap-10 md:gap-20 items-center  pt-[51px] min-w-[90vw] md:min-w-[50vw] overflow-x-auto max-w-[90vw]">
         {pages.map((p) => {
           return (
             <li

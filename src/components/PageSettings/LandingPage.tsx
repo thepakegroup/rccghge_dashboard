@@ -15,6 +15,7 @@ import ConfirmDeleteImage from "./ConfirmDeleteImage";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { formats, modules } from "../quill-config/confiig";
+import { UploadImgIcon } from "@/icons/upload-img-icon";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -30,6 +31,8 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
+  const [give_bg, setGiveBg] = useState<any>(null);
+  const [give_bg_prev, setGiveBgPrev] = useState<string>("");
 
   // get all social connect
   const {
@@ -84,6 +87,22 @@ const LandingPage = () => {
     page_data?.settings?.settings?.our_mission_vision,
   ]);
 
+  useEffect(() => {
+    setGiveBgPrev(page_data?.settings?.settings?.give_section?.give_bg_image);
+  }, [page_data?.settings?.settings?.give_section?.give_bg_image]);
+
+  //
+  const uploadGiveBg = (event: any) => {
+    const file = event.target.files[0];
+    setGiveBgPrev(page_data?.settings?.settings?.give_section?.give_bg_image);
+    setGiveBg(null);
+    if (file) {
+      setGiveBg(file);
+      setGiveBgPrev(URL.createObjectURL(file));
+    }
+  };
+  //
+
   const onLandingPageSubmit: SubmitHandler<{
     header_text: any;
     service_times: boolean;
@@ -108,6 +127,8 @@ const LandingPage = () => {
     files.forEach((file) => {
       formData.append("image_slides", file, file.name);
     });
+
+    if (give_bg) formData.append("give_bg", give_bg);
 
     try {
       const res = await post(
@@ -272,6 +293,53 @@ const LandingPage = () => {
             </label>
           </div>
         </div>
+
+        {/*  */}
+        <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
+          <h3 className="text-lg font-medium text-[#030229]">
+            Give card image
+          </h3>
+          <label
+            className="flex flex-col gap-1 cursor-pointer justify-center items-center"
+            htmlFor="give_bg"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              setGiveBgPrev(URL.createObjectURL(e.dataTransfer.files[0]));
+              setGiveBg(e.dataTransfer.files[0]);
+            }}
+          >
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              id="give_bg"
+              onChange={uploadGiveBg}
+            />
+            <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
+              <UploadImgIcon />
+              <div className="flex items-center gap-1">
+                <p className="text-orange">Click to upload</p>
+                <p>or drag and drop</p>
+              </div>
+              <p className="text-xs text-fade-ash">
+                SVG, PNG, JPG or GIF (max. 800x400px)
+              </p>
+            </div>
+          </label>
+          {give_bg_prev && (
+            <div className="w-[250px] h-[150px] mt-5 rounded-md overflow-hidden mx-auto">
+              <Image
+                src={give_bg_prev}
+                alt="give section image"
+                width={600}
+                height={300}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+        </div>
+        {/*  */}
 
         <button
           type="submit"
