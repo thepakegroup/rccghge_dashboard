@@ -88,6 +88,10 @@
   @apply bg-orange text-white;
 }
 
+.im-new-page-inputs {
+  @apply w-full outline-none focus:outline-none focus:ring-0 focus:border-zinc-300 rounded-md py-3 px-4 border border-zinc-300;
+}
+
 .loader {
   width: 48px;
   height: 48px;

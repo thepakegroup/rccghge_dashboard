@@ -65,6 +65,10 @@ export const IAmNewPageSchema = yup.object({
   header_text: yup.string().required("Header text is required"),
   service_times: yup.boolean().required(),
   events: yup.boolean().required(),
+  subheading_text: yup.string().required("Subheading text is required"),
+  subheading_description_text: yup.mixed(),
+  arrivalAndParking: yup.mixed(),
+  worshipExperience: yup.mixed(),
 });
 
 // services schema
