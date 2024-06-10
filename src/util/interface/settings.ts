@@ -28,6 +28,41 @@ export interface SettingsSettings {
     give_subheading: string;
     give_bg_image: string;
   };
+  subheading_text: string;
+  subheading_description_text: any;
+  arrivalAndParking: any;
+  worshipExperience: any;
+  pageVideoLink: {
+    url: string;
+  };
+  blueBannerContent: {
+    body: string;
+  };
+  wednesdayBibleStudy: {
+    adultText: string;
+    nextGenYouthText: string;
+    nextGenKidText: string;
+  };
+  sundayServices: {
+    adultsText: string;
+    adultYoutubeLink: string;
+    onlineChurchLink: string;
+    nextGenYouthText: string;
+    nextGenYoutubeLink: string;
+    nextGenKidText: string;
+    pageImage: string;
+  };
+}
+
+export interface sundayServicesType {
+  section?: string;
+  adultsText: string;
+  adultYoutubeLink: string;
+  onlineChurchLink: string;
+  nextGenYouthText: string;
+  nextGenYoutubeLink: string;
+  nextGenKidText: string;
+  pageImage?: string;
 }
 
 export interface Slide {
