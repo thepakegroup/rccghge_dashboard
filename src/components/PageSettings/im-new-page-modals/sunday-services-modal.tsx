@@ -46,7 +46,7 @@ export const SundayServicesModal = ({
       onlineChurchLink: data?.onlineChurchLink,
       nextGenYouthText: data?.nextGenYouthText,
       nextGenYoutubeLink: data?.nextGenYoutubeLink,
-      nextGenKidText: data?.nextGenKidText,
+      nextGenKidsText: data?.nextGenKidsText,
     },
   });
   //
@@ -75,7 +75,7 @@ export const SundayServicesModal = ({
       formData.append("onlineChurchLink", data?.onlineChurchLink);
       formData.append("nextGenYouthText", data?.nextGenYouthText);
       formData.append("nextGenYoutubeLink", data?.nextGenYoutubeLink);
-      formData.append("nextGenKidText", data?.nextGenKidText);
+      formData.append("nextGenKidsText", data?.nextGenKidsText);
       if (image !== null) formData.append("page_image", image);
       const res = await post(
         "/page-setting/iam-new-page-extra",
@@ -166,7 +166,7 @@ export const SundayServicesModal = ({
                 className="write-editor"
                 formats={formats}
                 modules={modules}
-                defaultValue={data?.adultsText}
+                defaultValue={data?.nextGenYouthText}
                 onChange={(event: any) => setValue("nextGenYouthText", event)}
               />
               <small className="text-xs text-red-500">
@@ -197,11 +197,11 @@ export const SundayServicesModal = ({
                 className="write-editor"
                 formats={formats}
                 modules={modules}
-                defaultValue={data?.adultsText}
-                onChange={(event: any) => setValue("nextGenKidText", event)}
+                defaultValue={data?.nextGenKidsText}
+                onChange={(event: any) => setValue("nextGenKidsText", event)}
               />
               <small className="text-xs text-red-500">
-                {errors?.nextGenKidText?.message}
+                {errors?.nextGenKidsText?.message}
               </small>
             </label>
             {/*  */}
