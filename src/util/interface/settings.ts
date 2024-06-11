@@ -49,7 +49,7 @@ export interface SettingsSettings {
     onlineChurchLink: string;
     nextGenYouthText: string;
     nextGenYoutubeLink: string;
-    nextGenKidText: string;
+    nextGenKidsText: string;
     pageImage: string;
   };
 }
@@ -61,7 +61,7 @@ export interface sundayServicesType {
   onlineChurchLink: string;
   nextGenYouthText: string;
   nextGenYoutubeLink: string;
-  nextGenKidText: string;
+  nextGenKidsText: string;
   pageImage?: string;
 }
 
