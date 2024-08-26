@@ -161,7 +161,8 @@ export const SundayServicesModal = ({
           {/*  */}
           <div className="flex flex-col gap-2 p-2 bg-white rounded-md">
             <label htmlFor="" className="flex flex-col gap-1">
-              <p className="font-semibold">Nextgen Youths</p>
+              {/* Nextgen Youths => Next - Impact Services */}
+              <p className="font-semibold">Next - Impact Services</p>
               <QuillEditor
                 className="write-editor"
                 formats={formats}
@@ -192,7 +193,8 @@ export const SundayServicesModal = ({
           {/*  */}
           <div className="flex flex-col gap-2 p-2 bg-white rounded-md">
             <label htmlFor="" className="flex flex-col gap-1">
-              <p className="font-semibold">Nextgen Kids</p>
+              {/* Nextgen Kids => Teenagers Chapel */}
+              <p className="font-semibold">Teenagers Chapel</p>
               <QuillEditor
                 className="write-editor"
                 formats={formats}
