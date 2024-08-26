@@ -301,7 +301,8 @@ const IAmNew = () => {
               />
             </label>
             {/*  */}
-            <label htmlFor="">
+            {/* commented off worship experience */}
+            {/* <label htmlFor="">
               <h3 className="font-semibold">The worship experience</h3>
               <QuillEditor
                 className="write-editor"
@@ -310,7 +311,7 @@ const IAmNew = () => {
                 value={page_data?.settings?.settings?.worshipExperience}
                 onChange={(event: any) => setValue("worshipExperience", event)}
               />
-            </label>
+            </label> */}
             {/*  */}
           </div>
         </div>
