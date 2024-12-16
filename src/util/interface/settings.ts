@@ -51,6 +51,10 @@ export interface SettingsSettings {
     nextGenYoutubeLink: string;
     nextGenKidsText: string;
     pageImage: string;
+    //
+    hgeSeedsText: string;
+    teenagersChapelText: string;
+    nextImpactServiceText: string;
   };
 }
 
@@ -63,6 +67,10 @@ export interface sundayServicesType {
   nextGenYoutubeLink: string;
   nextGenKidsText: string;
   pageImage?: string;
+  //
+  hgeSeedsText: string;
+  teenagersChapelText: string;
+  nextImpactServiceText: string;
 }
 
 export interface Slide {
