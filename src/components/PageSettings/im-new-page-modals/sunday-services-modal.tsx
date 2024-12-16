@@ -47,6 +47,10 @@ export const SundayServicesModal = ({
       nextGenYouthText: data?.nextGenYouthText,
       nextGenYoutubeLink: data?.nextGenYoutubeLink,
       nextGenKidsText: data?.nextGenKidsText,
+      //
+      hgeSeedsText: data?.hgeSeedsText,
+      teenagersChapelText: data?.teenagersChapelText,
+      nextImpactServiceText: data?.nextImpactServiceText,
     },
   });
   //
@@ -76,6 +80,11 @@ export const SundayServicesModal = ({
       formData.append("nextGenYouthText", data?.nextGenYouthText);
       formData.append("nextGenYoutubeLink", data?.nextGenYoutubeLink);
       formData.append("nextGenKidsText", data?.nextGenKidsText);
+      //
+      formData.append("hgeSeedsText", data?.hgeSeedsText);
+      formData.append("teenagersChapelText", data?.teenagersChapelText);
+      formData.append("nextImpactServiceText", data?.nextImpactServiceText);
+      //
       if (image !== null) formData.append("page_image", image);
       const res = await post(
         "/page-setting/iam-new-page-extra",
@@ -204,6 +213,64 @@ export const SundayServicesModal = ({
               />
               <small className="text-xs text-red-500">
                 {errors?.nextGenKidsText?.message}
+              </small>
+            </label>
+            {/*  */}
+          </div>
+          {/*  */}
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md">
+            <label htmlFor="" className="flex flex-col gap-1">
+              {/* Hge seeds text */}
+              <p className="font-semibold">Hge Seeds Text</p>
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={data?.hgeSeedsText}
+                onChange={(event: any) => setValue("hgeSeedsText", event)}
+              />
+              <small className="text-xs text-red-500">
+                {errors?.hgeSeedsText?.message}
+              </small>
+            </label>
+            {/*  */}
+          </div>
+          {/*  */}
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md">
+            <label htmlFor="" className="flex flex-col gap-1">
+              {/* Teenagers Chapel Text */}
+              <p className="font-semibold">Teenagers Chapel Text</p>
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={data?.teenagersChapelText}
+                onChange={(event: any) =>
+                  setValue("teenagersChapelText", event)
+                }
+              />
+              <small className="text-xs text-red-500">
+                {errors?.teenagersChapelText?.message}
+              </small>
+            </label>
+            {/*  */}
+          </div>
+          {/*  */}
+          <div className="flex flex-col gap-2 p-2 bg-white rounded-md">
+            <label htmlFor="" className="flex flex-col gap-1">
+              {/* Next Impacy Service Text */}
+              <p className="font-semibold">Next Impact Service Text</p>
+              <QuillEditor
+                className="write-editor"
+                formats={formats}
+                modules={modules}
+                defaultValue={data?.nextImpactServiceText}
+                onChange={(event: any) =>
+                  setValue("nextImpactServiceText", event)
+                }
+              />
+              <small className="text-xs text-red-500">
+                {errors?.nextImpactServiceText?.message}
               </small>
             </label>
             {/*  */}
