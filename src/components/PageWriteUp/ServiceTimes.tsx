@@ -15,17 +15,35 @@ import {
 } from "@/store/slice/service";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { post, remove } from "@/helper/apiFetch";
+import ImageUpload from "../ImageUpload";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
+import { formats, modules } from "../quill-config/confiig";
+const QuillEditor = dynamic(() => import("react-quill"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[150px] bg-stone-100/80 animate-pulse rounded-md" />
+  ),
+});
 
 const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
   const updateToast = useUpdateToast();
   const dispatch = useAppDispatch();
+  const formData = new FormData();
 
   const { id } = useAppSelector((state) => state.mediaItems);
   const { section } = useAppSelector((state) => state.content);
   const [loader, setLoader] = useState(false);
+  const [img, setImg] = useState<File | any>("");
+
+  // HandleImage
+  const handleImageChange = (file: File) => {
+    setImg(file);
+  };
+
   const {
     name,
     startTime,
@@ -67,20 +85,37 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
   // Update and Create Service
   const updateService = async () => {
-    const serviceData = {
-      service_name: name,
-      service_period: `${convertTo12HourFormat(
-        startTime as string
-      )} ${convertTo12HourFormat(endTime as string)}`,
-      service_description: description,
-      ...(btnType == "edit" && editId !== undefined ? { id: editId } : {}),
-    };
     setLoader(true);
+
+    if (btnType !== "edit" && !img) {
+      updateToast({
+        title: `Please add an image`,
+        info: name,
+      });
+      return;
+    }
+
+    img && formData.append("image", img as Blob, img.name as string);
+    formData.append("service_name", name as string);
+    formData.append("service_description", description);
+    // formData.append("service_description", description as string);
+    formData.append(
+      "service_period",
+      `${convertTo12HourFormat(startTime as string)} ${convertTo12HourFormat(
+        endTime as string
+      )}`
+    );
+    btnType === "edit" &&
+      editId !== undefined &&
+      formData.append("id", editId as unknown as string);
 
     try {
       const res = await post(
-        `${btnType == "edit" ? `update-service-times` : `create-service-time`}`,
-        serviceData
+        `${
+          btnType === "edit" ? `update-service-times` : `create-service-time`
+        }`,
+        formData,
+        "multipart/form-data"
       );
 
       fetchData();
@@ -91,6 +126,7 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
 
       setLoader(false);
 
+      setImg("");
       dispatch(
         setService({
           name: "",
@@ -123,6 +159,10 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         className="flex flex-col gap-[1.12rem] mt-4"
         onSubmit={(e) => e.preventDefault()}
       >
+        <div className="w-full md:max-w-[60%] mx-auto">
+          <ImageUpload handleImageChange={handleImageChange} />
+        </div>
+
         <label htmlFor="title" className="input-field">
           <span>Servic name</span>
           <input
@@ -159,11 +199,12 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
         </div>
         <label htmlFor="description" className="input-field">
           <span>Description</span>
-          <textarea
-            onChange={(e) => dispatch(setDiscriptionService(e.target.value))}
+          <QuillEditor
+            className="write-editor"
+            formats={formats}
+            modules={modules}
             value={description}
-            rows={10}
-            className="input"
+            onChange={(event: any) => dispatch(setDiscriptionService(event))}
           />
         </label>
         <button
@@ -194,11 +235,12 @@ const ServiceTimes = ({ currentSection }: { currentSection: string }) => {
             {services?.map((service) => {
               return (
                 <ServiceInfo
-                  key={service.id}
-                  id={service.id}
-                  name={service.service_name}
-                  serviceTime={service.service_period}
-                  description={service.service_description}
+                  key={service?.id}
+                  id={service?.id}
+                  image={service?.image_url as string}
+                  name={service?.service_name}
+                  serviceTime={service?.service_period}
+                  description={service?.service_description}
                 />
               );
             })}

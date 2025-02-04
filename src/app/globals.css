@@ -80,6 +80,18 @@
   }
 }
 
+.ministry-departments-pagination li a {
+  @apply bg-white px-4 py-2 rounded-md text-secondary-02 text-sm;
+}
+
+.ministry-departments-pagination li a[aria-current="page"] {
+  @apply bg-orange text-white;
+}
+
+.im-new-page-inputs {
+  @apply w-full outline-none focus:outline-none focus:ring-0 focus:border-zinc-300 rounded-md py-3 px-4 border border-zinc-300;
+}
+
 .loader {
   width: 48px;
   height: 48px;
@@ -89,6 +101,18 @@
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+}
+
+.btn-loader {
+  @apply h-[25px] w-[25px] border-[2.8px] border-solid border-white border-b-transparent rounded-full inline-block box-border animate-spin;
+}
+
+.write-editor .ql-editor {
+  @apply min-h-[200px];
+}
+
+.write-editor2 .ql-editor {
+  @apply min-h-[100px];
 }
 
 @keyframes rotation {

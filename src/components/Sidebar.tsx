@@ -73,43 +73,67 @@ const Sidebar = () => {
     {
       title: "Home",
       info: "Dashboard",
-      icon: "icons/home.svg",
+      icon: "/icons/home.svg",
       link: "/",
     },
     {
       title: "Testimonies",
       info: "Manage testimonies",
-      icon: "icons/star.svg",
+      icon: "/icons/star.svg",
       link: "/testimonies",
     },
     {
       title: "manage events",
       info: "Add and remove events",
-      icon: "icons/event.svg",
+      icon: "/icons/event.svg",
       link: "/manage-events",
     },
     {
       title: "page writeup",
       info: "manage page text content",
-      icon: "icons/write.svg",
+      icon: "/icons/write.svg",
       link: "/page-writeup",
     },
     {
       title: "ministry",
       info: "manage leaders & ministry",
-      icon: "icons/minister.svg",
+      icon: "/icons/minister.svg",
       link: "/ministry",
+    },
+    {
+      title: "socials",
+      info: "manage accounts",
+      icon: "/icons/minister.svg",
+      link: "/socials",
+    },
+    {
+      title: "sermon subscriptions",
+      info: "manage subscriptions",
+      icon: "/icons/minister.svg",
+      link: "/subscriptions",
+    },
+    {
+      title: "app settings",
+      info: "manage app settings",
+      icon: "/icons/settings.svg",
+      link: "/settings",
     },
     {
       title: "page settings",
       info: "manage site settings",
-      icon: "icons/settings.svg",
-      link: "/settings",
+      icon: "/icons/settings.svg",
+      link: "/page_settings",
+    },
+    {
+      title: "Ministry Settings",
+      info: "manage ministries and departments",
+      icon: "/icons/minister.svg",
+      link: "/ministry-departments",
     },
     {
       title: "admin",
       info: "add & remove admins",
-      icon: "icons/admin.svg",
+      icon: "/icons/admin.svg",
       link: "/admin",
     },
     {
@@ -155,7 +179,7 @@ const Sidebar = () => {
                 <li key={title}>
                   <Link
                     href={`${link}`}
-                    className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary ${
+                    className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary mb-2 ${
                       pathname === link && "bg-secondary"
                     }`}
                     onClick={handleToggle}

@@ -1,37 +1,49 @@
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setDeleteFunc } from '@/store/slice/content';
-import { setEditMediaId } from '@/store/slice/mediaItems';
-import { setMission } from '@/store/slice/mission';
-import Image from 'next/image';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setDeleteFunc } from "@/store/slice/content";
+import { setEditMediaId } from "@/store/slice/mediaItems";
+import { setMission } from "@/store/slice/mission";
+import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
 
 interface infoI {
   title: string;
   description: string;
+  setCat: Dispatch<SetStateAction<string>>;
+  category: string;
   id: number;
 }
 
-const OurMissionInfo = ({ title, description, id }: infoI) => {
+const OurMissionInfo = ({
+  title,
+  description,
+  id,
+  category,
+  setCat,
+}: infoI) => {
   const handleButton = useModalType();
 
   const dispatch = useAppDispatch();
 
   const handleDelete = () => {
-    handleButton('delete');
+    handleButton("delete");
     dispatch(setEditMediaId(id));
-    dispatch(setDeleteFunc('mission'));
+    dispatch(setDeleteFunc("mission"));
   };
 
   const handleEdit = () => {
-    handleButton('modify');
+    handleButton("modify");
     dispatch(setEditMediaId(id));
+
+    setCat(category);
+
     dispatch(
       setMission({
         title,
         description,
-        category: 'all',
+        category: category,
         id,
-        btnType: 'edit',
+        btnType: "edit",
       })
     );
   };

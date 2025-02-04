@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import ProfileCard from "./ProfileCard";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -14,12 +15,18 @@ import axios, { AxiosError } from "axios";
 import { baseUrl } from "@/util/constants";
 import ImageUpload from "../ImageUpload";
 import { setFileName, setMediaFile } from "@/store/slice/mediaItems";
-import { post, remove } from "@/helper/apiFetch";
+import { get, post, remove } from "@/helper/apiFetch";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { groupSchema } from "@/helper/schema";
+import { useRouter, useSearchParams } from "next/navigation";
+import ReactPaginate from "react-paginate";
+import { BsChevronDown } from "react-icons/bs";
+import { MotionDiv, MotionPresence } from "@/util/motion-exports";
 
 const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
   const { id } = useAppSelector((state) => state.mediaItems);
@@ -27,12 +34,20 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
 
   const [groups, setGroups] = useState<churchGroupI[]>([]);
+  const [meta_info, setMetaInfo] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<any | null>(null);
   const [currAction, setCurrAction] = useState(false);
   const [img, setImg] = useState<File | any>("");
+
+  //
+  const [showCategories, setShowCategories] = useState<boolean>(false);
+
+  // page param var
+  const page = searchParams.get("page") || 1;
+  const selected_category = searchParams.get("selected_category") || "Ministry";
 
   const {
     register,
@@ -57,31 +72,44 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
   } = useAppSelector((state) => state.churchGroup);
 
   // Fetch All Group
-  const getGroupByCategory = useCallback(async (category: string) => {
-    try {
-      const res = await post(`groups`, { category, page: 1 });
-      setLoading(false);
+  const getGroupByCategory = useCallback(
+    async (category: string) => {
+      try {
+        const res = await get(
+          `groups?category=${selected_category}&page=${page}&perPage=6`
+        );
+        setLoading(false);
 
-      const data = await res.data;
-      if (data.error) {
+        const data = await res.data;
+        if (data.error) {
+          updateToast({
+            title: `Error!`,
+            info: `${res.data?.message}`,
+          });
+          return;
+        }
+
+        setGroups(data?.message?.data);
+        setMetaInfo(data?.message?.meta);
+      } catch (error) {
+        setLoading(false);
+
         updateToast({
-          title: `Error!`,
-          info: `${res.data?.message}`,
+          type: "error",
+          title: "Error!",
+          info: `${(error as AxiosError)?.message}`,
         });
-        return;
       }
-
-      setGroups(data?.message?.data);
-    } catch (error) {
-      setLoading(false);
-
-      updateToast({
-        type: "error",
-        title: "Error!",
-        info: `${(error as AxiosError)?.message}`,
-      });
-    }
-  }, []);
+    },
+    [page, selected_category]
+  );
+  // This functions handles the page click change
+  const handlePageClick = ({ selected }: { selected: number }) => {
+    const page = selected + 1;
+    router.push(
+      `/ministry?page=${page}&selected_category=${selected_category}`
+    );
+  };
 
   // Delete Group
   const removeGroup = async () => {
@@ -139,6 +167,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
     form.append("category", groupInfo.category);
     form.append("description", groupInfo.description);
     currAction && form.append("id", `${id}`);
+    form.append("ministry_code", groupInfo.ministry_code);
 
     try {
       const res = await post(
@@ -212,6 +241,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
       name: data.name,
       category: cat,
       description: data.description,
+      ministry_code: data.ministry_code,
     };
 
     updateGroup(groupInfo);
@@ -234,7 +264,7 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           : "hidden md:block"
       }`}
     >
-      <div className="bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
+      <div className="overflow-auto bg-white rounded-lg md:max-h-[40rem] py-6 px-7">
         <h2 className="text-lg font-bold mb-5">Add church groups</h2>
         <ImageUpload handleImageChange={handleImageChange} section="group" />
         <form
@@ -316,6 +346,21 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
               </div>
             </Listbox>
           </label>
+          <label htmlFor="ministry_code">
+            <span>Ministry Code</span>
+            <input
+              type="text"
+              className="input"
+              {...register("ministry_code")}
+            />
+            <span className="text-sm text-fade-ash">
+              e.g for youth ministry, type youth_ministry
+            </span>
+            <br />
+            <small className="text-xs text-red-600">
+              {errors.ministry_code?.message}
+            </small>
+          </label>
           <label htmlFor="description" className="input-field">
             <span>Description</span>
             <textarea {...register("description")} rows={4} className="input" />
@@ -339,7 +384,70 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
         </form>
       </div>
       <div className="">
-        <div className="flex justify-end my-4">
+        <div className="px-4 flex justify-between my-4 items-start">
+          {/* category select */}
+          <div>
+            <div
+              className="flex items-center justify-between gap-3 text-sm text-fade-ash bg-white border border-[#d0d5dd] rounded-md py-[14px] px-4 cursor-pointer"
+              onClick={() => setShowCategories(!showCategories)}
+            >
+              <span>{selected_category}</span>
+              <BsChevronDown />
+            </div>
+            {/*  */}
+            <MotionPresence>
+              {showCategories && (
+                <MotionDiv
+                  initial={{ height: 0 }}
+                  animate={{ height: "auto" }}
+                  exit={{ height: 0 }}
+                  className="overflow-hidden bg-white border border-[#d0d5dd] rounded-md text-fade-ash"
+                >
+                  <p
+                    className="py-2 px-3 border-b last:border-b-0 cursor-pointer"
+                    onClick={() => {
+                      const params = new URLSearchParams();
+                      params.append("selected_category", "All");
+                      router.push(
+                        `/ministry?page=${page}&selected_category=All`
+                      );
+                      setShowCategories(false);
+                    }}
+                  >
+                    All
+                  </p>
+                  <p
+                    className="py-2 px-3 border-b last:border-b-0 cursor-pointer"
+                    onClick={() => {
+                      const params = new URLSearchParams();
+                      params.append("selected_category", "Ministry");
+                      router.push(
+                        `/ministry?page=${page}&selected_category=Ministry`
+                      );
+                      setShowCategories(false);
+                    }}
+                  >
+                    Ministry
+                  </p>
+                  <p
+                    className="py-2 px-3 border-b last:border-b-0 cursor-pointer"
+                    onClick={() => {
+                      const params = new URLSearchParams();
+                      params.append("selected_category", "Department");
+                      router.push(
+                        `/ministry?page=${page}&selected_category=Department`
+                      );
+                      setShowCategories(false);
+                    }}
+                  >
+                    Department
+                  </p>
+                </MotionDiv>
+              )}
+            </MotionPresence>
+          </div>
+
+          {/* sort by recent or oldest */}
           <Listbox value={sortKey} onChange={setSortKey}>
             <div className="relative">
               <Listbox.Button className="relative w-full min-w-[127px] gap-3 border border-[#d0d5dd] rounded-md bg-white p-4 cursor-pointer text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 text-sm">
@@ -426,6 +534,19 @@ const ChurchGroup = ({ currentSection }: { currentSection: string }) => {
           </div>
         )}
       </div>
+      {groups && (
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel=">"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={3}
+          pageCount={meta_info?.last_page}
+          previousLabel="<"
+          renderOnZeroPageCount={null}
+          className="ministry-departments-pagination flex flex-wrap gap-2 justify-center my-5"
+          activeLinkClassName="text-white bg-orange"
+        />
+      )}
       {type == "delete" && section === "group" && (
         <DeleteModal deleteFunc={removeGroup} />
       )}

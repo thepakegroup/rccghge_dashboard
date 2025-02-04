@@ -29,14 +29,22 @@ const config: Config = {
         orange: "#EA5017",
         "gray-1": "#101928",
         "gray-2": "#D2D9E1",
+        light: {
+          200: "#F1F1F6",
+        },
       },
       boxShadow: {
         modalShadow: "0px 4px 25px 0px rgba(0, 0, 0, 0.15)",
+      },
+      fontFamily: {
+        "play-fair-display": "'Playfair Display', serif",
       },
     },
   },
 
   plugins: [
+    require("@tailwindcss/forms"),
+
     function ({ addUtilities }: { addUtilities: any }) {
       addUtilities(
         {

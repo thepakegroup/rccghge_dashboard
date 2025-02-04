@@ -62,6 +62,7 @@ const GroupProfileModal = ({
     category: editItemData?.category,
     description: editItemData?.description,
     id: editItemData?.id,
+    ministry_code: editItemData?.ministry_code,
   });
 
   const handleSubmitForm = () => {
@@ -71,6 +72,7 @@ const GroupProfileModal = ({
       id: groupsInfo.id,
       banner: img,
       category: groupsInfo.category,
+      ministry_code: groupsInfo.ministry_code,
     };
 
     handleSubmit(groupInfo);
@@ -220,6 +222,28 @@ const GroupProfileModal = ({
                   </Transition>
                 </div>
               </Listbox>
+            </label>
+            <label htmlFor="ministry_code">
+              <span>Ministry Code</span>
+              <input
+                id="ministry_code"
+                type="text"
+                className="input"
+                defaultValue={editItemData?.ministry_code}
+                onChange={(e) =>
+                  setGroupsinfo((val) => ({
+                    ...val,
+                    ministry_code: e.target.value,
+                  }))
+                }
+              />
+              <span className="text-sm text-fade-ash">
+                e.g for youth ministry, type youth_ministry
+              </span>
+              <br />
+              <small className="text-xs text-red-600">
+                {/* {errors.ministry_code?.message} */}
+              </small>
             </label>
             <label htmlFor="description" className="input-field">
               <span>Description</span>
