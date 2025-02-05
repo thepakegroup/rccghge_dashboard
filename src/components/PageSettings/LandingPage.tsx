@@ -227,16 +227,18 @@ const LandingPage = () => {
         {page_loading && (
           <div className="h-[300px] bg-zinc-300 animate-pulse rounded-md" />
         )}
-        {data && (
-          <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
-            <h3 className="text-lg font-medium text-[#030229]">Header Text</h3>
 
-            <label htmlFor="">
-              {/* <input
+        <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
+          <h3 className="text-lg font-medium text-[#030229]">Header Text</h3>
+
+          <label htmlFor="">
+            {/* <input
               {...register("header_text")}
               type="text"
               className="w-full border-[#D1D1D1] outline-none border rounded-[5px]"
             /> */}
+
+            {data && (
               <QuillEditor
                 className="write-editor"
                 formats={formats}
@@ -246,12 +248,13 @@ const LandingPage = () => {
                   setValue("header_text", value);
                 }}
               />
-              <p className="text-xs text-red-600">
-                {errors.header_text?.message}
-              </p>
-            </label>
-          </div>
-        )}
+            )}
+
+            <p className="text-xs text-red-600">
+              {errors.header_text?.message}
+            </p>
+          </label>
+        </div>
 
         {/* select options */}
         <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">

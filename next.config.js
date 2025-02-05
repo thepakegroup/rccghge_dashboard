@@ -5,6 +5,8 @@ const nextConfig = {
     domains: [
       "staging.api.kouakoudomagni.com",
       "www.staging.api.kouakoudomagni.com",
+      "api.kouakoudomagni.com",
+      "www.api.kouakoudomagni.com",
     ],
   },
 };
