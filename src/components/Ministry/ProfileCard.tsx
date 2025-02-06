@@ -68,7 +68,7 @@ const ProfileCard = ({
           <Image src="icons/options.svg" alt="" width={24} height={24} />
         </button>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 min-[376px]:grid-cols-2 md:grid-cols-1 gap-3">
         <div className="flex justify-between flex-col gap-6">
           <Image
             src={`${baseUrl}load-media/${img}`}

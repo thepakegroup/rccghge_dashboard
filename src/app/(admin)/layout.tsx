@@ -24,7 +24,7 @@ export default function RootLayout({
     <div className={`${inter.className}`}>
       <div className="md:flex">
         <Sidebar />
-        <main className="w-full relative !overflow-y-scroll h-[100vh] scroll-pt-56 scroll-smooth">
+        <main className="w-full relative !overflow-y-scroll !overflow-x-hidden h-[100vh] scroll-pt-56 scroll-smooth">
           <Nav />
           <SectionWrapper>{children}</SectionWrapper>
         </main>
