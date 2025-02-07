@@ -10,6 +10,7 @@ import "react-quill/dist/quill.snow.css";
 import { sundayServicesType } from "@/util/interface/settings";
 import Image from "next/image";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
+import { notify } from "@/helper/notify";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -97,8 +98,10 @@ export const SundayServicesModal = ({
           title: `${"Content updated successfully."}`,
         });
         await getPageData();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setUpdating(false);
     }
