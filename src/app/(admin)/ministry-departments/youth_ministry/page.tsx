@@ -11,6 +11,7 @@ import { OurPrograms } from "@/components/ministry-departments/youth-ministry-co
 import { OurTeams } from "@/components/ministry-departments/youth-ministry-components/our-teams";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
+import { notify } from "@/helper/notify";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv, MotionPresence } from "@/util/motion-exports";
@@ -93,8 +94,11 @@ const YouthMinistryPage = () => {
     setDeleting(true);
     try {
       const res = await remove(`/ministry-page/image/${id}`);
+      if (res.statusText === "OK" || res.status === 200 || res.status === 201) {
+        notify({ type: "success", message: res.data?.message });
+      }
     } catch (error: any) {
-      console.log(error);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setDeleting(false);
     }
@@ -123,9 +127,10 @@ const YouthMinistryPage = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setEditing(false);
     }

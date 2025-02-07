@@ -7,6 +7,7 @@ import { MForm, MotionDiv } from "@/util/motion-exports";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
+import { notify } from "@/helper/notify";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -56,8 +57,10 @@ export const WednesdayBibleStudyModal = ({
           title: `${"Content updated successfully."}`,
         });
         await getPageData();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setUpdating(false);
     }

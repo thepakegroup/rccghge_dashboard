@@ -1,6 +1,7 @@
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { post } from "@/helper/apiFetch";
+import { notify } from "@/helper/notify";
 import { MForm, MotionDiv } from "@/util/motion-exports";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -43,8 +44,10 @@ export const UploadVideoLink = ({
           title: `${"Link uploaded successfully."}`,
         });
         await getPageData();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setSaving(false);
     }
