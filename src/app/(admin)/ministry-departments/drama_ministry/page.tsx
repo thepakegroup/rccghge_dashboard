@@ -6,6 +6,7 @@ import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
+import { notify } from "@/helper/notify";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
@@ -138,9 +139,10 @@ const DramaMinistryPage = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
-      console.log(error);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setEditing(false);
     }
@@ -153,8 +155,8 @@ const DramaMinistryPage = () => {
       if (res.statusText === "OK") {
         await getBackPageInfo();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setDeleting(false);
     }

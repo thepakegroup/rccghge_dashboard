@@ -10,7 +10,6 @@ import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { get, post, remove } from "@/helper/apiFetch";
 import { Truncate } from "@/helper/truncate-text";
 import { CancelIcon } from "@/icons/cancel-icon";
-import { DotsIcon } from "@/icons/dots-icon";
 import { ImgIcon1 } from "@/icons/img-icon1";
 import { TableIcon1 } from "@/icons/table-icon-1";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
@@ -22,6 +21,7 @@ import { useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import { notify } from "@/helper/notify";
 
 const CommonTwoPages = () => {
   const params = useParams();
@@ -83,9 +83,10 @@ const CommonTwoPages = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setDeleting(false);
     }
@@ -109,9 +110,10 @@ const CommonTwoPages = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
-      console.log(error);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setEditing(false);
     }
@@ -123,9 +125,10 @@ const CommonTwoPages = () => {
       const res = await remove(`ministry-page/common-2/section/${item}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
-      console.log(error.response);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setDeleting(false);
     }

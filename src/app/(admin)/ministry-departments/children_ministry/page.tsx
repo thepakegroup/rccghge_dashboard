@@ -7,6 +7,7 @@ import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
+import { notify } from "@/helper/notify";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
@@ -127,9 +128,10 @@ const ChildrenMinistryPage = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        notify({ type: "success", message: res.data?.message });
       }
     } catch (error: any) {
-      console.log(error);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setDeleting(false);
     }
@@ -160,8 +162,11 @@ const ChildrenMinistryPage = () => {
         formData,
         "multipart/form-data"
       );
+      if (res.statusText === "OK" || res.status === 200 || res.status === 201) {
+        notify({ type: "success", message: res.data?.message });
+      }
     } catch (error: any) {
-      console.log(error);
+      notify({ type: "error", message: error.response?.data?.message });
     } finally {
       setEditing(false);
     }
