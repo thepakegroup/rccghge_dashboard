@@ -10,7 +10,7 @@ import "react-quill/dist/quill.snow.css";
 import { sundayServicesType } from "@/util/interface/settings";
 import Image from "next/image";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -28,7 +28,8 @@ export const SundayServicesModal = ({
   getPageData: () => Promise<void>;
   toast: any;
   setShowModal: Dispatch<SetStateAction<boolean>>;
-}) => {
+  }) => {
+  const updateToast = useUpdateToast();
   //
   const [updating, setUpdating] = useState<boolean>(false);
   const [image, setImage] = useState<any>(null);
@@ -98,10 +99,18 @@ export const SundayServicesModal = ({
           title: `${"Content updated successfully."}`,
         });
         await getPageData();
-        notify({ type: "success", message: res.data?.message });
+           updateToast({
+             title: `Success`,
+             type: "update",
+             info: `${res.data?.message}`,
+           });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+     updateToast({
+       title: `Error`,
+       type: "error",
+       info: `${error.response?.data?.message}`,
+     });
     } finally {
       setUpdating(false);
     }

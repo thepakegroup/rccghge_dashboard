@@ -11,7 +11,7 @@ import { OurPrograms } from "@/components/ministry-departments/youth-ministry-co
 import { OurTeams } from "@/components/ministry-departments/youth-ministry-components/our-teams";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv, MotionPresence } from "@/util/motion-exports";
@@ -34,6 +34,7 @@ interface pageInfo {
   subheading_description: string;
 }
 const YouthMinistryPage = () => {
+  const updateToast = useUpdateToast();
   //states
   const [bgPreview, setBgPreview] = useState<any[]>([]);
   const [selectedBgImg, setSelectedBgImg] = useState<any[]>([]);
@@ -95,10 +96,18 @@ const YouthMinistryPage = () => {
     try {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK" || res.status === 200 || res.status === 201) {
-        notify({ type: "success", message: res.data?.message });
+           updateToast({
+            title: `Success`,
+            type: "update",
+            info: `${res.data?.message}`,
+          });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+          title: `Error`,
+          type: "error",
+          info: `${error.response?.data?.message}`,
+        });
     } finally {
       setDeleting(false);
     }
@@ -127,10 +136,18 @@ const YouthMinistryPage = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+           updateToast({
+            title: `Success`,
+            type: "update",
+            info: `${res.data?.message}`,
+          });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+          title: `Error`,
+          type: "error",
+          info: `${error.response?.data?.message}`,
+        });
     } finally {
       setEditing(false);
     }

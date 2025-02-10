@@ -3,10 +3,10 @@
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { post } from "@/helper/apiFetch";
+import useUpdateToast from "@/hooks/updateToast";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
 import { QueryObserverResult } from "@tanstack/react-query";
-import { profile } from "console";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,6 +20,7 @@ export const UpdateTeamMemberForm = ({
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
   setShowUpdateTeam: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [profile_image, setProfileImage] = useState<any>(null);
   const [profile_preview, setProfilePreview] = useState<any>(
@@ -73,9 +74,18 @@ export const UpdateTeamMemberForm = ({
       if (res.statusText === "OK") {
         setShowUpdateTeam(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setUpdating(false);
     }

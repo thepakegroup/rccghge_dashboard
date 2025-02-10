@@ -4,6 +4,7 @@ import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { post } from "@/helper/apiFetch";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
@@ -27,6 +28,8 @@ export const NewCategoryForm = ({
   page_name: string;
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
+  const updateToast = useUpdateToast();
+  //
   const [bgPreview, setBgPreview] = useState<any>("");
   const [selectedImg, setSelectedImg] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
@@ -43,7 +46,6 @@ export const NewCategoryForm = ({
   //
   const newCategoryImgUpload = (e: any) => {
     const file = e.target.files[0];
-    console.log(file);
     if (!file) return;
     setBgPreview(URL.createObjectURL(file) as any);
     setSelectedImg(file);
@@ -65,9 +67,18 @@ export const NewCategoryForm = ({
       if (res.statusText === "OK") {
         setToNew(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setCreating(false);
     }

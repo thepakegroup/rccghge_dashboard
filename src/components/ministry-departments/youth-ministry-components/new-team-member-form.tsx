@@ -3,7 +3,7 @@
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { post } from "@/helper/apiFetch";
-import { CancelIcon } from "@/icons/cancel-icon";
+import useUpdateToast from "@/hooks/updateToast";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
 import { QueryObserverResult } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ export const NewTeamMemberForm = ({
   setShowNewTeamForm: Dispatch<SetStateAction<boolean>>;
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [profile_image, setProfileImage] = useState<any>(null);
   const [profile_preview, setProfilePreview] = useState<any>(null);
@@ -67,9 +68,18 @@ export const NewTeamMemberForm = ({
       if (res.statusText === "OK") {
         setShowNewTeamForm(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setCreating(false);
     }
