@@ -7,7 +7,7 @@ import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +24,7 @@ const QuillEditor = dynamic(() => import("react-quill"), {
 });
 
 const WellnessMinistry = () => {
+  const updateToast = useUpdateToast();
   // states
   const [selectedBgImages, setSelectedBgImages] = useState<any>([]);
   const [bgImgPreview, setBgImgPreview] = useState<any>([]);
@@ -85,7 +86,6 @@ const WellnessMinistry = () => {
   const uploadBgImage = (event: any) => {
     setBgImgPreview(wellness_ministry?.sliders.map((url: any) => url.item_url));
     const files = event.target.files;
-    console.log(Array.from(files));
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
       setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
@@ -143,10 +143,18 @@ const WellnessMinistry = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+           updateToast({
+             title: `Success`,
+             type: "update",
+             info: `${res.data?.message}`,
+           });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+          title: `Error`,
+          type: "error",
+          info: `${error.response?.data?.message}`,
+        });
     } finally {
       setEditing(false);
     }
@@ -158,9 +166,18 @@ const WellnessMinistry = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
+           updateToast({
+             title: `Success`,
+             type: "update",
+             info: `${res.data?.message}`,
+           });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+          title: `Error`,
+          type: "error",
+          info: `${error.response?.data?.message}`,
+        });
     } finally {
       setDeleting(false);
     }

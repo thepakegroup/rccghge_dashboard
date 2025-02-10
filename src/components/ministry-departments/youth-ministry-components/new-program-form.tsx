@@ -2,6 +2,7 @@ import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { post } from "@/helper/apiFetch";
+import useUpdateToast from "@/hooks/updateToast";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
 import { QueryObserverResult } from "@tanstack/react-query";
@@ -24,6 +25,7 @@ export const NewProgramForm = ({
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
   setShowNewProgramForm: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [creating, setCreating] = useState<boolean>(false);
   const [selectedFlyer, setSelectedFlyer] = useState<any>(null);
@@ -68,9 +70,18 @@ export const NewProgramForm = ({
       if (res.statusText === "OK") {
         setShowNewProgramForm(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setCreating(false);
     }

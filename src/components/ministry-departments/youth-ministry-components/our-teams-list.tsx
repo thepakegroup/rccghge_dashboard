@@ -8,6 +8,7 @@ import { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { DeletingImageLoader } from "../deleting-image-loader";
+import useUpdateToast from "@/hooks/updateToast";
 
 export const OurTeamsList = ({
   item,
@@ -20,6 +21,7 @@ export const OurTeamsList = ({
   setShowUpdateTeam: Dispatch<SetStateAction<boolean>>;
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
+  const updateToast = useUpdateToast();
   //states
   const [showControls, setSetControls] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
@@ -30,9 +32,18 @@ export const OurTeamsList = ({
       const res = await remove(`ministry-page/team/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error.response);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }

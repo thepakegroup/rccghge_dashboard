@@ -3,6 +3,7 @@ import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { post } from "@/helper/apiFetch";
+import useUpdateToast from "@/hooks/updateToast";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
 import { QueryObserverResult } from "@tanstack/react-query";
@@ -27,6 +28,7 @@ export const UpdateProgramForm = ({
   setShowUpdateProgram: Dispatch<SetStateAction<boolean>>;
   selectedProgram: any;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [updating, setUpdating] = useState<boolean>(false);
   const [selectedFlyer, setSelectedFlyer] = useState<any>(null);
@@ -74,9 +76,18 @@ export const UpdateProgramForm = ({
       if (res.statusText === "OK") {
         setShowUpdateProgram(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setUpdating(false);
     }

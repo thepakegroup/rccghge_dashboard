@@ -21,10 +21,12 @@ import { useState } from "react";
 import { BsPlus } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 
 const CommonTwoPages = () => {
   const params = useParams();
+  //
+  const updateToast = useUpdateToast();
   // states
   const [heading_text, setHeadingText] = useState<string>("");
   const [bgPreview, setBgPreview] = useState<any[]>([]);
@@ -83,10 +85,18 @@ const CommonTwoPages = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+           updateToast({
+            title: `Success`,
+            type: "update",
+            info: `${res.data?.message}`,
+          });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+         title: `Error`,
+         type: "error",
+         info: `${error.response?.data?.message}`,
+       });
     } finally {
       setDeleting(false);
     }
@@ -110,10 +120,18 @@ const CommonTwoPages = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+         updateToast({
+           title: `Success`,
+           type: "update",
+           info: `${res.data?.message}`,
+         });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setEditing(false);
     }
@@ -125,10 +143,18 @@ const CommonTwoPages = () => {
       const res = await remove(`ministry-page/common-2/section/${item}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+          updateToast({
+            title: `Success`,
+            type: "update",
+            info: `${res.data?.message}`,
+          });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+       updateToast({
+         title: `Error`,
+         type: "error",
+         info: `${error.response?.data?.message}`,
+       });
     } finally {
       setDeleting(false);
     }

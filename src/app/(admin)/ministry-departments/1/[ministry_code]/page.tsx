@@ -6,7 +6,7 @@ import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import "react-quill/dist/quill.snow.css";
+
 const QuillEditor = dynamic(() => import("react-quill"), {
   ssr: false,
   loading: () => (
@@ -33,6 +34,7 @@ const CommonOnePages = () => {
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   //
+  const updateToast = useUpdateToast();
   // get page data info
   const {
     data: common_one_data,
@@ -111,10 +113,18 @@ const CommonOnePages = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setEditing(false);
     }
@@ -126,10 +136,18 @@ const CommonOnePages = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }

@@ -14,13 +14,12 @@ import {
 } from "@/store/slice/content";
 import Loader from "../Loader";
 import useUpdateToast from "@/hooks/updateToast";
-import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
-import { baseUrl } from "@/util/constants";
+import { AxiosError } from "axios";
 import "react-quill/dist/quill.snow.css";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { post, remove } from "@/helper/apiFetch";
+import { formats, modules } from "../quill-config/confiig";
 
 const ReactQuill = dynamic(() => import("react-quill"), {
   ssr: false,
@@ -117,38 +116,6 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
         info: `${(error as AxiosError)?.message}`,
       });
     }
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "link",
-    "color",
-    "image",
-    "background",
-    "align",
-    "size",
-    "font",
-  ];
-
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ size: [] }],
-      [{ font: [] }],
-      [{ align: ["right", "center", "justify"] }],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link"],
-      [{ color: ["red", "#785412"] }],
-      [{ background: ["red", "#785412"] }],
-    ],
   };
 
   return (
