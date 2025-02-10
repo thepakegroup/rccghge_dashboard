@@ -4,6 +4,7 @@ import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { post } from "@/helper/apiFetch";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv } from "@/util/motion-exports";
@@ -29,6 +30,7 @@ export const OurMission = ({
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
   setShowOurMission: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [ourMissionImg, setOurMissionImg] = useState<any>(
     ourMission?.media_url
@@ -96,9 +98,18 @@ export const OurMission = ({
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setSaving(false);
     }

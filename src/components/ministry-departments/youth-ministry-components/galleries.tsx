@@ -10,6 +10,7 @@ import { QueryObserverResult } from "@tanstack/react-query";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { DeletingImageLoader } from "../deleting-image-loader";
+import useUpdateToast from "@/hooks/updateToast";
 
 interface galleryProps {
   item_url: string;
@@ -24,6 +25,7 @@ export const Galleries = ({
   getBackPageInfo: () => Promise<QueryObserverResult<any, Error>>;
   setShowGallery: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const updateToast = useUpdateToast();
   // states
   const [galleryPreview, setGalleryPreview] = useState<any>(
     gallery?.map((url) => url?.item_url) || []
@@ -60,9 +62,18 @@ export const Galleries = ({
       if (res.statusText === "OK") {
         setShowGallery(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -86,9 +97,18 @@ export const Galleries = ({
       if (res.statusText === "OK") {
         setShowGallery(false);
         await getBackPageInfo();
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      console.log(error);
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setSaving(false);
     }

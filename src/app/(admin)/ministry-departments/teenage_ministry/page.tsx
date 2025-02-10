@@ -82,7 +82,6 @@ const TeenageMinistryPage = () => {
   const uploadBgImage = (event: any) => {
     setBgImgPreview(teenage_ministry?.sliders.map((url: any) => url.item_url));
     const files = event.target.files;
-    console.log(Array.from(files));
     const fileArray = Array.from(files);
     fileArray.forEach((file: any) => {
       setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
