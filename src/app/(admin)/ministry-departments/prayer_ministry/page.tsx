@@ -6,7 +6,7 @@ import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
-import { notify } from "@/helper/notify";
+import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +23,7 @@ const QuillEditor = dynamic(() => import("react-quill"), {
 });
 
 const PrayerMinistryPage = () => {
+  const updateToast = useUpdateToast();
   // states
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
   const [slidersSelected, setSlidersSelected] = useState<any>([]);
@@ -69,10 +70,10 @@ const PrayerMinistryPage = () => {
   // handles sliders image drop upload
   const handleSliderDrop = (files: FileList) => {
     setSlidersPreview(
-      prayer_ministry?.carousel.map((url: any) => url?.item_url)
+      prayer_ministry?.sliders.map((url: any) => url?.item_url)
     );
     const fileArray = Array.from(files);
-    fileArray.forEach((file: any) => {
+    fileArray?.forEach((file: any) => {
       setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
     });
     setSlidersSelected([...fileArray]);
@@ -80,7 +81,7 @@ const PrayerMinistryPage = () => {
   // handle sliders image upload
   const uploadSliderImage = (event: any) => {
     setSlidersPreview(
-      prayer_ministry?.carousel.map((url: any) => url?.item_url)
+      prayer_ministry?.sliders?.map((url: any) => url?.item_url)
     );
     const files = event.target.files;
     const fileArray = Array.from(files);
@@ -111,10 +112,18 @@ const PrayerMinistryPage = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setEditing(false);
     }
@@ -126,10 +135,18 @@ const PrayerMinistryPage = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-        notify({ type: "success", message: res.data?.message });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-      notify({ type: "error", message: error.response?.data?.message });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -199,7 +216,7 @@ const PrayerMinistryPage = () => {
                       <div
                         className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                         onClick={(event: any) => {
-                          const imgId = prayer_ministry?.carousel?.find(
+                          const imgId = prayer_ministry?.sliders?.find(
                             (item: any) => item.item_url === url
                           );
                           removeImage(imgId?.id);
