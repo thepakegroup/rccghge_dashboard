@@ -38,6 +38,7 @@ const config: Config = {
       },
       fontFamily: {
         "play-fair-display": "'Playfair Display', serif",
+        "quicksand":"'Quicksand', san-serif"
       },
     },
   },
