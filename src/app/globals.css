@@ -70,6 +70,10 @@
     @apply p-4 w-full rounded-md border text-base placeholder:text-sm placeholder:text-gray-400 focus:outline-none border-[#D0D5DD] bg-white;
   }
 
+  .input-2 {
+    @apply p-2 overflow-hidden w-full rounded-md border text-base placeholder:text-sm placeholder:text-gray-400 focus:outline-none border-[#D0D5DD] bg-white;
+  }
+
   .loaderWrapper {
     @apply flex-center justify-center w-full h-full;
   }
@@ -138,6 +142,7 @@
 *::-webkit-scrollbar-thumb {
   box-shadow: inset 0 0 0 10px;
 }
+
 
 @layer utilities {
   @layer responsive {

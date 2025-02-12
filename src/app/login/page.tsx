@@ -1,22 +1,130 @@
 "use client";
-
-import Loader from "@/components/Loader";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 import Toaster from "@/components/Toaster";
 import useUpdateToast from "@/hooks/updateToast";
-import { baseUrl } from "@/util/constants";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import Cookies from "js-cookie";
-import axios, { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/helper/schema";
-import { useForm } from "react-hook-form";
-import { post } from "@/helper/apiFetch";
+import axios, { AxiosError } from "axios";
+import { baseUrl } from "@/util/constants";
+import Loader from "@/components/Loader";
+import Image from "next/image";
 
+interface ContextModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  token: string;
+  email: string;
+}
+
+interface ctxProp {
+  name: JSX.Element;
+  value: string;
+}
+
+const ctxs: ctxProp[] = [
+  {
+    name: (
+      <h3 className="text-xl font-medium text-center cursor-pointer">
+        RCCGHGE
+        <br />
+        Mobile App
+      </h3>
+    ),
+    value: "mobile_edit",
+  },
+  {
+    name: (
+      <h3 className="text-xl font-medium text-center cursor-pointer">
+        RCCGHGE
+        <br />
+        Website
+      </h3>
+    ),
+    value: "web_edit",
+  },
+];
+
+const ContextModal = ({ isOpen, onClose, token, email }: ContextModalProps) => {
+  const router = useRouter();
+  const [selectedCtx, setSelectedCtx] = useState<ctxProp>(ctxs[0]);
+
+  const handleContinue = () => {
+    if (!selectedCtx) return;
+
+    Cookies.set("token", token, { expires: 2 });
+    Cookies.set("email", email, { expires: 2 });
+    Cookies.set("ctx", selectedCtx?.value, { expires: 2 });
+
+    router.push("/");
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="overflow-hidden rounded-2xl w-[90%] max-w-[600px] shadow-lg bg-gray-100">
+        <div className="mb-8 py-5 bg-white flex flex-col gap-2">
+          <h2 className="text-2xl font-semibold text-center font-play-fair-display">
+            What do you want to open?
+          </h2>
+          <small className="text-xs text-center opacity-60">
+            Select where you would like the changes you made on the Dashboard to
+            show.
+          </small>
+        </div>
+
+        <div className="grid grid-cols-1 min-[576px]:grid-cols-2 gap-6 mb-8 p-8 font-quicksand">
+          {ctxs?.map((item: ctxProp, index: number) => (
+            <div
+              key={index}
+              onClick={() => setSelectedCtx(item)}
+              className={`
+              !cursor-pointer rounded-xl p-8
+              flex flex-col items-center justify-center
+              transition-all select-none
+              ${
+                selectedCtx?.value === item?.value
+                  ? "bg-gradient-to-r from-[#12234E] to-[#4473BA] text-white"
+                  : "border-gray-200 border-[1.8px]"
+              }
+            `}
+            >
+              {item?.name}
+            </div>
+          ))}
+        </div>
+        <div className="p-8 flex justify-center">
+          <button
+            onClick={handleContinue}
+            disabled={!selectedCtx?.value}
+            className={`
+            w-full min-[380px]:w-[200px] !mx-auto py-4 rounded-lg text-white bg-[#E77400] text-lg font-medium
+            transition-all
+            ${
+              selectedCtx?.value
+                ? "bg-orange-500 hover:bg-orange-600"
+                : "bg-gray-300 cursor-not-allowed"
+            }
+              `}
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Modified Login Component
 const Login = () => {
   const router = useRouter();
   const updateToast = useUpdateToast();
+  const [showContextModal, setShowContextModal] = useState(false);
+  const [loginData, setLoginData] = useState({ token: "", email: "" });
 
   const {
     register,
@@ -36,11 +144,10 @@ const Login = () => {
     };
 
     setLoading(true);
-    let dataRes;
 
     try {
       const res = await axios.post(`${baseUrl}admin/login`, login);
-      dataRes = await res.data;
+      const dataRes = await res.data;
 
       if (dataRes.error === true) {
         setLoading(false);
@@ -52,15 +159,15 @@ const Login = () => {
         return;
       }
 
-      const token = dataRes?.token?.token;
-      const email = dataRes?.email;
-      Cookies.set("token", token, { expires: 2 });
-      Cookies.set("email", email, { expires: 2 });
-
-      router.push("/");
+      // Instead of setting cookies directly, show the context modal
+      setLoginData({
+        token: dataRes?.token?.token,
+        email: dataRes?.email,
+      });
+      setShowContextModal(true);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
-
       updateToast({
         title: `Error`,
         type: "error",
@@ -74,83 +181,101 @@ const Login = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="w-[85%] md:w-full max-w-[29.1875rem]">
-          <div className="flex justify-center mb-[1.35875rem]">
-            <div className="max-w-max bg-white p-[0.465rem] rounded-md">
-              <Image
-                src="/images/logo1.png"
-                priority
-                alt=""
-                width={119.58}
-                height={62.57}
-                className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
-              />
+        <>
+          <div className="w-[85%] md:w-full max-w-[29.1875rem]">
+            <div className="flex justify-center mb-[1.35875rem]">
+              <div className="max-w-max bg-white p-[0.465rem] rounded-md">
+                <Image
+                  src="/images/logo1.png"
+                  priority
+                  alt=""
+                  width={119.58}
+                  height={62.57}
+                  className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
+                />
+              </div>
+            </div>
+            <div className="rounded-lg bg-white p-6 md:py-12 md:px-9 w-full h-[calc(100dvh-150px)] overflow-y-auto pb-2">
+              <h1 className="font-bold text-2xl">Sign in</h1>
+              <form
+                className="flex flex-col gap-[1.19rem] mt-6"
+                onSubmit={handleSubmit(handleLogin)}
+              >
+                <label htmlFor="email" className="input-field relative">
+                  <span>Email Address</span>
+                  <div className="relative">
+                    <div className="input-2 flex justify-between items-center gap-1">
+                      <input
+                        type="email"
+                        {...register("email")}
+                        className="w-full outline-none border-none focus-within:ring-0"
+                        placeholder="Enter your admin email"
+                      />
+                      <Image
+                        src="icons/mail.svg"
+                        alt=""
+                        width={20}
+                        height={20}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-red-600">
+                    {errors.email?.message}
+                  </p>
+                </label>
+                <label
+                  htmlFor="password"
+                  className="input-field flex-1 relative"
+                >
+                  <span>Password</span>
+                  <div className="relative">
+                    <div className="input-2 flex justify-between items-center gap-1">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        {...register("password")}
+                        className="w-full outline-none border-none focus-within:ring-0"
+                        // required
+                      />
+                      {showPassword ? (
+                        <Image
+                          src="icons/eyeoff.svg"
+                          alt=""
+                          width={20}
+                          height={20}
+                          onClick={() => setShowPassword(!showPassword)}
+                        />
+                      ) : (
+                        <Image
+                          src="icons/eye.svg"
+                          alt=""
+                          width={20}
+                          height={20}
+                          onClick={() => setShowPassword(!showPassword)}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs text-red-600">
+                    {errors.password?.message}
+                  </p>
+                </label>
+                <button
+                  // onClick={handleLogin}
+                  type="submit"
+                  className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+                >
+                  Login
+                </button>
+              </form>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 md:py-12 md:px-9 w-full">
-            <h1 className="font-bold text-2xl">Sign in</h1>
-            <form
-              className="flex flex-col gap-[1.19rem] mt-6"
-              onSubmit={handleSubmit(handleLogin)}
-            >
-              <label htmlFor="email" className="input-field relative">
-                <span>Email Address</span>
-                <div className="relative">
-                  <div className="input flex justify-between items-center gap-1">
-                    <input
-                      type="email"
-                      {...register("email")}
-                      className="w-full outline-none border-none"
-                      placeholder="Enter your admin email"
-                    />
-                    <Image src="icons/mail.svg" alt="" width={20} height={20} />
-                  </div>
-                </div>
-                <p className="text-xs text-red-600">{errors.email?.message}</p>
-              </label>
-              <label htmlFor="password" className="input-field flex-1 relative">
-                <span>Password</span>
-                <div className="relative">
-                  <div className="input flex justify-between items-center gap-1">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      {...register("password")}
-                      className="w-full outline-none border-none"
-                      // required
-                    />
-                    {showPassword ? (
-                      <Image
-                        src="icons/eyeoff.svg"
-                        alt=""
-                        width={20}
-                        height={20}
-                        onClick={() => setShowPassword(!showPassword)}
-                      />
-                    ) : (
-                      <Image
-                        src="icons/eye.svg"
-                        alt=""
-                        width={20}
-                        height={20}
-                        onClick={() => setShowPassword(!showPassword)}
-                      />
-                    )}
-                  </div>
-                </div>
-                <p className="text-xs text-red-600">
-                  {errors.password?.message}
-                </p>
-              </label>
-              <button
-                // onClick={handleLogin}
-                type="submit"
-                className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
-              >
-                Login
-              </button>
-            </form>
-          </div>
-        </div>
+          <ContextModal
+            isOpen={showContextModal}
+            onClose={() => setShowContextModal(false)}
+            token={loginData.token}
+            email={loginData.email}
+          />
+        </>
       )}
       <Toaster />
     </section>
