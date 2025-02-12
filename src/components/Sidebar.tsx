@@ -69,18 +69,12 @@ const Sidebar = () => {
     setEmail(user_email as string);
   }, [dispatch, user_email]);
 
-  const navItems = [
+  const webLinks = [
     {
       title: "Home",
       info: "Dashboard",
       icon: "/icons/home.svg",
-      link: "/",
-    },
-    {
-      title: "Testimonies",
-      info: "Manage testimonies",
-      icon: "/icons/star.svg",
-      link: "/testimonies",
+      link: "/home-web",
     },
     {
       title: "manage events",
@@ -101,22 +95,10 @@ const Sidebar = () => {
       link: "/ministry",
     },
     {
-      title: "socials",
-      info: "manage accounts",
-      icon: "/icons/minister.svg",
-      link: "/socials",
-    },
-    {
       title: "sermon subscriptions",
       info: "manage subscriptions",
       icon: "/icons/minister.svg",
       link: "/subscriptions",
-    },
-    {
-      title: "app settings",
-      info: "manage app settings",
-      icon: "/icons/settings.svg",
-      link: "/settings",
     },
     {
       title: "page settings",
@@ -136,13 +118,56 @@ const Sidebar = () => {
       icon: "/icons/admin.svg",
       link: "/admin",
     },
+  ];
+  //
+  const mobileLinks = [
+    {
+      title: "Home",
+      info: "Dashboard",
+      icon: "/icons/home.svg",
+      link: "/",
+    },
+    {
+      title: "manage events",
+      info: "Add and remove events",
+      icon: "/icons/event.svg",
+      link: "/manage-events",
+    },
+    {
+      title: "Testimonies",
+      info: "Manage testimonies",
+      icon: "/icons/star.svg",
+      link: "/testimonies",
+    },
+    {
+      title: "socials",
+      info: "manage accounts",
+      icon: "/icons/minister.svg",
+      link: "/socials",
+    },
+    {
+      title: "admin",
+      info: "add & remove admins",
+      icon: "/icons/admin.svg",
+      link: "/admin",
+    },
     {
       title: "manage notification",
       info: "send push notifications",
       icon: "/icons/notification.svg",
       link: "/notification",
     },
+    {
+      title: "app settings",
+      info: "manage app settings",
+      icon: "/icons/settings.svg",
+      link: "/settings",
+    },
   ];
+
+  const ctx = Cookies.get("ctx");
+
+  const navItems = ctx && ctx === "mobile_edit" ? webLinks : mobileLinks;
 
   const handleCloseModal = () => {
     setIsOpen(false);
