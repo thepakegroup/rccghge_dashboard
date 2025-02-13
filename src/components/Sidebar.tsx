@@ -68,6 +68,9 @@ const Sidebar = () => {
 
     setEmail(user_email as string);
   }, [dispatch, user_email]);
+  //
+  const [navLinks, setNavLink] = useState([]);
+  //
 
   const webLinks = [
     {
@@ -167,7 +170,12 @@ const Sidebar = () => {
 
   const ctx = Cookies.get("ctx");
 
-  const navItems = ctx && ctx === "mobile_edit" ? webLinks : mobileLinks;
+  const navItems = useMemo(() => {
+    if (ctx === "web_edit") return webLinks;
+    if (ctx === "mobile_edit") return mobileLinks;
+  }, [ctx]);
+
+  // const navItems = ctx && ctx === "web_edit" ? webLinks : mobileLinks;
 
   const handleCloseModal = () => {
     setIsOpen(false);
@@ -198,7 +206,7 @@ const Sidebar = () => {
             />
           </div>
           <ul className="min-h-auto lg:min-h-max overflow-y-scroll">
-            {navItems.map((navItem) => {
+            {navItems?.map((navItem) => {
               const { title, icon, info, link } = navItem;
               return (
                 <li key={title}>

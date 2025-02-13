@@ -23,6 +23,7 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import UpdateModal from "@/components/Home/UpdateModal";
 import { post } from "@/helper/apiFetch";
+import { useRouter } from "next/navigation";
 
 export interface EditItem {
   id: number;
@@ -39,6 +40,8 @@ export default function Home() {
   const type = useGetTypeOfModal();
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
+  //
+  const router = useRouter();
 
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
   const [currEditItem, setCurrEditItem] = useState<EditItem | null>(null);
@@ -55,6 +58,10 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (Cookies.get("ctx") === "web_edit") {
+      router.push("/home-web");
+    }
+    //
     if (currEditItemID) {
       const EditItem = data?.message?.filter(
         (item: any) => item.id === currEditItemID
