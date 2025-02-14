@@ -14,9 +14,7 @@ export const UpcomingEvents = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["get-event", page],
     queryFn: async () => {
-      const res = await get(
-        `https://staging.api.kouakoudomagni.com/events/${page}/10`
-      );
+      const res = await get(`/events/${page}/10`);
       return res.data;
     },
     select: (data) => data?.message,
@@ -31,7 +29,6 @@ export const UpcomingEvents = () => {
     }
     return [];
   }, [data?.data]);
-  console.log(data);
   //
   return (
     <div className="w-full">
