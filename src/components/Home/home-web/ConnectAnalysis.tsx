@@ -1,4 +1,5 @@
 import React from "react";
+import { BsChevronDown } from "react-icons/bs";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 //
@@ -15,7 +16,13 @@ const data = [
 export const ConnectAnalysis = () => {
   return (
     <div className="flex flex-col items-center p-6 bg-white rounded-xl shadow-md overflow-hidden w-full sm:w-[550px] lg:w-full">
-      <h2 className="text-lg font-semibold">Connect Analytics</h2>
+      <div className="flex w-full justify-between items-center mb-8">
+        <h2 className="text-lg font-semibold">Connect Analytics</h2>
+        <div className="cursor-pointer flex items-center font-play-fair-display gap-1 bg-gray-100 rounded-md px-2 py-2">
+          <p>10-06-2021</p>
+          <BsChevronDown />
+        </div>
+      </div>
       <div className="relative w-full h-56">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>

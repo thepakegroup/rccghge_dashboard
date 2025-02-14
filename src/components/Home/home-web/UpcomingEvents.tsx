@@ -14,9 +14,7 @@ export const UpcomingEvents = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["get-event", page],
     queryFn: async () => {
-      const res = await get(
-        `https://staging.api.kouakoudomagni.com/events/${page}/10`
-      );
+      const res = await get(`events/${page}/10`);
       return res.data;
     },
     select: (data) => data?.message,
@@ -31,7 +29,6 @@ export const UpcomingEvents = () => {
     }
     return [];
   }, [data?.data]);
-  console.log(data);
   //
   return (
     <div className="w-full">
@@ -65,9 +62,9 @@ export const UpcomingEvents = () => {
             return (
               <div
                 key={item?.id}
-                className="rounded-md p-5 flex flex-col gap-2 items-center bg-white shadow-sm"
+                className="rounded-lg p-1 flex flex-col gap-2 items-center bg-white shadow-sm max-h-[260px]"
               >
-                <div className="rounded-sm overflow-hidden w-[96%] h-[250px] mx-auto">
+                <div className="rounded-lg overflow-hidden w-[96%] h-[171px] mx-auto">
                   <Image
                     src={`${baseUrl}event-image/${item?.banner}`}
                     alt={item?.title}
@@ -76,11 +73,11 @@ export const UpcomingEvents = () => {
                     className="object-cover object-center w-full h-full"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 p-2">
                   <h3 className="font-play-fair-display font-semibold text-lg line-clamp-1">
                     {item?.title}
                   </h3>
-                  <p className="text-sm flex items-start gap-2 text-gray-500">
+                  <p className="text-xs flex items-start gap-2 text-gray-500">
                     <CalenderIcon />
                     <span>
                       {item?.end_date &&
