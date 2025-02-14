@@ -4,12 +4,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { setIsSidebarToggle } from "../store/slice/sidbar";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { baseUrl } from "@/util/constants";
 import Loader from "./Loader";
+import {
+  AdminIcon,
+  HomeIcon,
+  ManageEventIcon,
+  NotifyIcon,
+  SermonSubIcon,
+  SettingIcon,
+  SocialsIcon,
+} from "@/icons";
+import { useCtx } from "@/providers/ctx-provider";
+
+interface navItemProp {
+  title: string;
+  info: string;
+  icon: ReactNode;
+  link: string;
+}
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -22,6 +39,11 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loader, setLoader] = useState(false);
   const [email, setEmail] = useState("");
+  //
+  const [hydrated, setHydrated] = useState<boolean>(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   // Header and token
   const token = Cookies.get("token");
@@ -49,6 +71,7 @@ const Sidebar = () => {
     if (data.error === false) {
       Cookies.remove("token");
       Cookies.remove("email");
+      setCtx(null);
       router.replace("/login");
       setLoader(false);
       handleCloseModal();
@@ -69,20 +92,19 @@ const Sidebar = () => {
     setEmail(user_email as string);
   }, [dispatch, user_email]);
   //
-  const [navLinks, setNavLink] = useState([]);
   //
 
-  const webLinks = [
+  const webLinks: navItemProp[] = [
     {
       title: "Home",
       info: "Dashboard",
-      icon: "/icons/home.svg",
+      icon: <HomeIcon />,
       link: "/home-web",
     },
     {
       title: "manage events",
       info: "Add and remove events",
-      icon: "/icons/event.svg",
+      icon: <ManageEventIcon />,
       link: "/manage-events",
     },
     {
@@ -100,13 +122,13 @@ const Sidebar = () => {
     {
       title: "sermon subscriptions",
       info: "manage subscriptions",
-      icon: "/icons/minister.svg",
+      icon: <SermonSubIcon />,
       link: "/subscriptions",
     },
     {
       title: "page settings",
       info: "manage site settings",
-      icon: "/icons/settings.svg",
+      icon: <SettingIcon />,
       link: "/page_settings",
     },
     {
@@ -118,7 +140,7 @@ const Sidebar = () => {
     {
       title: "admin",
       info: "add & remove admins",
-      icon: "/icons/admin.svg",
+      icon: <AdminIcon />,
       link: "/admin",
     },
   ];
@@ -127,13 +149,13 @@ const Sidebar = () => {
     {
       title: "Home",
       info: "Dashboard",
-      icon: "/icons/home.svg",
+      icon: <HomeIcon />,
       link: "/",
     },
     {
       title: "manage events",
       info: "Add and remove events",
-      icon: "/icons/event.svg",
+      icon: <ManageEventIcon />,
       link: "/manage-events",
     },
     {
@@ -145,71 +167,71 @@ const Sidebar = () => {
     {
       title: "socials",
       info: "manage accounts",
-      icon: "/icons/minister.svg",
+      icon: <SocialsIcon />,
       link: "/socials",
     },
     {
       title: "admin",
       info: "add & remove admins",
-      icon: "/icons/admin.svg",
+      icon: <AdminIcon />,
       link: "/admin",
     },
     {
       title: "manage notification",
       info: "send push notifications",
-      icon: "/icons/notification.svg",
+      icon: <NotifyIcon />,
       link: "/notification",
     },
     {
       title: "app settings",
       info: "manage app settings",
-      icon: "/icons/settings.svg",
+      icon: <SettingIcon />,
       link: "/settings",
     },
   ];
 
-  const ctx = Cookies.get("ctx");
+  const { ctx, setCtx } = useCtx();
 
-  const navItems = useMemo(() => {
-    if (ctx === "web_edit") return webLinks;
-    if (ctx === "mobile_edit") return mobileLinks;
-  }, [ctx]);
+  // const navItems = useMemo(() => {
+  //   if (ctx === "web_edit") return webLinks;
+  //   if (ctx === "mobile_edit") return mobileLinks;
+  // }, [ctx]);
 
-  // const navItems = ctx && ctx === "web_edit" ? webLinks : mobileLinks;
+  const navItems = ctx === "web_edit" ? webLinks : mobileLinks;
 
   const handleCloseModal = () => {
     setIsOpen(false);
   };
 
   // console.log(Cookies.get("email"));
-
+  if (!hydrated) return null;
   return (
     <>
       <aside
         onClick={handleToggle}
-        className={`fixed lg:max-w-max top-0 z-50 w-full h-screen text-white transition-all ease-in-out delay-150 overflow-y-auto ${
+        className={`fixed lg:max-w-max top-0 z-50 w-full h-screen text-white transition-all ease-in-out delay-150 overflow-y-auto no-scrollbar ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full hidden"
         }`}
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="px-2 pt-5 pb-28 md:pb-5 min-h-screen w-[17rem] bg-side-bar-bg relative !overflow-y-scroll lg:overscroll-y-auto flex flex-col md:justify-between gap-7 lg:gap-10"
+          className="px-2 pt-5 pb-28 md:pb-5 min-h-screen w-[17rem] bg-gradient-to-r from-[#12234E] to-[#4473BA] relative !overflow-y-scroll lg:overscroll-y-auto flex flex-col md:justify-between gap-7 lg:gap-10 no-scrollbar"
         >
-          <div className="bg-white rounded-md p-[0.465rem] max-w-max">
+          <div className="bg-white flex flex-col items-center rounded-md p-2 max-w-[126px] !mx-auto">
             <Image
               src="/images/logo1.png"
               priority
               alt=""
               width={119.58}
               height={62.57}
-              className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
+              className="w-[59.52px] h-[48px] md:w-[119.58px]"
             />
           </div>
-          <ul className="min-h-auto lg:min-h-max overflow-y-scroll">
+          <div className="min-h-auto lg:min-h-max overflow-y-scroll">
             {navItems?.map((navItem) => {
               const { title, icon, info, link } = navItem;
               return (
-                <li key={title}>
+                <div key={title}>
                   <Link
                     href={`${link}`}
                     className={`flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary mb-2 ${
@@ -217,22 +239,26 @@ const Sidebar = () => {
                     }`}
                     onClick={handleToggle}
                   >
-                    <Image
-                      src={icon}
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="cursor-pointer"
-                    />
+                    {icon && typeof icon === "string" ? (
+                      <Image
+                        src={String(icon)}
+                        alt=""
+                        width={24}
+                        height={24}
+                        className="cursor-pointer"
+                      />
+                    ) : (
+                      icon
+                    )}
                     <div className="capitalize">
                       <p className="text-sm font-bold">{title}</p>
                       <span className="text-xs font-medium">{info}</span>
                     </div>
                   </Link>
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </div>
           <div className="border-t-2 border-[#657596] py-6 md:py-0">
             <div
               className="flex-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all hover:bg-secondary"

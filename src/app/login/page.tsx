@@ -11,6 +11,7 @@ import axios, { AxiosError } from "axios";
 import { baseUrl } from "@/util/constants";
 import Loader from "@/components/Loader";
 import Image from "next/image";
+import { useCtx } from "@/providers/ctx-provider";
 
 interface ContextModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ const ctxs: ctxProp[] = [
 
 const ContextModal = ({ isOpen, onClose, token, email }: ContextModalProps) => {
   const router = useRouter();
+  const { ctx, setCtx } = useCtx();
   const [selectedCtx, setSelectedCtx] = useState<ctxProp>(ctxs[0]);
 
   const handleContinue = () => {
@@ -56,7 +58,7 @@ const ContextModal = ({ isOpen, onClose, token, email }: ContextModalProps) => {
 
     Cookies.set("token", token, { expires: 2 });
     Cookies.set("email", email, { expires: 2 });
-    Cookies.set("ctx", selectedCtx?.value, { expires: 2 });
+    setCtx(selectedCtx?.value as any);
 
     router.push("/");
     onClose();
@@ -177,25 +179,25 @@ const Login = () => {
   };
 
   return (
-    <section className="h-screen flex-center justify-center relative bg-bg-mobile md:bg-bg-desktop bg-cover bg-no-repeat no-scrollbar">
+    <section
+      // className="h-screen flex-center justify-center relative bg-bg-mobile md:bg-bg-desktop bg-cover bg-no-repeat no-scrollbar"
+      className="h-screen flex-center justify-center relative bg-gradient-to-r from-[#12234E] to-[#4473BA] no-scrollbar"
+    >
       {loading ? (
         <Loader />
       ) : (
         <>
           <div className="w-[85%] md:w-full max-w-[29.1875rem]">
-            <div className="flex justify-center mb-[1.35875rem]">
-              <div className="max-w-max bg-white p-[0.465rem] rounded-md">
-                <Image
-                  src="/images/logo1.png"
-                  priority
-                  alt=""
-                  width={119.58}
-                  height={62.57}
-                  className="w-[59.52px] h-[41.38px] md:w-[119.58px] md:h-[62.57px]"
-                />
-              </div>
-            </div>
-            <div className="rounded-lg bg-white p-6 md:py-12 md:px-9 w-full h-[calc(100dvh-150px)] overflow-y-auto pb-2">
+            <div className="flex justify-center mb-[1.35875rem]"></div>
+            <div className="rounded-lg bg-white p-6 md:py-10 md:px-9 w-full h-[calc(100dvh-150px)] overflow-y-auto pb-2">
+              <Image
+                src="/images/logo1.png"
+                priority
+                alt=""
+                width={119.58}
+                height={62.57}
+                className="w-[100px] mb-6"
+              />
               <h1 className="font-bold text-2xl">Sign in</h1>
               <form
                 className="flex flex-col gap-[1.19rem] mt-6"
@@ -262,7 +264,7 @@ const Login = () => {
                 <button
                   // onClick={handleLogin}
                   type="submit"
-                  className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+                  className="px-6 py-4 bg-orange w-full text-white rounded-md"
                 >
                   Login
                 </button>

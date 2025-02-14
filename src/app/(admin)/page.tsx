@@ -24,6 +24,7 @@ import Cookies from "js-cookie";
 import UpdateModal from "@/components/Home/UpdateModal";
 import { post } from "@/helper/apiFetch";
 import { useRouter } from "next/navigation";
+import { useCtx } from "@/providers/ctx-provider";
 
 export interface EditItem {
   id: number;
@@ -57,8 +58,10 @@ export default function Home() {
     ids: items,
   };
 
+  const { ctx } = useCtx();
+
   useEffect(() => {
-    if (Cookies.get("ctx") === "web_edit") {
+    if (ctx === "web_edit") {
       router.push("/home-web");
     }
     //
@@ -69,7 +72,7 @@ export default function Home() {
 
       setCurrEditItem(EditItem);
     }
-  }, [currEditItemID, data]);
+  }, [currEditItemID, data, ctx]);
 
   // Delete Media
   const handleRemoveMedia = async () => {
