@@ -10,6 +10,7 @@ import useModalType from "@/hooks/modalType";
 import { BsChevronDown } from "react-icons/bs";
 import Cookies from "js-cookie";
 import { Truncate } from "@/helper/truncate-text";
+import { useCtx } from "@/providers/ctx-provider";
 
 const Nav = () => {
   const router = useRouter();
@@ -20,7 +21,6 @@ const Nav = () => {
   );
 
   // State for client-side rendering
-  const [currentCtx, setCurrentCtx] = useState<string>("");
   const [currentEmail, setCurrentEmail] = useState<string>("");
   const [isMounted, setIsMounted] = useState(false);
   const [showSwitchDrop, setShowSwitchDrop] = useState(false);
@@ -31,19 +31,12 @@ const Nav = () => {
 
   // Initialize states after mount
   useEffect(() => {
-    setCurrentCtx(Cookies.get("ctx") || "");
     setCurrentEmail(Cookies.get("email") || "");
     setIsMounted(true);
   }, []);
 
   // Handle ctx changes
-  const handleCtxSwitch = () => {
-    const newCtx = currentCtx === "web_edit" ? "mobile_edit" : "web_edit";
-    Cookies.set("ctx", newCtx, { expires: 2 });
-    setCurrentCtx(newCtx);
-    // Force a page refresh to ensure all components update
-    router.refresh();
-  };
+  const { ctx, setCtx } = useCtx();
 
   const handleToggle = () => {
     dispatch(setIsSidebarToggle(!isSidebarOpen));
@@ -106,15 +99,15 @@ const Nav = () => {
             <BsChevronDown />
           </div>
 
-          {showSwitchDrop && currentCtx && (
+          {showSwitchDrop && ctx && (
             <div
               className="absolute right-0 top-[40px] mt-2 py-2 px-4 bg-white shadow-lg rounded-md cursor-pointer hover:bg-gray-50"
               onClick={() => {
-                handleCtxSwitch();
+                setCtx(ctx === "mobile_edit" ? "web_edit" : "mobile_edit");
                 setShowSwitchDrop(false);
               }}
             >
-              Switch to {currentCtx === "web_edit" ? "Mobile Edit" : "Web Edit"}
+              Switch to {ctx === "web_edit" ? "Mobile Edit" : "Web Edit"}
             </div>
           )}
         </div>
