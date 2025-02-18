@@ -26,7 +26,8 @@ const config: Config = {
         "blue-100": "#1064C6",
         "warning-400": "#FEF6E7",
         "error-400": "#D42620",
-        orange: "#EA5017",
+        // orange: "#EA5017",
+        orange: "#E77400",
         "gray-1": "#101928",
         "gray-2": "#D2D9E1",
         light: {
@@ -38,7 +39,7 @@ const config: Config = {
       },
       fontFamily: {
         "play-fair-display": "'Playfair Display', serif",
-        "quicksand":"'Quicksand', san-serif"
+        quicksand: "'Quicksand', sans-serif",
       },
     },
   },
