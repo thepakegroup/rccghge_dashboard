@@ -170,18 +170,18 @@ const Nav = () => {
                   >
                     Switch to {ctx === "web_edit" ? "mobile app" : "web app"}
                   </div>
-                  <Link
+                  {/* <Link
                     href={"/admin"}
                     className="py-3 px-3 cursor-pointer w-full hover:bg-gray-200"
                     onClick={() => setShowSwitchDrop(false)}
                   >
                     Change password
-                  </Link>
+                  </Link> */}
                 </div>
                 <div
                   className="flex items-center gap-1 cursor-pointer text-error-400 py-3 px-3 border-t w-full hover:bg-gray-200"
                   onClick={() => {
-                    setShowSwitchDrop(false);
+                    setIsOpen(true);
                     setShowSwitchDrop(false);
                   }}
                 >

@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
+import { mobileLinks, webLinks } from "./side-bar-links";
 
 type CtxType = "web_edit" | "mobile_edit" | null;
 
@@ -38,29 +39,22 @@ export const CtxProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Redirect logic when ctx changes
   useEffect(() => {
-    if (ctx) {
-      const currentRoute = pathname;
+    if (!ctx) return; // Ensure context exists before running
 
-      // If on web mode and on a mobile-specific route
-      if (ctx === "web_edit" && currentRoute === "/") {
-        router.push("/home-web"); // Redirect to web home if on mobile mode
-      }
+    // Extract only the route paths from both arrays
+    const webRoutes = webLinks?.map((link) => link.link);
+    const mobileRoutes = mobileLinks?.map((link) => link.link);
 
-      // If on mobile mode and on a web-specific route
-      if (ctx === "mobile_edit" && currentRoute === "/home-web") {
-        router.push("/"); // Redirect to mobile home if on web mode
-      }
+    const isWeb = ctx === "web_edit";
+    const isMobile = ctx === "mobile_edit";
 
-      // Check if we're on a shared route, and no redirection is needed
-      if (!sharedRoutes.includes(currentRoute)) {
-        if (ctx === "web_edit" && currentRoute !== "/home-web") {
-          router.push("/home-web"); // Redirect to web home if not on the web route
-        } else if (ctx === "mobile_edit" && currentRoute !== "/") {
-          router.push("/"); // Redirect to mobile home if not on the mobile route
-        }
-      }
+    // If pathname is not in the respective mode's routes, redirect
+    if (isWeb && !webRoutes.includes(pathname)) {
+      router.replace("/home-web");
+    } else if (isMobile && !mobileRoutes.includes(pathname)) {
+      router.replace("/");
     }
-  }, [ctx, pathname, sharedRoutes]);
+  }, [ctx, pathname]);
 
   return (
     <CtxContext.Provider value={{ ctx, setCtx }}>
