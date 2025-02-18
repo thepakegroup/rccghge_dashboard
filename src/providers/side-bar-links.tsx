@@ -42,18 +42,18 @@ export const webLinks: navItemProp[] = [
     icon: "/icons/minister.svg",
     link: "/ministry",
   },
-  {
-    title: "prayer request",
-    info: "manage prayer requests",
-    icon: <PrayerRequestIcon />,
-    link: "/prayer-requests",
-  },
-  {
-    title: "ride request",
-    info: "manage ride requests",
-    icon: <RideRequestIcon />,
-    link: "/ride-requests",
-  },
+  // {
+  //   title: "prayer request",
+  //   info: "manage prayer requests",
+  //   icon: <PrayerRequestIcon />,
+  //   link: "/prayer-requests",
+  // },
+  // {
+  //   title: "ride request",
+  //   info: "manage ride requests",
+  //   icon: <RideRequestIcon />,
+  //   link: "/ride-requests",
+  // },
   {
     title: "sermon subscriptions",
     info: "manage subscriptions",
