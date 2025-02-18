@@ -274,7 +274,7 @@ const Admin = () => {
         <div className="!w-full md:col-span-1 flex items-center">
           <button
             onClick={createAdmin}
-            className="w-full md:w-fit bg-[#052A53] text-white rounded-md px-4 py-4"
+            className="w-full md:w-fit bg-orange text-white rounded-md px-4 py-4"
           >
             Register
           </button>
