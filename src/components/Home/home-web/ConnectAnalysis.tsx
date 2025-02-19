@@ -15,9 +15,11 @@ const data = [
 
 export const ConnectAnalysis = () => {
   return (
-    <div className="flex flex-col items-center p-6 bg-white rounded-xl shadow-md overflow-hidden w-full sm:w-[550px] lg:w-full">
-      <div className="flex w-full justify-between items-center mb-8">
-        <h2 className="text-sm font-semibold">Connect Analytics</h2>
+    <div className="flex flex-col items-center py-[19px] px-[11px] bg-white rounded-xl shadow-md overflow-hidden w-full sm:w-[550px] lg:w-full">
+      <div className="flex w-full justify-between items-center px-4 mb-8">
+        <h2 className="text-xl  font-play-fair-display font-semibold">
+          Connect Analytics
+        </h2>
         <div className="cursor-pointer flex items-center text-sm font-play-fair-display gap-1 bg-gray-100 rounded-md px-2 py-2">
           <p>10-06-2021</p>
           <BsChevronDown />
@@ -47,17 +49,21 @@ export const ConnectAnalysis = () => {
           <span>100</span>
         </div>
       </div>
-      <div className="mt-4 space-y-2 flex gap-2 flex-wrap">
+      <div className="mt-4 flex items-start gap-2 flex-wrap">
         {data.map((entry, index) => (
-          <div key={index} className="flex items-start text-gray-600 space-x-2">
-            <span>
-              <div
-                className="w-3 h-3 whi rounded-full"
-                style={{ backgroundColor: entry.color }}
-              ></div>
-            </span>
-            <span className="text-sm">{entry.name}</span>
-            <span className="text-sm font-medium">40%</span>
+          <div
+            key={index}
+            className="flex w-full xl:max-w-[32%] items-start text-gray-600 space-x-2"
+          >
+            <span
+              className="!w-2 !h-2 p-2  rounded-full"
+              style={{ backgroundColor: entry.color }}
+            ></span>
+
+            <p className="flex flex-col">
+              <span className="text-sm text-[#5d5d5d]">{entry.name}</span>
+              <span className="text-sm font-medium text-[#050505]">40%</span>
+            </p>
           </div>
         ))}
       </div>

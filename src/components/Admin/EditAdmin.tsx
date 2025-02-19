@@ -169,7 +169,7 @@ const EditAdmin = ({
           </label>
           <button
             onClick={submitForm}
-            className="px-6 py-4 bg-orange w-full text-white rounded-md"
+            className="px-6 py-4 bg-orange w-full max-w-[60%] mx-auto text-white rounded-md"
           >
             Update
           </button>

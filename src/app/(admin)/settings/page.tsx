@@ -158,7 +158,7 @@ const Settings = () => {
         <div className="md:pt-5 col-span-1 !w-full">
           <button
             onClick={createSetting}
-            className="w-full bg-[#052A53] text-white rounded-md px-6 py-4"
+            className="w-full bg-[#e77400] text-white rounded-md px-6 py-4"
           >
             Submit
           </button>

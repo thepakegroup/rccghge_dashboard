@@ -185,7 +185,7 @@ const Testimonials = () => {
         <AddItemButton title="Add testimony" />
       </div> */}
       <section className="mt-4">
-        <div className="text-ash-100 flex flex-col gap-[17px] md:flex-row">
+        <div className="text-ash-100 flex flex-col justify-between gap-[17px] md:flex-row">
           <label
             htmlFor="search"
             className="relative px-3 py-2 bg-white border border-[#D0D5DD] rounded-md flex items-center"
@@ -202,8 +202,8 @@ const Testimonials = () => {
               name="search"
               onChange={(e) => setSearchValue(e.target.value)}
               id="search"
-              placeholder="Search testimonies"
-              className="pl-7 rounded-md border-none outline-none w-full"
+              placeholder="Search for testimony"
+              className="pl-7 rounded-md !border-none !outline-none focus:ring-0 w-full"
             />
           </label>
 

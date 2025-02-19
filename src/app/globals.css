@@ -75,7 +75,7 @@
   }
 
   .loaderWrapper {
-    @apply flex-center justify-center w-full h-full;
+    @apply !flex !items-center !justify-center w-full h-full;
   }
 
   .modal-btn-wrapper {
@@ -83,7 +83,7 @@
   }
 
   .modal-btn {
-    @apply capitalize px-6 py-4 bg-secondary-02 w-full text-white rounded-md;
+    @apply capitalize px-6 py-4 bg-[#e77400] w-full max-w-[60%] !mx-auto text-white rounded-md;
   }
 }
 
@@ -108,6 +108,7 @@
   display: inline-block;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+  margin: auto;
 }
 
 .btn-loader {
