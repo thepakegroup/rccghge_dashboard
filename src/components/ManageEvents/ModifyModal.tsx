@@ -174,7 +174,7 @@ modalI) => {
               </p>
             </label>
 
-            <div className="">
+            <div className="w-full flex justify-center items-center">
               <button type="submit" className="modal-btn">
                 {buttonText}
               </button>

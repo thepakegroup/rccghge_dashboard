@@ -68,8 +68,8 @@ const Card = ({
           onClick={() => publishTestimony(published, id)}
           className={`text-sm font-semibold capitalize px-4 py-2 rounded-md ${
             published
-              ? "border border-blue-100 text-blue-100"
-              : "bg-blue-100 text-white"
+              ? "border border-[#e77400] text-[#e77400]"
+              : "bg-[#e77400] text-white"
           }`}
         >
           {published ? "Published" : "publish"}

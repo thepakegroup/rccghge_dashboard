@@ -161,7 +161,7 @@ const WriteUpSection = ({ currentSection }: { currentSection: string }) => {
 
         <button
           onClick={updateContent}
-          className="text-sm text-ash-300 font-semibold mt-28 md:mt-14 bg-gray-300 rounded-md px-4 py-2 my-5"
+          className="text-sm text-white font-semibold mt-28 md:mt-14 bg-[#e77400] rounded-md px-4 py-2 my-5"
         >
           {btnType === "add" ? "Create Post" : "Edit Post"}
         </button>

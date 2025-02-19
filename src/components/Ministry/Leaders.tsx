@@ -249,7 +249,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
           <button
             type="submit"
-            className="flex-center gap-2 bg-secondary-02 rounded-md max-w-max text-white text-sm px-4 py-2"
+            className="flex-center gap-2 bg-[#e77400] rounded-md max-w-max text-white text-sm px-4 py-2"
           >
             <span>Upload</span>
             <Image

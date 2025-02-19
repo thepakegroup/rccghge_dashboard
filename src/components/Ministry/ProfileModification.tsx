@@ -208,7 +208,7 @@ const ProfileModification = ({
               />
             </label>
 
-            <div className="">
+            <div className="w-full flex justify-center items-center">
               <button onClick={handleSubmitForm} className="modal-btn">
                 update
               </button>

@@ -110,119 +110,125 @@ const Nav = () => {
   return (
     <Fragment>
       <nav
-        className={`flex-center justify-between bg-white px-4 py-3 fixed top-0 w-full z-30 ${
-          isSidebarOpen ? "lg:calc-width-50 lg:ml-[271px]" : "lg:w-full md:ml-0"
+        className={`flex items-center bg-[#e5e8ed] justify-center fixed top-0 py-2 w-full z-30 ${
+          isSidebarOpen ? "lg:calc-width-50 lg:ml-[271px]" : "lg:w-full lg:ml-0"
         }`}
       >
-        <div className="flex justify-between items-center w-full">
-          <div className="flex-center gap-5">
-            <Image
-              src="/icons/hamburger.svg"
-              alt=""
-              width={24}
-              height={24}
-              className="cursor-pointer h-auto w-auto"
-              onClick={handleToggle}
-            />
-            <div className="font-bold text-lg capitalize">
-              {section[pathname]}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div
-              className="flex items-center gap-1 cursor-pointer"
-              onClick={() => setShowSwitchDrop(!showSwitchDrop)}
-            >
-              <div className="h-[40px] w-[40px] bg-gray-300 rounded-full" />
-              {currentEmail && (
-                <p className="capitalize">{Truncate(currentEmail, 5)}</p>
-              )}
-              <BsChevronDown />
+        <section className="w-full max-w-[97%] flex gap-3 items-center justify-between bg-white px-5 rounded-[10px] shadow-[1px_5px_44px_0px_rgba(3,2,41,0.07)] py-3">
+          <div className="flex justify-between items-center w-full">
+            <div className="flex-center gap-5">
+              <Image
+                src="/icons/hamburger.svg"
+                alt=""
+                width={24}
+                height={24}
+                className="cursor-pointer h-auto w-auto"
+                onClick={handleToggle}
+              />
+              <div className="font-bold text-lg capitalize">
+                {section[pathname]}
+              </div>
             </div>
 
-            {showSwitchDrop && ctx && (
-              <div className="absolute right-0 top-[45px] mt-2 bg-white shadow-lg rounded-md hover:bg-gray-50 w-fit min-[480px]:w-[322px] font-quicksand">
-                <div className="flex items-center justify-between px-3 py-3 gap-4">
-                  <div className="flex items-center gap-1">
-                    <div className="h-[45px] w-[45px] rounded-full bg-gray-400" />
-                    <p className="text-sm">{userMail}</p>
+            <div className="relative">
+              <div
+                className="flex items-center gap-1 w-fit cursor-pointer"
+                onClick={() => setShowSwitchDrop(!showSwitchDrop)}
+              >
+                <div className="h-[40px] min-w-[40px] bg-[#d9d9d9] rounded-full" />
+                {currentEmail && (
+                  <p className="capitalize">{Truncate(currentEmail, 6)}</p>
+                  // <p className="capitalize">{Truncate(currentEmail, 5)}</p>
+                )}
+                <BsChevronDown />
+              </div>
+
+              {showSwitchDrop && ctx && (
+                <div className="absolute right-0 top-[45px] px-1 py-4 mt-2 bg-white shadow-lg rounded-md hover:bg-gray-50 w-fit min-[480px]:w-[322px] font-quicksand">
+                  {/* header */}
+                  <div className="flex items-center justify-between border-b border-[#d1d1d1] px-[11.5px] pb-[13px] gap-4">
+                    <div className="flex items-center gap-1">
+                      <div className="h-[45px] w-[45px] rounded-full bg-[#d9d9d9]" />
+                      <p className="text-sm">{userMail}</p>
+                    </div>
+                    {/*  */}
+                    <CircleClosed onClick={() => setShowSwitchDrop(false)} />
                   </div>
-                  {/*  */}
-                  <CircleClosed onClick={() => setShowSwitchDrop(false)} />
-                </div>
-                <div className="flex flex-col gap-2 mb-2">
-                  <Link
-                    href={"/admin"}
-                    onClick={() => setShowSwitchDrop(false)}
-                    className="py-3 px-3 w-full hover:bg-gray-200"
-                  >
-                    Admins
-                  </Link>
-                  <div
-                    className="py-3 px-3 cursor-pointer w-full hover:bg-gray-200"
-                    onClick={() => {
-                      setCtx(
-                        ctx === "mobile_edit" ? "web_edit" : "mobile_edit"
-                      );
-                      setShowSwitchDrop(false);
-                    }}
-                  >
-                    Switch to {ctx === "web_edit" ? "mobile app" : "web app"}
-                  </div>
-                  {/* <Link
+
+                  <div className="flex flex-col gap-2 mb-2">
+                    <Link
+                      href={"/admin"}
+                      onClick={() => setShowSwitchDrop(false)}
+                      className="p-[10px] w-full hover:bg-gray-200"
+                    >
+                      Admins
+                    </Link>
+                    <div
+                      className="p-[10px] cursor-pointer w-full hover:bg-gray-200"
+                      onClick={() => {
+                        setCtx(
+                          ctx === "mobile_edit" ? "web_edit" : "mobile_edit"
+                        );
+                        setShowSwitchDrop(false);
+                      }}
+                    >
+                      Switch to {ctx === "web_edit" ? "mobile app" : "web app"}
+                    </div>
+                    {/* <Link
                     href={"/admin"}
                     className="py-3 px-3 cursor-pointer w-full hover:bg-gray-200"
                     onClick={() => setShowSwitchDrop(false)}
                   >
                     Change password
                   </Link> */}
+                  </div>
+                  <div
+                    className="flex items-center gap-1 cursor-pointer text-error-400 py-3 p-2 border-t w-full hover:bg-gray-200"
+                    onClick={() => {
+                      setIsOpen(true);
+                      setShowSwitchDrop(false);
+                    }}
+                  >
+                    <LogOut />
+                    <span>Log out</span>
+                  </div>
                 </div>
-                <div
-                  className="flex items-center gap-1 cursor-pointer text-error-400 py-3 px-3 border-t w-full hover:bg-gray-200"
-                  onClick={() => {
-                    setIsOpen(true);
-                    setShowSwitchDrop(false);
-                  }}
-                >
-                  <LogOut />
-                  <span>Log out</span>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="text-base flex-center gap-2 md:gap-3">
-          <button
-            onClick={() => handleButton("delete")}
-            className={`gap-1 ${
-              items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
-            }`}
-          >
-            <Image src="/icons/delete.svg" alt="" width={18} height={18} />
-            <span>{items.length === 1 ? "Delete" : "Delete All"}</span>
-          </button>
-          <button
-            onClick={() => dispatch(clearItems())}
-            className={`gap-1 ${
-              items.length > 0 ? "flex-center text-xs md:text-base" : "hidden"
-            }`}
-          >
-            <Image src="/icons/edit.svg" alt="" width={18} height={18} />
-            <span>{items.length === 1 ? "Uncheck" : "Uncheck All"}</span>
-          </button>
-          <button
-            onClick={() => handleButton("add")}
-            className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
-              isButtonVisible ? "hidden" : "flex-center"
-            }`}
-          >
-            <span>Add media</span>
-            <Image src="/icons/plus.svg" alt="" width={18} height={18} />
-          </button>
-        </div>
+          {/* buttons */}
+          {items.length > 0 ? (
+            <div className="text-base min-w-[20%] justify-end flex-center gap-4 md:gap-3">
+              <button
+                onClick={() => handleButton("delete")}
+                className={`gap-1 flex-center text-xs md:text-sm`}
+              >
+                <Image src="/icons/delete.svg" alt="" width={18} height={18} />
+                <span>{items.length === 1 ? "Delete" : "Delete All"}</span>
+              </button>
+              <button
+                onClick={() => dispatch(clearItems())}
+                className={`gap-1 flex-center text-xs md:text-sm`}
+              >
+                <Image src="/icons/edit.svg" alt="" width={18} height={18} />
+                <span>{items.length === 1 ? "Uncheck" : "Uncheck All"}</span>
+              </button>
+              <button
+                onClick={() => handleButton("add")}
+                className={`py-2 px-3 text-sm font-semibold bg-secondary gap-[0.3rem] text-white rounded-md ${
+                  isButtonVisible ? "hidden" : "flex-center"
+                }`}
+              >
+                <span>Add media</span>
+                <Image src="/icons/plus.svg" alt="" width={18} height={18} />
+              </button>
+            </div>
+          ) : null}
+        </section>
       </nav>
+
+      {/* modal content */}
       {isOpen && (
         <div
           onClick={handleCloseModal}

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import useModalType from '@/hooks/modalType';
-import { useAppDispatch } from '@/store/hooks';
-import { setButtonVisibility } from '@/store/slice/ButtonVisibility';
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import useModalType from "@/hooks/modalType";
+import { useAppDispatch } from "@/store/hooks";
+import { setButtonVisibility } from "@/store/slice/ButtonVisibility";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
 
 const AddItemButton = ({ title }: { title: string }) => {
   const elementRef = useRef<HTMLButtonElement | null>(null);
@@ -22,19 +22,19 @@ const AddItemButton = ({ title }: { title: string }) => {
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     handleScroll();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
     <button
       ref={elementRef}
-      onClick={() => handleButton('add')}
-      className="py-2 px-3 text-sm font-semibold bg-secondary flex-center gap-[0.3rem] text-white rounded-md"
+      onClick={() => handleButton("add")}
+      className="text-sm font-semibold px-6 py-4 bg-[#e77400] flex-center gap-[0.3rem] text-white rounded-md"
     >
       <span>{title}</span>
       <Image

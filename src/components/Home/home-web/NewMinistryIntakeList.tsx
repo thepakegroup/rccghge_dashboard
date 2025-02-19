@@ -40,10 +40,12 @@ const data = [
 ];
 export const NewMinistryIntakeList = () => {
   return (
-    <div className="p-5 w-full min-[887px]:w-[780px] lg:w-fit lg:max-w-[400px] xl:max-w-[600px] bg-white rounded-xl shadow-md">
+    <div className="p-5 w-full bg-white rounded-xl shadow-md">
       {/* Header Section */}
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-lg font-semibold">New Ministry intake list</h2>
+      <div className="flex justify-between items-center mb-[21px]">
+        <h2 className="text-xl font-play-fair-display font-semibold">
+          New Ministry intake list
+        </h2>
         <div className="cursor-pointer flex items-center font-play-fair-display gap-1 bg-gray-100 rounded-md px-2 py-2">
           <p>10-06-2021</p>
           <BsChevronDown />
