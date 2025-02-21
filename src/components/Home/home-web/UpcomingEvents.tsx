@@ -31,7 +31,7 @@ export const UpcomingEvents = () => {
   }, [data?.data]);
   //
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-play-fair-display font-semibold text-xl">
           Upcoming Events

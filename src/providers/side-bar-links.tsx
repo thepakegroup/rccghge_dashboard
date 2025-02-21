@@ -48,12 +48,12 @@ export const webLinks: navItemProp[] = [
     icon: <PrayerRequestIcon />,
     link: "/prayer-requests",
   },
-  // {
-  //   title: "ride request",
-  //   info: "manage ride requests",
-  //   icon: <RideRequestIcon />,
-  //   link: "/ride-requests",
-  // },
+  {
+    title: "ride request",
+    info: "manage ride requests",
+    icon: <RideRequestIcon />,
+    link: "/ride-requests",
+  },
   {
     title: "sermon subscriptions",
     info: "manage subscriptions",

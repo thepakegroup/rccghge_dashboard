@@ -85,18 +85,18 @@ const CommonTwoPages = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-           updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-         title: `Error`,
-         type: "error",
-         info: `${error.response?.data?.message}`,
-       });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -120,11 +120,11 @@ const CommonTwoPages = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-         updateToast({
-           title: `Success`,
-           type: "update",
-           info: `${res.data?.message}`,
-         });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
       updateToast({
@@ -143,18 +143,18 @@ const CommonTwoPages = () => {
       const res = await remove(`ministry-page/common-2/section/${item}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-          updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-         title: `Error`,
-         type: "error",
-         info: `${error.response?.data?.message}`,
-       });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -162,7 +162,7 @@ const CommonTwoPages = () => {
   //
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack
         header={(params.ministry_code as string)
           .replace("_", " ")
@@ -382,7 +382,7 @@ const CommonTwoPages = () => {
           />
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

@@ -189,7 +189,7 @@ const Login = () => {
         <>
           <div className="w-[85%] md:w-full max-w-[29.1875rem]">
             <div className="flex justify-center mb-[1.35875rem]"></div>
-            <div className="rounded-lg bg-white p-6 md:py-10 md:px-9 w-full h-[calc(100dvh-150px)] overflow-y-auto pb-2">
+            <div className="rounded-lg bg-white p-6 md:py-10 md:px-9 w-full h-fit overflow-y-auto pb-2">
               <Image
                 src="/images/logo1.png"
                 priority

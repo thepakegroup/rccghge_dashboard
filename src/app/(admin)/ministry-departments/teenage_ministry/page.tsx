@@ -180,7 +180,7 @@ const TeenageMinistryPage = () => {
   };
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack header="Teenage Ministry" />
       {/*  */}
       <div className="mt-8">
@@ -391,7 +391,7 @@ const TeenageMinistryPage = () => {
         )}
       </div>
       <DeletingImageLoader deleting={deleting} />
-    </div>
+    </section>
   );
 };
 
