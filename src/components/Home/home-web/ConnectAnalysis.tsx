@@ -1,3 +1,7 @@
+"use client";
+import { get } from "@/helper/apiFetch";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { BsChevronDown } from "react-icons/bs";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
@@ -12,8 +16,23 @@ const data = [
     color: "#C5CAE9",
   },
 ];
-
 export const ConnectAnalysis = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  //
+  const date = searchParams.get("date") || `${new Date().toISOString()}`;
+  //
+  const { data: analytics } = useQuery({
+    queryKey: ["get-connect-analytics", date],
+    queryFn: async () => {
+      const res = await get(`/connect-analytics?date=${date}`);
+      return res.data;
+    },
+  });
+  //
+  console.log(analytics);
+  //
   return (
     <div className="flex flex-col items-center py-[19px] px-[11px] bg-white rounded-xl shadow-md overflow-hidden w-full sm:w-[550px] lg:w-full">
       <div className="flex w-full justify-between items-center px-4 mb-8">

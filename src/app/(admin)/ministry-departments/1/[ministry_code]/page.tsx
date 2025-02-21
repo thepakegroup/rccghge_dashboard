@@ -154,7 +154,7 @@ const CommonOnePages = () => {
   };
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack
         header={(params.ministry_code as string)
           .replace("_", " ")
@@ -294,7 +294,7 @@ const CommonOnePages = () => {
         )}
       </div>
       <DeletingImageLoader deleting={deleting} />
-    </div>
+    </section>
   );
 };
 

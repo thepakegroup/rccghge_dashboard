@@ -35,26 +35,7 @@ export const CtxProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const sharedRoutes = ["/admin", "/manage-events"];
-
-  // Redirect logic when ctx changes
-  useEffect(() => {
-    if (!ctx) return; // Ensure context exists before running
-
-    // Extract only the route paths from both arrays
-    const webRoutes = webLinks?.map((link) => link.link);
-    const mobileRoutes = mobileLinks?.map((link) => link.link);
-
-    const isWeb = ctx === "web_edit";
-    const isMobile = ctx === "mobile_edit";
-
-    // If pathname is not in the respective mode's routes, redirect
-    if (isWeb && !webRoutes.includes(pathname)) {
-      router.replace("/home-web");
-    } else if (isMobile && !mobileRoutes.includes(pathname)) {
-      router.replace("/");
-    }
-  }, [ctx, pathname]);
+  //
 
   return (
     <CtxContext.Provider value={{ ctx, setCtx }}>

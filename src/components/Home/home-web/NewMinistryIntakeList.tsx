@@ -40,20 +40,20 @@ const data = [
 ];
 export const NewMinistryIntakeList = () => {
   return (
-    <div className="p-5 w-full bg-white rounded-xl shadow-md">
+    <div className="p-5 w-full bg-white rounded-xl shadow-md min-w-0">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-[21px]">
-        <h2 className="text-xl font-play-fair-display font-semibold">
+        <h2 className="text-base sm:text-lg md:text-xl font-play-fair-display font-semibold">
           New Ministry intake list
         </h2>
-        <div className="cursor-pointer flex items-center font-play-fair-display gap-1 bg-gray-100 rounded-md px-2 py-2">
+        <div className="cursor-pointer flex items-center font-play-fair-display gap-1 bg-gray-100 rounded-md px-2 py-2 text-sm">
           <p>10-06-2021</p>
           <BsChevronDown />
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-auto scroll-style">
+      <div className="overflow-auto scroll-style w-full">
         <table className="border-collapse w-full">
           {/* Table Header */}
           <thead>

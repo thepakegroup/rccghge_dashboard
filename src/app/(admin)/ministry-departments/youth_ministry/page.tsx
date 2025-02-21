@@ -96,18 +96,18 @@ const YouthMinistryPage = () => {
     try {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK" || res.status === 200 || res.status === 201) {
-           updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-          title: `Error`,
-          type: "error",
-          info: `${error.response?.data?.message}`,
-        });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -136,25 +136,25 @@ const YouthMinistryPage = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-           updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-          title: `Error`,
-          type: "error",
-          info: `${error.response?.data?.message}`,
-        });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setEditing(false);
     }
   };
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack header="Youth Ministry" />
       <div className="mt-8">
         <h3 className="font-play-fair-display font-semibold text-lg">
@@ -409,7 +409,7 @@ const YouthMinistryPage = () => {
         onClick={editPage}
         type="submit"
       />
-    </div>
+    </section>
   );
 };
 

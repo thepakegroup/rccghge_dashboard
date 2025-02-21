@@ -37,8 +37,8 @@ const MinistryDepartmentsPage = () => {
   };
   //
   return (
-    <div className="max-w-[1440px] px-4">
-      <MinistryDepartmentsHeader />
+    <div className="max-w-[1440px] px-4 mt-8">
+      {/* <MinistryDepartmentsHeader /> */}
       {/* two tab display */}
       <MinistryDepartmentsTab
         tab={tab}

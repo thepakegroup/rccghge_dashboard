@@ -129,18 +129,18 @@ const ChildrenMinistryPage = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-          updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-     updateToast({
-       title: `Error`,
-       type: "error",
-       info: `${error.response?.data?.message}`,
-     });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }
@@ -172,11 +172,11 @@ const ChildrenMinistryPage = () => {
         "multipart/form-data"
       );
       if (res.statusText === "OK" || res.status === 200 || res.status === 201) {
-          updateToast({
-            title: `Success`,
-            type: "update",
-            info: `${res.data?.message}`,
-          });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
       updateToast({
@@ -191,7 +191,7 @@ const ChildrenMinistryPage = () => {
 
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack header="Children Ministry" />
       {/*  */}
       <div className="mt-8">
@@ -421,7 +421,7 @@ const ChildrenMinistryPage = () => {
         )}
       </div>
       <DeletingImageLoader deleting={deleting} />
-    </div>
+    </section>
   );
 };
 
