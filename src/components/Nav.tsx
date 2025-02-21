@@ -91,6 +91,7 @@ const Nav = () => {
 
   const section: { [key: string]: string } = {
     "/": "home",
+    "/home-web": "home",
     "/testimonies": "testimonies",
     "/manage-events": "manage events",
     "/page-writeup": "page writeup",
@@ -99,6 +100,7 @@ const Nav = () => {
     "/subscriptions": "subscriptions",
     "/settings": "app settings",
     "/page_settings": "page settings",
+    "/prayer-requests": "prayer requests",
     "/admin": "admin",
   };
 
