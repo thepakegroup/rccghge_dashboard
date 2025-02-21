@@ -2,61 +2,15 @@
 
 import React, { useState } from "react";
 import ViewPrayerRequestModal from "./view-prayer-request";
+import { PrayerRequests } from "@/app/(admin)/prayer-requests/page";
 
-const data = [
-  {
-    id: "#876364",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#876365",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#876366",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#876367",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#876368",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#8763610",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-  {
-    id: "#8763611",
-    name: "Chinonye Umeh",
-    phone: "080 665 7783",
-    date: "10-06-21",
-    prayer: "I had a bad dream last we had a terrible omen",
-  },
-];
-const PrayerRequestTable = () => {
+interface Props {
+  data: PrayerRequests[];
+  fetchData: any;
+}
+const PrayerRequestTable = ({ data, fetchData }: Props) => {
   const [openView, setOpenView] = useState(false);
-  const [currPrayer, setCurrPrayer] = useState<null | any>(null);
+  const [currPrayer, setCurrPrayer] = useState<null | PrayerRequests>(null);
 
   return (
     <>
@@ -74,37 +28,47 @@ const PrayerRequestTable = () => {
           </thead>
 
           {/* Table Body */}
-          <tbody>
-            {data.map((row, index) => (
-              <tr
-                key={index}
-                className="border-t whitespace-nowrap bg-white text-xs font-quicksand"
-              >
-                <td className="py-5 px-4">{row.id}</td>
-                <td className="py-5 px-4">{row.name}</td>
-                <td className="py-5 px-4">{row.phone}</td>
-                <td className="py-5 px-4">{row.date}</td>
-                <td className="py-5 px-4 line-clamp-1">{row.prayer}</td>
-                <td className="py-5 px-4 ">
-                  <button
-                    onClick={() => {
-                      setCurrPrayer(row);
-                      setOpenView(true);
-                    }}
-                    className="text-orange bg-transparent border-none outline-none"
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+
+          {data && !data.length ? (
+            <p className="w-full text-center pt-10">
+              No Prayer Requests Found!
+            </p>
+          ) : (
+            <tbody>
+              {data?.map((row, index) => (
+                <tr
+                  key={index}
+                  className="border-t whitespace-nowrap bg-white text-xs font-quicksand"
+                >
+                  <td className="py-5 px-4">#{row.id}</td>
+                  <td className="py-5 px-4">{row.name}</td>
+                  <td className="py-5 px-4">{row.mobile}</td>
+                  <td className="py-5 px-4">
+                    {new Date(row.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="py-5 px-4 line-clamp-1">{row.content}</td>
+                  <td className="py-5 px-4 ">
+                    <button
+                      onClick={() => {
+                        setCurrPrayer(row);
+                        setOpenView(true);
+                      }}
+                      className="text-orange bg-transparent border-none outline-none"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          )}
         </table>
       </div>
 
       {openView && (
         <ViewPrayerRequestModal
-          prayer={currPrayer}
+          prayer={currPrayer as PrayerRequests}
+          fetchData={fetchData}
           onClose={() => {
             setCurrPrayer(null);
             setOpenView(false);

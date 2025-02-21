@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import ModalWrapper from "../ModalWrapper";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setModalToggle } from "@/store/slice/Modal";
 import useCloseModal from "@/hooks/closeModal";
 import { useState } from "react";
-import useUpdateToast from "@/hooks/updateToast";
 
 interface editSettingI {
   handleSubmit: (mediaInfo: any) => void;
@@ -18,7 +15,6 @@ interface editSettingI {
 const EditSettings = ({
   handleSubmit,
   editItemData,
-  editItemId,
   onResetEditId,
 }: editSettingI) => {
   const handleCloseModal = useCloseModal();

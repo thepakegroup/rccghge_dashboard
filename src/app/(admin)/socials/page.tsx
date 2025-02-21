@@ -10,7 +10,7 @@ import { Socials } from "@/util/interface/socials";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-const Socials = () => {
+const SocialsPage = () => {
   const [show, setShow] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -51,12 +51,12 @@ const Socials = () => {
         {loading ? (
           <Loader />
         ) : (
-          <section className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-x-[16px] md:gap-y-[74px]">
+          <section className="w-full items-center justify-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-x-[16px] md:gap-y-[74px]">
             {socials?.map((c) => {
               return (
                 <div
                   key={c?.id}
-                  className="relative flex flex-col max-w-[305px] rounded-[10px] col-span-1 w-full"
+                  className="relative flex flex-col max-w-[305px] mx-auto rounded-[10px] col-span-1 w-full"
                 >
                   <div className="relative max-h-[225px]">
                     <Image
@@ -190,7 +190,7 @@ const Socials = () => {
   );
 };
 
-export default Socials;
+export default SocialsPage;
 
 const socialAccounts = [
   {

@@ -54,7 +54,7 @@ export const UpcomingEvents = () => {
             />
           ))
         ) : data && upcomingEvents?.length < 1 ? (
-          <div>No Events here</div>
+          <div>No Events Found!</div>
         ) : (
           data &&
           upcomingEvents?.map((item: any) => {
