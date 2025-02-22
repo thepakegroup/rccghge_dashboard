@@ -1,25 +1,56 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { RideRequestProp } from "./request-prop";
 import { Button } from "../base-components/button";
-import { CalenderIcon, RideRequestIcon } from "@/icons";
+import { CalenderIcon, RideRequestIcon, Trash } from "@/icons";
 import dayjs from "dayjs";
+import useUpdateToast from "@/hooks/updateToast";
+import { remove } from "@/helper/apiFetch";
+import { QueryObserverResult } from "@tanstack/react-query";
+import { DeleteModalV2 } from "../base-components/DeleteModalV2";
 
 export const PreviousRequests = ({
   setShowModal,
   data,
-  setSelectedRequest,
+  getRequests,
 }: {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   data: RideRequestProp[];
-  setSelectedRequest: Dispatch<SetStateAction<RideRequestProp | null>>;
+  getRequests: () => Promise<QueryObserverResult<Error, any>>;
 }) => {
-  const now = new Date();
-  const previousRequests = data?.filter((req) => new Date(req?.date) <= now);
+  const updateToast = useUpdateToast();
+  const previousRequests = data?.filter((req) => req.attended_to === true);
+  //
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [id, setId] = useState<string>("");
+  //
+  const deleteRequest = async () => {
+    try {
+      setDeleting(true);
+      const res = await remove(`/ride-request/${id}`);
+      if (res.status === 200 || res.status === 201 || res.statusText === "OK") {
+        updateToast({
+          title: `SuccessFul!`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
+        setShowModal(false);
+        setShowDelete(false);
+        await getRequests();
+      }
+    } catch (error: any) {
+      updateToast({
+        title: `Error!`,
+        type: "error",
+        info: `${error.response.data?.message}`,
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+  //
   return (
     <div>
-      <h3 className="text-base sm:text-lg font-semibold font-play-fair-display mb-4">
-        Previous Requests
-      </h3>
       <div className="flex flex-col gap-5">
         {previousRequests?.length < 1 && (
           <div className="w-full h-[250px] flex justify-center items-center">
@@ -51,15 +82,24 @@ export const PreviousRequests = ({
             </div>
             <Button
               onClick={() => {
-                setSelectedRequest(item);
-                setShowModal(true);
+                setId(item?.id.toString());
+                setShowDelete(true);
               }}
-              label="View"
-              className="rounded-sm w-fit min-[376px]:w-[89px] h-[37px] flex justify-center items-center"
+              label=""
+              icon={<Trash size="30" />}
+              className="bg-transparent flex justify-center items-center"
             />
           </div>
         ))}
       </div>
+      {/*  */}
+      {showDelete && (
+        <DeleteModalV2
+          setShowModal={setShowDelete}
+          deleting={deleting}
+          deleteFunc={deleteRequest}
+        />
+      )}
     </div>
   );
 };

@@ -17,7 +17,7 @@ export const Button = ({
 }) => {
   return (
     <button
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg bg-orange text-white ${className}`}
+      className={`flex cursor-pointer items-center gap-2 px-3 py-2 rounded-lg bg-orange text-white ${className}`}
       onClick={onClick}
       type={type}
     >

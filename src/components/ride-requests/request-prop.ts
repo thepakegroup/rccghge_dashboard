@@ -7,4 +7,5 @@ export interface RideRequestProp {
   name: string;
   passengers: number;
   updated_at: string;
+  attended_to: boolean;
 }

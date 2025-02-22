@@ -10,3 +10,4 @@ export { default as SettingIcon } from "./nav-links-icons/setting-icon";
 export { default as CalenderIcon } from "./calender";
 export { default as LogOut } from "./log-out-icon";
 export { default as SearchIcon } from "./search-icon";
+export { default as Trash } from "./trash";

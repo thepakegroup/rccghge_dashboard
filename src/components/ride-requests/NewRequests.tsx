@@ -13,14 +13,9 @@ export const NewRequests = ({
   data: RideRequestProp[];
   setSelectedRequest: Dispatch<SetStateAction<RideRequestProp | null>>;
 }) => {
-  const now = new Date();
-  const newRequests = data?.filter((req) => new Date(req?.date) >= now);
-  console.log(newRequests);
+  const newRequests = data?.filter((req) => req?.attended_to === false);
   return (
     <div>
-      <h3 className="text-base sm:text-lg font-semibold font-play-fair-display mb-4">
-        New Request
-      </h3>
       <div className="flex flex-col gap-5">
         {newRequests?.length < 1 && (
           <div className="w-full h-[250px] flex justify-center items-center">
@@ -52,9 +47,9 @@ export const NewRequests = ({
             </div>
             <Button
               onClick={() => {
-                setSelectedRequest(item)
-                setShowModal(true)
-            }}
+                setSelectedRequest(item);
+                setShowModal(true);
+              }}
               label="View"
               className="rounded-sm w-fit min-[376px]:w-[89px] h-[37px] flex justify-center items-center"
             />

@@ -124,49 +124,51 @@ export const MultipleImageUploader = ({
   );
 
   const fileAvailable = (
-    <div className="flex-center  justify-between ">
-      <div className="flex flex-col gap-6 w-full">
-        {/* upload success text and button */}
-        <div className="flex flex-col sm:flex-row gap-2 items-center justify-between w-full">
-          <p className="text-sm flex gap-2 items-center font-medium text-gray-800">
-            <div className="rounded-full bg-[#E7F6EC] h-10 w-10 flex-center justify-center">
-              <Image
-                src="icons/success.svg"
-                alt=""
-                width={28}
-                height={28}
-                className="cursor-pointer"
-              />
-            </div>
-            Upload Successful
-          </p>
+    <div className="flex flex-col gap-4">
+      {/* Header with add button */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm font-medium text-gray-800">Selected Files</p>
+        <button className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md">
+          Add
+        </button>
+      </div>
 
-          <button className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md">
-            Add
-          </button>
-        </div>
-
-        {/* files */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 ">
-          {files?.map((c, i) => (
-            <div
-              key={c?.name}
-              className="col-span-1 w-full justify-between md:max-w-[70%] flex gap-2 items-center"
-            >
-              <span className="text-gray-400 text-[0.6875rem]">
-                {c?.name} | {c?.size / 1024 && Math.ceil(c?.size / 1024)} KB
-              </span>
+      {/* Display selected files */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {files?.map((file, index) => (
+          <div
+            key={file.name}
+            onClick={(event) => event.stopPropagation()}
+            className="flex items-center gap-2 border p-2 rounded-md"
+          >
+            {file.type.startsWith("image/") ? (
               <Image
-                src="icons/delete.svg"
-                alt=""
-                width={24}
-                height={24}
-                className="cursor-pointer"
-                onClick={() => removeFile(i)}
+                src={URL.createObjectURL(file)}
+                alt={file.name}
+                width={40}
+                height={40}
+                className="rounded-md"
               />
-            </div>
-          ))}
-        </div>
+            ) : (
+              <div className="text-gray-600 text-sm">{file.name}</div>
+            )}
+            <span className="text-gray-400 text-xs">
+              {Math.ceil(file.size / 1024)} KB
+            </span>
+            <Image
+              src="icons/delete.svg"
+              alt="Remove"
+              width={20}
+              height={20}
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeFile(index);
+              }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
