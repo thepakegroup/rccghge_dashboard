@@ -31,9 +31,9 @@ export const UpcomingEvents = () => {
   }, [data?.data]);
   //
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-play-fair-display font-semibold text-2xl">
+        <h3 className="font-play-fair-display font-semibold text-xl">
           Upcoming Events
         </h3>
         <Link
@@ -45,7 +45,7 @@ export const UpcomingEvents = () => {
         </Link>
       </div>
       {/*  */}
-      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 min-[1180px]:grid-cols-3 gap-y-5 gap-x-6">
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 min-[1180px]:grid-cols-3 gap-y-5 gap-x-[31.09px]">
         {isLoading ? (
           Array.from({ length: 6 }, (_, index) => (
             <div
@@ -54,7 +54,7 @@ export const UpcomingEvents = () => {
             />
           ))
         ) : data && upcomingEvents?.length < 1 ? (
-          <div>No Events here</div>
+          <div>No Events Found!</div>
         ) : (
           data &&
           upcomingEvents?.map((item: any) => {
@@ -64,17 +64,17 @@ export const UpcomingEvents = () => {
                 key={item?.id}
                 className="rounded-lg p-1 flex flex-col gap-2 items-center bg-white shadow-sm max-h-[260px]"
               >
-                <div className="rounded-lg overflow-hidden w-[96%] h-[171px] mx-auto">
+                <div className="rounded-lg overflow-hidden w-[97%] py-[5px] h-[171px] mx-auto">
                   <Image
                     src={`${baseUrl}event-image/${item?.banner}`}
                     alt={item?.title}
                     width={100}
                     height={80}
-                    className="object-cover object-center w-full h-full"
+                    className="object-cover rounded-[10px] object-center w-full h-full"
                   />
                 </div>
                 <div className="flex flex-col gap-2 p-2">
-                  <h3 className="font-play-fair-display font-semibold text-lg line-clamp-1">
+                  <h3 className="font-play-fair-display font-medium text-base line-clamp-1">
                     {item?.title}
                   </h3>
                   <p className="text-xs flex items-start gap-2 text-gray-500">

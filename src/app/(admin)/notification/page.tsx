@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import useUpdateToast from "@/hooks/updateToast";
 import Loader from "@/components/Loader";
 import { post } from "@/helper/apiFetch";
@@ -75,10 +75,11 @@ const NotificationPage = () => {
   return (
     <section className="flex-center justify-center mt-9 md:mt-14">
       <div className="w-full ">
-        <h1 className="font-bold text-lg text-center text-fade-ash mb-9">
-          Send push notification
+        <h1 className="text-[#030229] text-[22px] font-semibold font-play-fair-display mb-[19px]">
+          Add push notification
         </h1>
-        <div className="modal py-9 md:max-w-[467px] mx-auto">
+
+        <div className="w-full py-9 md:max-w-[45%]">
           {loader ? (
             <Loader />
           ) : (
@@ -86,7 +87,10 @@ const NotificationPage = () => {
               className="flex flex-col gap-[1.19rem] h-auto"
               onSubmit={(e) => e.preventDefault()}
             >
-              <label htmlFor="type" className="input-field">
+              <label
+                htmlFor="type"
+                className="input-field text-sm font-play-fair-display font-medium"
+              >
                 <span>Notice type</span>
 
                 <Listbox value={noticeType} onChange={setNoticeType}>
@@ -162,7 +166,11 @@ const NotificationPage = () => {
                   ""
                 )}
               </label>
-              <label htmlFor="title" className="input-field">
+
+              <label
+                htmlFor="title"
+                className="input-field  text-sm font-play-fair-display font-medium"
+              >
                 <span>Notice title</span>
                 <input
                   type="text"
@@ -186,7 +194,11 @@ const NotificationPage = () => {
                   ""
                 )}
               </label>
-              <label htmlFor="description" className="input-field">
+
+              <label
+                htmlFor="description"
+                className="input-field  text-sm font-play-fair-display font-medium"
+              >
                 <span>Notice content</span>
                 <textarea
                   onChange={(e) => {
@@ -209,8 +221,9 @@ const NotificationPage = () => {
                   ""
                 )}
               </label>
+
               <button
-                className="w-full bg-[#1063C6] text-white rounded-md px-6 py-4"
+                className="w-full max-w-[30%] bg-[#e77400] text-white rounded-md px-6 py-4"
                 type="submit"
                 onClick={(e) => handleSubmit(e)}
               >

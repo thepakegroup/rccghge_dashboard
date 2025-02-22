@@ -39,7 +39,7 @@ const AdminInfo = ({
       <p className="col-span-2">{email}</p>
       <p>********</p>
       <p className="flex-center justify-center">
-        <span className="text-xs text-white bg-orange rounded-full px-2 py-1">
+        <span className="text-xs text-white bg-[#ea5017] rounded-[3px] px-2 py-1">
           {level === 1 ? "Super Admin" : "Admin"}
         </span>
       </p>

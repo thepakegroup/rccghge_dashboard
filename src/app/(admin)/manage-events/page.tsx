@@ -132,10 +132,11 @@ const ManageEvents = () => {
 
   return (
     <section className="relative min-h-[88vh]">
-      <div className="flex justify-end mt-2">
-        <AddItemButton title="Add event" />
+      <div className="md:hidden flex justify-end mt-3">
+        <AddItemButton title="Create new event" />
       </div>
-      <section className="mt-3">
+
+      <section className="my-[26px]">
         {loading || loader ? (
           <Loader />
         ) : (
@@ -196,6 +197,10 @@ const ManageEvents = () => {
           itemsCount={items.length}
         />
       )}
+
+      <div className="hidden md:flex">
+        <AddItemButton title="Create new event" />
+      </div>
     </section>
   );
 };

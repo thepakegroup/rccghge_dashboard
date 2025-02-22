@@ -185,7 +185,7 @@ const WellnessMinistry = () => {
 
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack header="HGE Wellness Ministry" />
       {/*  */}
       <div className="mt-8">
@@ -396,7 +396,7 @@ const WellnessMinistry = () => {
         )}
       </div>
       <DeletingImageLoader deleting={deleting} />
-    </div>
+    </section>
   );
 };
 

@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import ModalWrapper from "../ModalWrapper";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setModalToggle } from "@/store/slice/Modal";
 import useCloseModal from "@/hooks/closeModal";
 import { useState } from "react";
-import useUpdateToast from "@/hooks/updateToast";
 
 interface editSettingI {
   handleSubmit: (mediaInfo: any) => void;
@@ -18,7 +15,6 @@ interface editSettingI {
 const EditSettings = ({
   handleSubmit,
   editItemData,
-  editItemId,
   onResetEditId,
 }: editSettingI) => {
   const handleCloseModal = useCloseModal();
@@ -74,7 +70,7 @@ const EditSettings = ({
           </label>
           <button
             onClick={submitForm}
-            className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+            className="px-6 py-4 bg-[#e77400] w-full text-white rounded-md"
           >
             Update
           </button>

@@ -105,7 +105,7 @@ const UpdateTestimonyModal = ({
               <div className="flex justify-center mt-6">
                 <button
                   onClick={handleSubmitTestimony}
-                  className="px-6 py-4 bg-secondary-02 w-full text-white rounded-md"
+                  className="px-6 py-4 bg-[#e77400] max-w-[60%] w-full text-white rounded-md"
                 >
                   {buttonText}
                 </button>

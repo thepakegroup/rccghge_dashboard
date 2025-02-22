@@ -153,7 +153,7 @@ const PrayerMinistryPage = () => {
   };
   //
   return (
-    <div className="relative px-4 mb-8">
+    <section className="relative px-4 mb-8 mt-8">
       <GoBack header="Prayer Ministry" />
       {/*  */}
       <div className="mt-8">
@@ -322,7 +322,7 @@ const PrayerMinistryPage = () => {
         )}
       </div>
       <DeletingImageLoader deleting={deleting} />
-    </div>
+    </section>
   );
 };
 

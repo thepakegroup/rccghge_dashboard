@@ -48,6 +48,8 @@ const Admin = () => {
 
   // Create Admin
   const createAdmin = async (e: any) => {
+    e.preventDefault();
+
     if (email === "") {
       updateToast({
         title: "Email cannot be empty!",
@@ -55,7 +57,8 @@ const Admin = () => {
       });
 
       return;
-    } else if (password === "") {
+    }
+    if (password === "") {
       updateToast({
         title: "Password cannot be empty!",
         info: "Please provide your password",
@@ -64,7 +67,6 @@ const Admin = () => {
       return;
     }
 
-    e.preventDefault();
     setLoader(true);
     const adminLevel = level === "admin" ? "2" : "1";
 
@@ -274,7 +276,7 @@ const Admin = () => {
         <div className="!w-full md:col-span-1 flex items-center">
           <button
             onClick={createAdmin}
-            className="w-full md:w-fit bg-orange text-white rounded-md px-4 py-4"
+            className="bg-orange text-white rounded-md px-4 py-3"
           >
             Register
           </button>
@@ -306,6 +308,7 @@ const Admin = () => {
           )}
         </div>
       </div>
+
       {type == "modify" && (
         <EditAdmin
           onResetEditId={() => {

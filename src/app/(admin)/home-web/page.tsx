@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCtx } from "@/providers/ctx-provider";
 import { UpcomingEvents } from "@/components/Home/home-web/UpcomingEvents";
@@ -20,14 +20,20 @@ const WebHomePage = () => {
   }, [ctx]);
   //
   return (
-    <section className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] items-start gap-8 mb-8">
+    <section className="flex flex-col gap-5 py-[45px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] items-start gap-8">
         <UpcomingEvents />
-        <ConnectAnalysis />
+        <Suspense>
+          <ConnectAnalysis />
+        </Suspense>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 mb-8">
-        <NewMinistryIntakeList />
-        <Notifications />
+      <div
+      // className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8"
+      >
+        <Suspense>
+          <NewMinistryIntakeList />
+        </Suspense>
+        {/* <Notifications /> */}
       </div>
     </section>
   );
