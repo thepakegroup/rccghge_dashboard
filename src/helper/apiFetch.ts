@@ -79,6 +79,15 @@ export const patch = (url: string, data: any, type?: string) => {
   });
 };
 
+export const patch2 = (url: string, data?: any, type?: string) => {
+  return api.patch(url, data, {
+    headers: {
+      "content-Type": type || "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const remove = (url: string) => {
   return api.delete(url, { headers });
 };

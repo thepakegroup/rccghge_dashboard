@@ -105,31 +105,33 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
   };
 
   const fileAvailable = (
-    <div className="flex-center justify-between">
-      <div className="flex-center gap-3">
-        <div className="rounded-full bg-[#E7F6EC] h-10 w-10 flex-center justify-center">
-          <Image
-            src="icons/success.svg"
-            alt=""
-            width={28}
-            height={28}
-            className="cursor-pointer"
-          />
-        </div>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        {file && (
+          <div className="relative h-14 w-14">
+            <Image
+              src={URL.createObjectURL(file)}
+              alt="Selected file"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-md"
+            />
+          </div>
+        )}
         <div>
-          <p className="text-sm font-medium text-gray-800">Upload Successful</p>
+          <p className="text-sm font-medium text-gray-800">{fileName}</p>
           <span className="text-gray-400 text-[0.6875rem]">
-            {fileName} | {kb && Math.ceil(kb)} KB
+            {kb && Math.ceil(kb)} KB
           </span>
         </div>
       </div>
       <Image
         src="icons/delete.svg"
-        alt=""
+        alt="Remove file"
         width={24}
         height={24}
         className="cursor-pointer"
-        onClick={removeFile}
+        onClick={removeFile} // Ensures only removal, no file selection
       />
     </div>
   );

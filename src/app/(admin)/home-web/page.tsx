@@ -27,9 +27,13 @@ const WebHomePage = () => {
           <ConnectAnalysis />
         </Suspense>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
-        <NewMinistryIntakeList />
-        <Notifications />
+      <div
+      // className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8"
+      >
+        <Suspense>
+          <NewMinistryIntakeList />
+        </Suspense>
+        {/* <Notifications /> */}
       </div>
     </section>
   );
