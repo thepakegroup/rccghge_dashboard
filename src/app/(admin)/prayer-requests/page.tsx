@@ -39,14 +39,12 @@ const PrayerRequestsPage = () => {
   });
 
   // Pagination
-  const totalPagesUnseen = metadata?.last_page;
-  const totalPagesSeen = seenMetadata?.last_page;
+  const totalPagesUnseen = data?.data?.meta?.last_page;
+  const totalPagesSeen = seen_data?.data?.meta?.last_page;
 
   // list
-  const prayer_requests: PrayerRequests[] = data?.message?.data;
-  const seen_prayer_requests: PrayerRequests[] = seen_data?.message?.data;
-
-  console.log({ prayer_requests, seen_prayer_requests });
+  const prayer_requests: PrayerRequests[] = data?.data?.data;
+  const seen_prayer_requests: PrayerRequests[] = seen_data?.data?.data;
 
   const onFetchAllData = () => {
     fetchData();
@@ -107,6 +105,7 @@ const PrayerRequestsPage = () => {
           <PrayerRequestTable
             fetchData={onFetchAllData}
             data={seen_prayer_requests}
+            seen_requests={true}
           />
         )}
       </div>

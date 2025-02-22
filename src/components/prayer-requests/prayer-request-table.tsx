@@ -3,12 +3,20 @@
 import React, { useState } from "react";
 import ViewPrayerRequestModal from "./view-prayer-request";
 import { PrayerRequests } from "@/app/(admin)/prayer-requests/page";
+import ConfirmDeletePrayerRequest from "./confirm-delete";
 
 interface Props {
   data: PrayerRequests[];
   fetchData: any;
+  seen_requests?: boolean;
 }
-const PrayerRequestTable = ({ data, fetchData }: Props) => {
+const PrayerRequestTable = ({
+  data,
+  fetchData,
+  seen_requests = false,
+}: Props) => {
+  const [openDel, setOpenDel] = useState(false);
+  const [selectedId, setSelectedId] = useState<null | number>(null);
   const [openView, setOpenView] = useState(false);
   const [currPrayer, setCurrPrayer] = useState<null | PrayerRequests>(null);
 
@@ -30,8 +38,10 @@ const PrayerRequestTable = ({ data, fetchData }: Props) => {
           {/* Table Body */}
 
           {data && !data.length ? (
-            <p className="w-full text-center pt-10">
-              No Prayer Requests Found!
+            <p className="w-full text-center py-10">
+              {seen_requests
+                ? "No Prayer Requests Found!"
+                : "No New Prayer Requests Found!"}
             </p>
           ) : (
             <tbody>
@@ -48,15 +58,27 @@ const PrayerRequestTable = ({ data, fetchData }: Props) => {
                   </td>
                   <td className="py-5 px-4 line-clamp-1">{row.content}</td>
                   <td className="py-5 px-4 ">
-                    <button
-                      onClick={() => {
-                        setCurrPrayer(row);
-                        setOpenView(true);
-                      }}
-                      className="text-orange bg-transparent border-none outline-none"
-                    >
-                      View
-                    </button>
+                    {seen_requests ? (
+                      <button
+                        onClick={() => {
+                          setSelectedId(row?.id);
+                          setOpenDel(true);
+                        }}
+                        className="text-red-600 bg-transparent border-none outline-none"
+                      >
+                        Delete
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setCurrPrayer(row);
+                          setOpenView(true);
+                        }}
+                        className="text-orange bg-transparent border-none outline-none"
+                      >
+                        View
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -72,6 +94,17 @@ const PrayerRequestTable = ({ data, fetchData }: Props) => {
           onClose={() => {
             setCurrPrayer(null);
             setOpenView(false);
+          }}
+        />
+      )}
+
+      {openDel && (
+        <ConfirmDeletePrayerRequest
+          selectedId={selectedId as number}
+          fetchData={fetchData}
+          onClose={() => {
+            setSelectedId(null);
+            setOpenDel(false);
           }}
         />
       )}
