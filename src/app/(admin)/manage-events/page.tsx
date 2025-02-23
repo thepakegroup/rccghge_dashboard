@@ -156,7 +156,7 @@ const ManageEvents = () => {
       </section>
 
       {events && !events.length ? (
-        <p className="w-full text-center pt-10">No Events Found!</p>
+        <p className="w-full text-center py-10">No Events Found!</p>
       ) : null}
 
       {/* Pagination */}

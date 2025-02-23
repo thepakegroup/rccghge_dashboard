@@ -223,7 +223,7 @@ const NotificationPage = () => {
               </label>
 
               <button
-                className="w-full max-w-[30%] bg-[#e77400] text-white rounded-md px-6 py-4"
+                className="w-full max-w-[30%] bg-[#e77400] text-white rounded-md px-6 py-2"
                 type="submit"
                 onClick={(e) => handleSubmit(e)}
               >

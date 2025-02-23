@@ -130,7 +130,7 @@ const Settings = () => {
   }, [sorted, settings]);
 
   return (
-    <section className=" max-w-full md:max-w-[90vw] lg:max-w-[70vw]">
+    <section className="mt-4 max-w-full md:max-w-[90vw] lg:max-w-[70vw]">
       <h1 className="text-[#717171] text-lg font-bold">Create setting</h1>
       <form className="flex flex-col md:grid md:grid-cols-6 gap-[1.12rem] mt-9 md:items-center">
         <label htmlFor="name" className="input-field col-span-2">
@@ -158,7 +158,7 @@ const Settings = () => {
         <div className="md:pt-5 col-span-1 !w-full">
           <button
             onClick={createSetting}
-            className="w-full bg-[#e77400] text-white rounded-md px-6 py-4"
+            className="w-full bg-[#e77400] text-white rounded-md px-6 py-2"
           >
             Submit
           </button>
