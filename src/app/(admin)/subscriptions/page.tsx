@@ -87,7 +87,9 @@ const Subscriptions = () => {
     <section className="relative min-h-[88vh]">
       {/* new sign ups */}
       <div className="flex flex-col gap-3 mt-11">
-        <h3 className="text-lg font-semibold text-black">New Sign Ups</h3>
+        <h3 className="text-lg font-play-fair-display text-[#030229] font-semibold">
+          New Sign Ups
+        </h3>
 
         {!loading_new_signups && newSignups?.length < 1 && (
           <p className="w-full text-center pt-10">No New Sign Ups!</p>
@@ -157,7 +159,9 @@ const Subscriptions = () => {
 
       {/* subscribers */}
       <div className="flex flex-col gap-3 mt-11">
-        <h3 className="text-lg font-semibold text-black">Subscribers</h3>
+        <h3 className="text-lg font-semibold text-[#030229] font-play-fair-display">
+          Subscribers
+        </h3>
 
         {!loading_subscribers && subscribers_data?.length < 1 && (
           <p className="w-full text-center pt-10">No Subscribers Yet!</p>

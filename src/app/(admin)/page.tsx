@@ -157,7 +157,7 @@ export default function Home() {
               <section key={label.value} className="" id={label.value}>
                 <div className="flex-center gap-1 ">
                   <Image src="icons/img.svg" alt="" width={18} height={18} />
-                  <p className="text-base text-fade-ash font-bold">
+                  <p className="text-base text-[#030229] font-play-fair-display font-bold">
                     {label.label} Images
                   </p>
                 </div>

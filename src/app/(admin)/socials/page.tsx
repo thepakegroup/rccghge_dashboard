@@ -37,7 +37,9 @@ const SocialsPage = () => {
       {/* new sign ups */}
       <div className="flex flex-col gap-6 mt-11 w-full">
         <div className="flex justify-between items-center w-full  md:max-w-[93%]">
-          <h3 className="text-lg font-semibold text-black">Social Accounts</h3>
+          <h3 className="text-lg font-semibold text-[#030229] font-play-fair-display">
+            Social Accounts
+          </h3>
 
           <button
             onClick={() => setShowCreate(true)}
