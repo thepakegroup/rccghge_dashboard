@@ -41,7 +41,7 @@ const SocialsPage = () => {
 
           <button
             onClick={() => setShowCreate(true)}
-            className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md"
+            className="bg-[#E77400] py-2 px-6 w-fit text-white rounded-md"
           >
             Create
           </button>
@@ -56,19 +56,22 @@ const SocialsPage = () => {
               return (
                 <div
                   key={c?.id}
-                  className="relative flex flex-col max-w-[305px] mx-auto rounded-[10px] col-span-1 w-full"
+                  className="relative flex flex-col max-w-[305px] mx-auto lg:mx-0 rounded-[10px] col-span-1 w-full"
                 >
-                  <div className="relative max-h-[225px]">
-                    <Image
-                      src={
-                        c?.media_thumbnail ||
-                        "/images/default-socials-image.png"
-                      }
-                      alt=""
-                      width={305}
-                      height={225}
-                      className="rounded-t-[10px] !w-full !h-[225px]"
-                    />
+                  <div className="relative">
+                    <div className="h-[225px] rounded-t-[10px] bg-white">
+                      <Image
+                        src={
+                          c?.media_thumbnail ||
+                          "/images/default-socials-image.png"
+                        }
+                        alt=""
+                        width={305}
+                        height={225}
+                        className="rounded-t-[10px] !w-full !max-h-full"
+                      />
+                    </div>
+
                     {c?.media_type === "video" && (
                       <Image
                         src="/icons/play.svg"

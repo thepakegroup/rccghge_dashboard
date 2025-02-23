@@ -143,7 +143,7 @@ export default function Home() {
   const mediaData: mediaI[] = data?.message;
 
   return (
-    <section className="w-full">
+    <section className="w-full mt-4">
       <div className="flex justify-end mt-2">
         <AddItemButton title="Add media" />
       </div>
@@ -158,7 +158,7 @@ export default function Home() {
                 <div className="flex-center gap-1 ">
                   <Image src="icons/img.svg" alt="" width={18} height={18} />
                   <p className="text-base text-fade-ash font-bold">
-                    {label.label}
+                    {label.label} Images
                   </p>
                 </div>
                 <div className="card-wrapper">

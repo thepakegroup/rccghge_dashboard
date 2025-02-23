@@ -34,7 +34,7 @@ const AddItemButton = ({ title }: { title: string }) => {
     <button
       ref={elementRef}
       onClick={() => handleButton("add")}
-      className="text-sm font-semibold px-6 py-4 bg-[#e77400] flex-center gap-[0.3rem] text-white rounded-md"
+      className="text-sm font-semibold px-3 py-2 bg-[#e77400] flex-center gap-[0.3rem] text-white rounded-md"
     >
       <span>{title}</span>
       <Image

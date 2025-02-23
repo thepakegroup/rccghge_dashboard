@@ -7,7 +7,7 @@ const SectionWrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <section
-      className={`pt-[5rem] [&>section]:pb-28 [&>section]:px-[18px] ${
+      className={`pt-[5rem] [&>section]:pb-28 [&>section]:px-[18px] lg:[&>section]:px-[46px] ${
         isSidebarOpen ? "lg:ml-[271px]" : "lg:ml-0"
       }`}
     >
