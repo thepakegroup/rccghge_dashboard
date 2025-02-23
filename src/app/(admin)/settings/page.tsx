@@ -131,7 +131,9 @@ const Settings = () => {
 
   return (
     <section className="mt-4 max-w-full md:max-w-[90vw] lg:max-w-[70vw]">
-      <h1 className="text-[#717171] text-lg font-bold">Create setting</h1>
+      <h1 className="text-[#030229] font-play-fair-display text-lg font-bold">
+        Create setting
+      </h1>
       <form className="flex flex-col md:grid md:grid-cols-6 gap-[1.12rem] mt-9 md:items-center">
         <label htmlFor="name" className="input-field col-span-2">
           <span>Name</span>
