@@ -155,8 +155,10 @@ const Admin = () => {
   const sortOptions = [{ name: "admin" }, { name: "super admin" }];
 
   return (
-    <section className="max-w-full md:max-w-[90vw] lg:max-w-[70vw]">
-      <h1 className="text-[#717171] text-lg font-bold">Manage Admins</h1>
+    <section className="max-w-full md:max-w-[90vw] mt-4 lg:max-w-[70vw]">
+      <h1 className="text-[#030229] font-play-fair-display text-lg font-bold">
+        Manage Admins
+      </h1>
       <form className="flex flex-col justify-start md:grid md:grid-cols-8 gap-[12px] mt-9 md:items-end">
         <label htmlFor="email" className="input-field col-span-3 w-full">
           <span>Admin email</span>
@@ -276,7 +278,7 @@ const Admin = () => {
         <div className="!w-full md:col-span-1 flex items-center">
           <button
             onClick={createAdmin}
-            className="bg-orange text-white rounded-md px-6 py-2"
+            className="bg-orange text-white rounded-md px-6 py-3"
           >
             Register
           </button>

@@ -15,7 +15,7 @@ const PageWriteUp = () => {
   ];
 
   return (
-    <section className="">
+    <section className="mt-4">
       <div className="flex justify-center mb-3 md:hidden">
         <Listbox value={currentSection} onChange={setCurrentSection}>
           <div className="relative">
