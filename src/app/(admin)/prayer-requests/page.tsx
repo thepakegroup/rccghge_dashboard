@@ -69,7 +69,14 @@ const PrayerRequestsPage = () => {
         </h4>
 
         {loading ? (
-          <Loader />
+          <div className="flex flex-col gap-3 my-3">
+            {Array.from({ length: 4 }, (_, idx) => (
+              <div
+                className="h-[50px] rounded-md bg-gray-300 animate-pulse"
+                key={idx}
+              />
+            ))}
+          </div>
         ) : (
           <PrayerRequestTable
             fetchData={onFetchAllData}
@@ -100,7 +107,14 @@ const PrayerRequestsPage = () => {
         </h4>
 
         {isloading ? (
-          <Loader />
+          <div className="flex flex-col gap-3 my-3">
+            {Array.from({ length: 4 }, (_, idx) => (
+              <div
+                className="h-[50px] rounded-md bg-gray-300 animate-pulse"
+                key={idx}
+              />
+            ))}
+          </div>
         ) : (
           <PrayerRequestTable
             fetchData={onFetchAllData}
