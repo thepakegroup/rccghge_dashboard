@@ -5,11 +5,11 @@ import Leaders from "@/components/Ministry/Leaders";
 import { useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 
-const Ministry = () => {
+const GroupLeadersPage = () => {
   const [currentSection, setCurrentSection] = useState("church leader");
   const sortOptions = [
     { name: "Church Leader", value: "church leader" },
-    { name: "Church Group", value: "church group" },
+    // { name: "Church Group", value: "church group" },
   ];
 
   return (
@@ -79,12 +79,14 @@ const Ministry = () => {
           </div>
         </Listbox>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div
+      // className="grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
         <Leaders currentSection={currentSection} />
-        <ChurchGroup currentSection={currentSection} />
+        {/* <ChurchGroup currentSection={currentSection} /> */}
       </div>
     </section>
   );
 };
 
-export default Ministry;
+export default GroupLeadersPage;

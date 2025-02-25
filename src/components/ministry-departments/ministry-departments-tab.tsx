@@ -1,6 +1,4 @@
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
-
+import { useRouter, useSearchParams } from "next/navigation";
 export const MinistryDepartmentsTab = ({
   tab,
   // setTab,
@@ -11,17 +9,17 @@ export const MinistryDepartmentsTab = ({
   page: string | number;
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
   // const handle ministry tab click
   const handleMinistryTab = () => {
-    const params = new URLSearchParams();
-    params.append("tab", "Ministry");
-    router.push(`/ministry-departments?page=${page}&tab=Ministry`);
+    params.set("tab", "Ministry");
+    router.push(`?${params}`);
   };
   // const handle department tab click
   const handleDepartmentTab = () => {
-    const params = new URLSearchParams();
-    params.append("tab", "Department");
-    router.push(`/ministry-departments?page=${page}&tab=Department`);
+    params.set("tab", "Department");
+    router.push(`?${params}`);
   };
   // two tab display
   return (

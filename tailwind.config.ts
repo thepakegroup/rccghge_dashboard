@@ -39,7 +39,8 @@ const config: Config = {
       },
       fontFamily: {
         "play-fair-display": "'Playfair Display', serif",
-        quicksand: "'Quicksand', sans-serif",
+        // quicksand: "'Quicksand', sans-serif",
+        quicksand: "var(--quicksand), sans-serif",
       },
     },
   },

@@ -43,10 +43,10 @@ export const webLinks: navItemProp[] = [
     link: "/page-writeup",
   },
   {
-    title: "ministry",
-    info: "manage leaders & ministry",
+    title: "group leaders",
+    info: "manage leaders",
     icon: "/icons/minister.svg",
-    link: "/ministry",
+    link: "/group-leaders",
   },
   {
     title: "prayer request",

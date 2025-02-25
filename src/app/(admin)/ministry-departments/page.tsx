@@ -1,14 +1,13 @@
 "use client";
-import { MinistryCardLoader } from "@/components/ministry-departments/ministry-card-loader";
-import { MinistryDepartmentsHeader } from "@/components/ministry-departments/ministry-departments-header";
+import { Button } from "@/components/base-components/button";
+import { AddMinistryModal } from "@/components/ministry-departments/AddMinistryModal";
+import { EditMinistryModal } from "@/components/ministry-departments/EditMinistryModal";
+import { MinistryDepartmentLists } from "@/components/ministry-departments/ministry-department-lists";
 import { MinistryDepartmentsTab } from "@/components/ministry-departments/ministry-departments-tab";
 import { get } from "@/helper/apiFetch";
 import { redirectLink } from "@/helper/redirectLink";
-import { PenIcon } from "@/icons/pen-icon";
-import { baseUrl } from "@/util/constants";
+import { MotionPresence } from "@/util/motion-exports";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
@@ -16,12 +15,17 @@ import ReactPaginate from "react-paginate";
 const MinistryDepartmentsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
   // states
   // params
   const tab = searchParams.get("tab") || "Ministry";
   const page = searchParams.get("page") || 1;
   // get all groups
-  const { data: groups, isLoading: loadingGroups } = useQuery({
+  const {
+    data: groups,
+    isLoading: loadingGroups,
+    refetch: getGroups,
+  } = useQuery({
     queryKey: ["groups", tab, page],
     queryFn: async () => {
       const res = await get(`/groups?category=${tab}&page=${page}&perPage=10`);
@@ -33,8 +37,17 @@ const MinistryDepartmentsPage = () => {
   //
   const handlePageClick = ({ selected }: { selected: number }) => {
     const page = selected + 1;
-    router.push(`/ministry-departments?page=${page}&tab=${tab}`);
+    params.set("page", String(page));
+    router.push(`?${params}`);
   };
+  //
+  //
+  const [showCreateMinistryModal, setShowCreateMinistryModal] =
+    useState<boolean>(false);
+  const [showEditMinistryModal, setShowEditMinistryModal] =
+    useState<boolean>(false);
+  const [selectedMinistry, setSelectedMinistry] = useState<any>(null);
+  //
   //
   return (
     <div className="max-w-[1440px] px-4 mt-8">
@@ -46,46 +59,40 @@ const MinistryDepartmentsPage = () => {
         page={page}
       />
       {/* Groups Display */}
-      <div className="mt-8 grid grid-cols-1 min-[476px]:grid-cols-2 min-[768px]:grid-cols-3 min-[1240px]:gricd-cols-4 gap-4 mb-5">
-        {loadingGroups &&
-          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((group) => {
-            return <MinistryCardLoader key={group} />;
-          })}
-        {groups &&
-          groups.data?.map((group: any) => {
-            return (
-              <div
-                className="rounded-lg overflow-hidden bg-white"
-                key={group?.id}
-              >
-                <div className="w-full h-[250px]">
-                  <Image
-                    className="w-full h-full object-cover"
-                    src={`${baseUrl}load-media/${group?.banner}`}
-                    alt={group?.name}
-                    width={200}
-                    height={200}
-                  />
-                </div>
-                <div className="py-5 px-2 flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <div className="h-[10px] w-[10px] rounded-full bg-black" />
-                    <h3 className="text-sm font-bold font-play-fair-display">
-                      {group?.name}
-                    </h3>
-                  </div>
-                  <Link
-                    className="flex items-center gap-1 text-orange text-xs"
-                    href={`${redirectLink(group)}`}
-                  >
-                    <PenIcon />
-                    <span>Edit Page</span>
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-      </div>
+      <MinistryDepartmentLists
+        {...{
+          groups,
+          loadingGroups,
+          redirectLink,
+          setSelectedMinistry,
+          setShowEditMinistryModal,
+        }}
+      />
+      {/*  */}
+      <Button
+        label={tab === "Ministry" ? "Add Ministry" : "Add Department"}
+        className="!h-[44px] !rounded-[6px] !w-[192px] flex justify-center items-center text-center !py-4 !px-6 font-quicksand !my-12"
+        onClick={() => setShowCreateMinistryModal(true)}
+      />
+      {/*  */}
+      <MotionPresence>
+        {showCreateMinistryModal && (
+          <AddMinistryModal
+            setShowModal={setShowCreateMinistryModal}
+            tab={tab}
+            getGroups={getGroups}
+          />
+        )}
+        {showEditMinistryModal && (
+          <EditMinistryModal
+            selectedMinistry={selectedMinistry}
+            setSelectedMinistry={setSelectedMinistry}
+            setShowModal={setShowEditMinistryModal}
+            getGroups={getGroups}
+          />
+        )}
+      </MotionPresence>
+      {/*  */}
       {groups && (
         <ReactPaginate
           breakLabel="..."

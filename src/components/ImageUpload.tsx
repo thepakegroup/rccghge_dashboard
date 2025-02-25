@@ -19,13 +19,24 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
   );
   const dispatch = useAppDispatch();
 
-  const kb = file && file?.size / 10240;
+  // Determine which file and filename to use based on section
+  const currentFile =
+    section === "leader" ? leaderImg : section === "group" ? groupImg : file;
+
+  const currentFileName =
+    section === "leader"
+      ? leaderImgName
+      : section === "group"
+      ? groupImgName
+      : fileName;
+
+  const kb = currentFile && currentFile?.size / 1024; // Fixed size calculation
 
   const upload = (
     <div className="flex-center md:flex-col gap-2 relative cursor-pointer">
       <div className="flex justify-center">
         <Image
-          src="icons/upload.svg"
+          src="/icons/upload.svg" // Added leading slash
           alt=""
           width={32}
           height={32}
@@ -59,7 +70,7 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
     <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
       <div className="flex justify-center h-10 w-10 rounded-full bg-warning-400">
         <Image
-          src="icons/warning.svg"
+          src="/warning.svg" // Added leading slash
           alt=""
           width={24}
           height={24}
@@ -67,14 +78,14 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
         />
       </div>
       <div>
-        <div className="text-sm text-gray-600">{file?.name}</div>
+        <div className="text-sm text-gray-600">{currentFile?.name}</div>
         <div className="text-error-400 text-[0.6875rem]">
           The file is too large to upload
         </div>
       </div>
       <div className="flex-center justify-center gap-2 text-[#F56630] text-[0.6875rem]">
         <Image
-          src="icons/reload.svg"
+          src="/icons/reload.svg" // Added leading slash
           alt=""
           width={16}
           height={16}
@@ -85,32 +96,28 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
     </div>
   );
 
-  const removeFile = (e: any) => {
+  const removeFile = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (section === "leader") {
       dispatch(setLeaderImg(null));
       dispatch(setLeaderImgName(""));
-      console.log(section);
-    }
-
-    if (section === "group") {
+    } else if (section === "group") {
       dispatch(setGroupImg(null));
       dispatch(setGroupImgName(""));
-      console.log(section);
+    } else {
+      dispatch(setMediaFile(null));
+      dispatch(setFileName(""));
     }
-
-    dispatch(setMediaFile(null));
-    dispatch(setFileName(""));
   };
 
   const fileAvailable = (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        {file && (
+        {currentFile && (
           <div className="relative h-14 w-14">
             <Image
-              src={URL.createObjectURL(file)}
+              src={URL.createObjectURL(currentFile)}
               alt="Selected file"
               layout="fill"
               objectFit="cover"
@@ -119,45 +126,40 @@ const ImageUpload = ({ section, handleImageChange = () => {} }: uploadI) => {
           </div>
         )}
         <div>
-          <p className="text-sm font-medium text-gray-800">{fileName}</p>
+          <p className="text-sm font-medium text-gray-800">{currentFileName}</p>
           <span className="text-gray-400 text-[0.6875rem]">
             {kb && Math.ceil(kb)} KB
           </span>
         </div>
       </div>
       <Image
-        src="icons/delete.svg"
+        src="/icons/delete.svg" // Added leading slash
         alt="Remove file"
         width={24}
         height={24}
         className="cursor-pointer"
-        onClick={removeFile} // Ensures only removal, no file selection
+        onClick={removeFile}
       />
     </div>
   );
 
-  const content = (file: File, fileName: string) => {
-    if (!file && fileName === "") {
-      return upload;
-    }
-
-    if (file && kb && kb >= 3000) {
+  // Simplified content rendering logic
+  const renderContent = () => {
+    if (currentFile && kb && kb >= 3000) {
       return fileTooLarge;
     }
 
-    if (fileName) {
+    if (currentFile && currentFileName) {
       return fileAvailable;
     }
+
+    return upload;
   };
 
   return (
     <DragDrop section={section} handleImageChange={handleImageChange}>
       <div className="px-4 py-6 rounded-md border border-dashed border-[#D0D5DD] my-6">
-        {section === "leader"
-          ? content(leaderImg as File, leaderImgName as string)
-          : section === "group"
-          ? content(groupImg as File, groupImgName as string)
-          : content(file as File, fileName)}
+        {renderContent()}
       </div>
     </DragDrop>
   );
