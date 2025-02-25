@@ -1,7 +1,6 @@
 "use client";
 
 import OurMission from "@/components/PageWriteUp/OurMission";
-import ServiceTimes from "@/components/PageWriteUp/ServiceTimes";
 import WriteUpSection from "@/components/PageWriteUp/WriteUpSection";
 import { useEffect, useState, Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
@@ -10,7 +9,6 @@ const PageWriteUp = () => {
   const [currentSection, setCurrentSection] = useState("mission");
   const sortOptions = [
     { name: "Our Mission/Belief", value: "mission" },
-    { name: "Service Times", value: "service times" },
     { name: "Edit Content", value: "edit content" },
   ];
 
@@ -81,9 +79,8 @@ const PageWriteUp = () => {
           </div>
         </Listbox>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <OurMission currentSection={currentSection} />
-        <ServiceTimes currentSection={currentSection} />
       </div>
       <WriteUpSection currentSection={currentSection} />
     </section>

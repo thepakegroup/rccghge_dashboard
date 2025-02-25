@@ -12,16 +12,28 @@ import {
 import { baseUrl } from "@/util/constants";
 import useUpdateToast from "@/hooks/updateToast";
 import { useState, useEffect } from "react";
+import { CalenderIcon } from "@/icons";
+import { format, parseISO } from "date-fns";
 
 interface cardI {
   title?: string;
+  description?: string;
   img: string;
   id: number;
   home?: boolean;
   onEditClick?: () => void;
+  end_date: string;
 }
 
-const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
+const Card = ({
+  title,
+  img,
+  id,
+  description,
+  end_date,
+  home,
+  onEditClick = () => {},
+}: cardI) => {
   const handleButton = useModalType();
   const dispatch = useAppDispatch();
 
@@ -58,32 +70,47 @@ const Card = ({ title, img, id, home, onEditClick = () => {} }: cardI) => {
     items.length === 0 ? setCheck(false) : null;
   }, [items.length]);
 
+  const date = parseISO(end_date);
+
   return (
     <div
-      className={`flex flex-col gap-4 rounded-md p-2 bg-white border-[3px] max-w-[269px]  ${
+      className={`flex flex-col relative gap-4 rounded-md  bg-white border-[3px] max-w-[269px]  ${
         check ? " border-secondary-02" : "border-white"
       }`}
     >
-      <div>
-        <div className="flex-center justify-between">
-          <span>{title}</span>
-          <input
-            onChange={handleCheck}
-            type="checkbox"
-            checked={items.length === 0 ? false : check}
-            name=""
-            className=" h-5 w-5 cursor-pointer"
-          />
-        </div>
+      <div className="absolute right-1 top-1">
+        {/* <span>{title}</span> */}
+        <input
+          onChange={handleCheck}
+          type="checkbox"
+          checked={items.length === 0 ? false : check}
+          name=""
+          className=" h-5 w-5 cursor-pointer"
+        />
       </div>
+
       <Image
         src={`${baseUrl}event-image/${img}`}
         alt=""
         height={100}
         width={200}
-        className=" w-full h-28 object-contain"
+        className="!w-full h-[225px] object-contain"
       />
-      <div className="flex justify-end">
+
+      <div className="flex flex-col gap-[7px] p-[10px]">
+        <h3 className="font-play-fair-display font-medium text-base line-clamp-1">
+          {title}
+        </h3>
+        <p className="font-quicksand !text-[#454545] text-xs line-clamp-3">
+          {description}
+        </p>
+        <p className="text-xs font-quicksand flex items-start gap-2 text-gray-500">
+          <CalenderIcon />
+          <span>{end_date && format(date, "MMMM do - h a") + " - 12PM"}</span>
+        </p>
+      </div>
+
+      <div className="flex justify-end pb-2">
         <div className="flex-center gap-[0.91rem]">
           <button onClick={handleEdit}>
             <Image src="icons/edit.svg" alt="" width={24} height={24} />

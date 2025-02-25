@@ -2,7 +2,6 @@
 
 import AddItemButton from "@/components/AddItemButton";
 import DeleteModal from "@/components/DeleteModal";
-import Card from "@/components/ManageEvents/Card";
 import Loader from "@/components/Loader";
 import ModifyModal from "@/components/ManageEvents/ModifyModal";
 import { useFetchData } from "@/hooks/fetchData";
@@ -10,42 +9,45 @@ import useGetTypeOfModal from "@/hooks/getTypeOfModal";
 import useUpdateToast from "@/hooks/updateToast";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearItems, setFileName } from "@/store/slice/mediaItems";
-import { eventI } from "@/util/interface/events";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import UpdateModal from "@/components/ManageEvents/UpdateModal";
-import { post } from "@/helper/apiFetch";
+import { post, remove } from "@/helper/apiFetch";
 import PaginationButtons from "@/components/PaginationButtons";
+import { serviceTime } from "@/util/interface/serviceTime";
+import ServiceInfo from "@/components/PageWriteUp/ServiceInfo";
+import { convertTo12HourFormat } from "@/helper/convertTo12HrTime";
+import { setService } from "@/store/slice/service";
+import ModifyServiceModal from "@/components/ManageServices/ModifyServiceModal";
 
-const ManageEvents = () => {
+const ManageServices = () => {
   const type = useGetTypeOfModal();
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
   const [currEditItemID, setCurrEditItemID] = useState<number | null>(null);
-  const [currEditItem, setCurrEditItem] = useState<eventI | null>(null);
+  const [currEditItem, setCurrEditItem] = useState<serviceTime | null>(null);
   const [loader, setLoader] = useState(false);
-  const { items, file, id } = useAppSelector((state) => state.mediaItems);
   const [currentPage, setCurrentPage] = useState(1);
+  const { id } = useAppSelector((state) => state.mediaItems);
 
-  //Fetch All Data
-  const { data, loading, fetchData, metadata } = useFetchData({
-    url: `events/${currentPage}`,
+  const { data, loading, fetchData } = useFetchData({
+    url: `service-times`,
     method: "client",
   });
 
-  const events: eventI[] = data?.message.data;
+  const services: serviceTime[] = data?.message;
 
   // Set Edit Data
   useEffect(() => {
     if (currEditItemID) {
-      const EditItem = events?.filter(
+      const EditItem = services?.filter(
         (item: any) => item.id === currEditItemID
       )[0];
 
       setCurrEditItem(EditItem);
     }
-  }, [currEditItemID, events]);
+  }, [currEditItemID, services]);
 
   // Token & Header
   const token = Cookies.get("token");
@@ -54,19 +56,13 @@ const ManageEvents = () => {
     Authorization: `Bearer ${token}`,
   };
 
-  const postData = {
-    ids: items,
-  };
-
-  // Delete Events
-  const handleRemoveEvents = async () => {
+  // Delete Service
+  const deleteService = async () => {
     setLoader(true);
     try {
-      const res = await post("delete-event", postData);
+      const res = await remove(`service-time/${id}`);
 
       fetchData();
-      dispatch(clearItems());
-
       updateToast({
         type: "delete",
       });
@@ -74,57 +70,17 @@ const ManageEvents = () => {
       setLoader(false);
     } catch (error) {
       setLoader(false);
+
       updateToast({
         type: "error",
-        title: "Error 404 Not Found",
+        title: "Error!",
         info: `${(error as AxiosError)?.message}`,
       });
     }
   };
 
-  // Update Event
-  const updateMedia = async (mediaInfo: any) => {
-    setLoader(true);
-    const form = new FormData();
-
-    mediaInfo.banner &&
-      form.append("banner", mediaInfo.banner as Blob, mediaInfo.banner?.name);
-    form.append("title", mediaInfo.title);
-    form.append("location", mediaInfo.location);
-    form.append("short_description", mediaInfo.short_description);
-    form.append("start_date", mediaInfo.start_date);
-    form.append("end_date", mediaInfo.end_date);
-    type === "modify" && form.append("id", `${id}`);
-
-    try {
-      const res = await post(
-        `${type == "modify" ? `update-event` : `create-event`}`,
-        form,
-        "multipart/form-data"
-      );
-
-      fetchData();
-      updateToast({
-        title: `Event ${type === "modify" ? "updated!" : "added!"}`,
-        info: mediaInfo.name,
-      });
-
-      setLoader(false);
-      dispatch(clearItems());
-      dispatch(setFileName(""));
-    } catch (error) {
-      setLoader(false);
-
-      updateToast({
-        title: `Error`,
-        type: "error",
-        info: `${(error as AxiosError)?.message}`,
-      });
-    }
-  };
-
-  // Pagination
-  const totalPages = metadata?.last_page;
+  // // Pagination
+  // const totalPages = metadata?.last_page;
 
   useEffect(() => {
     fetchData();
@@ -133,7 +89,7 @@ const ManageEvents = () => {
   return (
     <section className="relative min-h-[88vh]">
       <div className="md:hidden flex justify-end mt-3">
-        <AddItemButton title="Create new event" />
+        <AddItemButton title="Add new service" />
       </div>
 
       <section className="my-[26px]">
@@ -147,17 +103,16 @@ const ManageEvents = () => {
             ))}
           </div>
         ) : (
-          <div className="card-wrapper gap-[30px]">
-            {events?.map((event) => {
+          <div className="card-wrapper gap-y-[30px] gap-x-[30px]">
+            {services?.map((service) => {
               return (
-                <Card
-                  key={event.id}
-                  id={event.id}
-                  img={event.banner}
-                  title={event?.title}
-                  description={event?.short_description}
-                  end_date={event?.end_date}
-                  onEditClick={() => setCurrEditItemID(event.id)}
+                <ServiceInfo
+                  key={service?.id}
+                  id={service?.id}
+                  image={service?.image_url as string}
+                  name={service?.service_name}
+                  serviceTime={service?.service_period}
+                  description={service?.service_description}
                 />
               );
             })}
@@ -165,12 +120,12 @@ const ManageEvents = () => {
         )}
       </section>
 
-      {events && !events.length ? (
-        <p className="w-full text-center py-10">No Events Found!</p>
+      {services && !services.length ? (
+        <p className="w-full text-center py-10">No services Found!</p>
       ) : null}
 
       {/* Pagination */}
-      {events?.length > 0 && (
+      {/* {services?.length > 0 && (
         <div className="absolute bottom-0 right-[45%]">
           <PaginationButtons
             totalPages={totalPages}
@@ -178,9 +133,9 @@ const ManageEvents = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
-      )}
+      )} */}
 
-      {currEditItemID && (
+      {/* {currEditItemID && (
         <UpdateModal
           editItemId={currEditItemID}
           onResetEditId={() => {
@@ -192,27 +147,22 @@ const ManageEvents = () => {
           buttonText="Update"
           editItemData={currEditItem}
         />
-      )}
-      {type == "add" && (
-        <ModifyModal
-          // handleImageChange={handleImageChange}
-          handleSubmitEvent={updateMedia}
-          buttonText="Add Event"
-        />
-      )}
+      )} */}
 
-      {type == "delete" && (
-        <DeleteModal
-          deleteFunc={handleRemoveEvents}
-          itemsCount={items.length}
-        />
-      )}
+      {type == "delete" && <DeleteModal deleteFunc={deleteService} />}
+
+      {type == "add" && <ModifyServiceModal fetchData={fetchData} />}
+
+      {type == "modify" && <ModifyServiceModal fetchData={fetchData} />}
 
       <div className="hidden md:flex">
-        <AddItemButton title="Create new event" />
+        <AddItemButton
+          onclick={() => dispatch(setService({ btnType: "add" }))}
+          title="Add new service"
+        />
       </div>
     </section>
   );
 };
 
-export default ManageEvents;
+export default ManageServices;

@@ -31,6 +31,12 @@ export const webLinks: navItemProp[] = [
     link: "/manage-events",
   },
   {
+    title: "manage services",
+    info: "Add and remove service times",
+    icon: <ManageEventIcon />,
+    link: "/manage-services",
+  },
+  {
     title: "page writeup",
     info: "manage page text content",
     icon: "/icons/write.svg",
