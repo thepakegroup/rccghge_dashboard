@@ -159,6 +159,8 @@ const Admin = () => {
       <h1 className="text-[#030229] font-play-fair-display text-lg font-bold">
         Manage Admins
       </h1>
+
+      {/* form for adding an admin */}
       <form className="flex flex-col justify-start md:grid md:grid-cols-8 gap-[12px] mt-9 md:items-end">
         <label htmlFor="email" className="input-field col-span-3 w-full">
           <span>Admin email</span>
@@ -284,14 +286,22 @@ const Admin = () => {
           </button>
         </div>
       </form>
+
       <div className="mt-9 bg-white rounded-lg px-6 overflow-x-scroll !w-full">
-        <div className="text-sm min-w-[700px]  no-scrollbar font-medium [&>div]:grid [&>div]:grid-cols-5 [&>div]:py-4">
+        <div className="text-sm min-w-[700px] w-full no-scrollbar font-medium [&>div]:grid [&>div]:grid-cols-5 [&>div]:py-4">
           <div className="">
             <p className="col-span-2">Email</p>
             <p>Password</p>
           </div>
           {loading || loader ? (
-            <Loader />
+            <section className="flex flex-col gap-3 my-3">
+              {Array.from({ length: 4 }, (_, idx) => (
+                <div
+                  className="h-[50px] rounded-md bg-gray-300 animate-pulse"
+                  key={idx}
+                />
+              ))}
+            </section>
           ) : (
             admins?.map((admin) => {
               return (

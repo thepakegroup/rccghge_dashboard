@@ -97,7 +97,14 @@ const Subscriptions = () => {
 
         {/*new sign ups card */}
         {loading_new_signups ? (
-          <Loader />
+          <div className="flex flex-col gap-3 my-3">
+            {Array.from({ length: 4 }, (_, idx) => (
+              <div
+                className="h-[50px] rounded-md bg-gray-300 animate-pulse"
+                key={idx}
+              />
+            ))}
+          </div>
         ) : (
           <>
             {newSignups?.map((c) => {
@@ -169,7 +176,14 @@ const Subscriptions = () => {
 
         {/*new sign ups card */}
         {loading_subscribers ? (
-          <Loader />
+          <div className="flex flex-col gap-3 my-3">
+            {Array.from({ length: 4 }, (_, idx) => (
+              <div
+                className="h-[50px] rounded-md bg-gray-300 animate-pulse"
+                key={idx}
+              />
+            ))}
+          </div>
         ) : (
           <>
             {subscribers_data?.map((c) => {
