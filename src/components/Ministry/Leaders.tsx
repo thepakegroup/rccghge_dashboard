@@ -20,6 +20,9 @@ import { post, remove } from "@/helper/apiFetch";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { leaderSchema } from "@/helper/schema";
+import { AddLeaderModal } from "./AddLeaderModal";
+import { Button } from "../base-components/button";
+import { MotionPresence } from "@/util/motion-exports";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
@@ -55,6 +58,17 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   const [currAction, setCurrAction] = useState(false);
   const [img, setImg] = useState<File | any>("");
   const [loader, setLoader] = useState(false);
+  const [showAddLeaderModal, setShowAddLeaderModal] = useState<boolean>(false);
+  //
+  const toggleAddLeaderModal = () => {
+    setShowAddLeaderModal(!showAddLeaderModal);
+    // Reset form when opening modal
+    if (!showAddLeaderModal) {
+      reset();
+      setImg("");
+      dispatch(setFileName(""));
+    }
+  };
 
   // Fetch All leaders
   const { data, loading, fetchData } = useFetchData({
@@ -150,7 +164,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           leaderImgName: "",
         })
       );
-
+      setShowAddLeaderModal(false);
       dispatch(setFileName(""));
 
       setLoader(false);
@@ -200,92 +214,50 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
         currentSection === "church leader" ? "block" : "hidden md:block"
       }`}
     >
-      <div className="bg-white rounded-lg py-6 px-7 md:max-h-[40rem] md:overflow-y-auto overflow-x-hidden">
-        <h2 className="text-lg font-bold mb-5">Add Church Leader</h2>
-        <ImageUpload handleImageChange={handleImageChange} section="leader" />
-        <form
-          className="flex flex-col gap-[1.19rem]"
-          onSubmit={handleSubmit(handleCreateLeader)}
-        >
-          <label htmlFor="name" className="input-field">
-            <span>Name</span>
-            <input {...register("name")} type="text" className="input" />
-            <p className="text-xs text-red-600">{errors.name?.message}</p>
-          </label>
-
-          <label htmlFor="title" className="input-field">
-            <span>Title</span>
-            <input {...register("title")} type="text" className="input" />
-            <p className="text-xs text-red-600">{errors.title?.message}</p>
-          </label>
-          <label htmlFor="qualification" className="input-field">
-            <span>Qualification</span>
-            <input
-              {...register("qualification")}
-              type="text"
-              className="input"
-            />
-            <p className="text-xs text-red-600">
-              {errors.qualification?.message}
-            </p>
-          </label>
-          <label htmlFor="position" className="input-field">
-            <span>Position</span>
-            <input {...register("position")} type="text" className="input" />
-            <p className="text-xs text-red-600">{errors.position?.message}</p>
-          </label>
-          <label htmlFor="description" className="input-field">
-            <span>Short description</span>
-            <input {...register("description")} type="text" className="input" />
-            <p className="text-xs text-red-600">
-              {errors.description?.message}
-            </p>
-          </label>
-          <label htmlFor="fullStory" className="input-field">
-            <span>Full story</span>
-            <textarea {...register("fullStory")} rows={5} className="input" />
-            <p className="text-xs text-red-600">{errors.fullStory?.message}</p>
-          </label>
-
-          <button
-            type="submit"
-            className="flex-center gap-2 bg-[#e77400] rounded-md max-w-max text-white text-sm px-4 py-2"
-          >
-            <span>Upload</span>
-            <Image
-              src="icons/upload-btn.svg"
-              alt=""
-              width={20}
-              height={20}
-              className="cursor-pointer"
-            />
-          </button>
-        </form>
-      </div>
+      <MotionPresence>
+        {showAddLeaderModal && (
+          <AddLeaderModal
+            register={register}
+            errors={errors}
+            handleSubmit={handleSubmit}
+            handleCreateLeader={handleCreateLeader}
+            handleImageChange={handleImageChange}
+            onClose={toggleAddLeaderModal}
+          />
+        )}
+      </MotionPresence>
       {loading || loader ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-          {leaders?.map((leader) => {
-            return (
-              <ProfileCard
-                key={leader.id}
-                name={leader.name}
-                title={leader.title}
-                qualification={leader.qualification}
-                position={leader.position}
-                id={leader.id as number}
-                img={leader.profile_picture as string}
-                type="leader"
-                slug={leader.slug as string}
-                onEditClick={() => {
-                  setCurrEditItemID(leader?.id);
-                  setCurrEditItem(leader);
-                  setCurrAction(true);
-                }}
-              />
-            );
-          })}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 mt-4">
+            {leaders?.map((leader) => {
+              return (
+                <ProfileCard
+                  key={leader.id}
+                  name={leader.name}
+                  title={leader.title}
+                  qualification={leader.qualification}
+                  position={leader.position}
+                  id={leader.id as number}
+                  img={leader.profile_picture as string}
+                  type="leader"
+                  slug={leader.slug as string}
+                  onEditClick={() => {
+                    setCurrEditItemID(leader?.id);
+                    setCurrEditItem(leader);
+                    setCurrAction(true);
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          <Button
+            label="Add Group Leader"
+            className="selft-start !h-[44px] !rounded-[6px] !w-fit flex justify-center items-center text-center !py-4 !px-6 font-quicksand !my-12"
+            onClick={toggleAddLeaderModal}
+          />
         </div>
       )}
       {type == "delete" && section === "leader" && (

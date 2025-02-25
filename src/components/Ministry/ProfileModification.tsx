@@ -99,7 +99,7 @@ const ProfileModification = ({
       <>
         <div
           onClick={(e) => e.stopPropagation()}
-          className="modal modal-content"
+          className="modal modal-content !max-h-[500px]"
         >
           <div className="flex-center justify-end font-semibold text-base text-orange">
             <button

@@ -70,14 +70,15 @@ const ProfileCard = ({
       </div>
       <div className="grid grid-cols-1 min-[376px]:grid-cols-2 md:grid-cols-1 gap-3">
         <div className="flex justify-between flex-col gap-6">
-          <Image
-            src={`${baseUrl}load-media/${img}`}
-            alt=""
-            height={220}
-            width={400}
-            className="md:my-4 rounded-lg"
-          />
-
+          <div className="md:my-4 max-h-[250px]">
+            <Image
+              src={`${baseUrl}load-media/${img}`}
+              alt=""
+              height={220}
+              width={400}
+              className="w-full h-full object-top object-cover rounded-lg"
+            />
+          </div>
           {/* mobile */}
           <div className="md:hidden flex gap-6">
             <button onClick={handleEdit}>

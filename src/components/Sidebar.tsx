@@ -133,7 +133,7 @@ const Sidebar = () => {
             />
           </div>
           <div className="min-h-auto lg:min-h-max overflow-y-scroll">
-            {navItems?.map((navItem:navItemProp) => {
+            {navItems?.map((navItem: navItemProp) => {
               const { title, icon, info, link } = navItem;
               return (
                 <div key={title}>
@@ -156,8 +156,12 @@ const Sidebar = () => {
                       icon
                     )}
                     <div className="capitalize">
-                      <p className="text-sm font-bold">{title}</p>
-                      <span className="text-xs font-medium">{info}</span>
+                      <p className="text-sm font-bold font-play-fair-display">
+                        {title}
+                      </p>
+                      <span className="text-xs font-medium font-quicksand">
+                        {info}
+                      </span>
                     </div>
                   </Link>
                 </div>
