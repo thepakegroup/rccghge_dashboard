@@ -171,7 +171,7 @@ export const ConnectAnalysis = () => {
           <span>{totalClicks}</span>
         </div>
       </div>
-      <div className="mt-4 flex items-start gap-2 flex-wrap">
+      <div className="mt-4 flex items-start w-full gap-2 flex-wrap">
         {formattedData?.length < 1 && (
           <p className="text-sm font-normal text-[#5d5d5d]">
             No Data available for these periods

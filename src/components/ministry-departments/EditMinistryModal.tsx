@@ -25,8 +25,10 @@ export const EditMinistryModal = ({
   selectedMinistry,
   setSelectedMinistry,
   getGroups,
+  tab,
 }: {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  tab: string;
   selectedMinistry: any;
   setSelectedMinistry: Dispatch<SetStateAction<any>>;
   getGroups: () => Promise<QueryObserverResult<Error, any>>;
@@ -204,7 +206,7 @@ export const EditMinistryModal = ({
         {/* content */}
         <label htmlFor="name" className="input-field">
           <span className="!font-semibold font-quicksand text-[#101928]">
-            Ministry name
+            {tab === "Ministry" ? "Ministry name" : "Department name"}
           </span>
           <input
             type="text"
@@ -236,7 +238,7 @@ export const EditMinistryModal = ({
         </label>
         <label htmlFor="ministry_code" className="input-field font-quicksand">
           <span className="!font-semibold font-quicksand text-[#101928]">
-            Ministry Code
+            {tab === "Ministry" ? "Ministry code" : "Department code"}
           </span>
           <input
             type="text"
@@ -248,7 +250,11 @@ export const EditMinistryModal = ({
             {errors?.ministry_code?.message === typeof "string" &&
               errors.ministry_code?.message}
           </small>
-          <small>NB: e.g for youth ministry, type youth_ministry</small>
+          <small>
+            {tab === "Ministry"
+              ? "NB: e.g for youth ministry, type youth_ministry"
+              : "NB: e.g for youth department, type youth_department"}
+          </small>
         </label>
         <label htmlFor="subtext" className="input-field font-quicksand">
           <span className="!font-semibold font-quicksand text-[#101928]">
