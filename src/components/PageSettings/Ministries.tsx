@@ -11,6 +11,7 @@ import { IAmNewPage } from "@/util/interface/settings";
 import { post } from "@/helper/apiFetch";
 import { AxiosError } from "axios";
 import Image from "next/image";
+import Link from "next/link";
 
 const Ministries = () => {
   const formData = new FormData();
@@ -229,15 +230,25 @@ const Ministries = () => {
             </label>
           </div>
         </div>
-
-        <button
-          type="submit"
-          className={`bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md ${
-            loading && "animate-pulse"
-          }`}
-        >
-          {loading ? "Updating..." : "Update Page Settings"}
-        </button>
+        <div className="flex items-center gap-6">
+          <button
+            type="submit"
+            className={`bg-[#E77400] h-[55px] py-[10px] px-10 w-fit text-white rounded-md ${
+              loading && "animate-pulse"
+            }`}
+          >
+            {loading ? "Updating..." : "Update Page Settings"}
+          </button>
+          <Link href="/page_settings/ministry-subpage-settings">
+            <button
+              disabled={loading}
+              type="button"
+              className={`bg-transparent border border-orange h-[55px] py-[10px] px-10 w-fit text-[#101928] rounded-md`}
+            >
+              Manage sub pages
+            </button>
+          </Link>
+        </div>
       </form>
     </div>
   );

@@ -2,10 +2,7 @@
 
 import Image from "next/image";
 import ModalWrappeer from "../ModalWrapper";
-// import { setModalToggle } from "../../store/slice/Modal";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-// import { setToast } from "../../store/slice/toast";
-// import DragDrop from "../DragDrop";
 import useCloseModal from "@/hooks/closeModal";
 import {
   setFullStory,
@@ -20,24 +17,26 @@ import { leadersI } from "@/util/interface/ministry";
 import { useEffect, useState } from "react";
 import { setMediaFile } from "@/store/slice/mediaItems";
 import ImageUpload from "../ImageUpload";
+import clsx from "clsx";
 
 interface modalI {
   handleSubmit: (mediaInfo: any) => void;
   onResetEditId: () => void;
   editItemData: any;
+  loader: boolean;
   editItemId: number | undefined;
 }
 
 const ProfileModification = ({
   handleSubmit,
+  onResetEditId,
   editItemData,
   editItemId,
-  onResetEditId,
+  loader,
 }: modalI) => {
   const dispatch = useAppDispatch();
   const handleCloseModal = useCloseModal();
-  // const { name, title, qualification, position, description, fullStory } =
-  //   useAppSelector((state) => state.leader);
+
   const [img, setImg] = useState<File | any>("");
 
   // HandleImage
@@ -55,7 +54,9 @@ const ProfileModification = ({
     fullStory: editItemData.full_story_about,
   });
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     const leaderInfo: leadersI = {
       name: leadInfo.name,
       title: leadInfo.title,
@@ -67,8 +68,8 @@ const ProfileModification = ({
     };
 
     handleSubmit(leaderInfo);
-    handleCloseModal();
-    onResetEditId();
+    // handleCloseModal();
+    // onResetEditId();
   };
 
   useEffect(() => {
@@ -99,7 +100,7 @@ const ProfileModification = ({
       <>
         <div
           onClick={(e) => e.stopPropagation()}
-          className="modal modal-content"
+          className="modal modal-content !max-h-[500px]"
         >
           <div className="flex-center justify-end font-semibold text-base text-orange">
             <button
@@ -116,7 +117,10 @@ const ProfileModification = ({
 
           <ImageUpload handleImageChange={handleImageChange} />
 
-          <form className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10">
+          <form
+            onSubmit={handleSubmitForm}
+            className="flex flex-col gap-[1.19rem] min-h-[200px] pb-10"
+          >
             <label htmlFor="name" className="input-field">
               <span>Name</span>
               <input
@@ -209,8 +213,11 @@ const ProfileModification = ({
             </label>
 
             <div className="w-full flex justify-center items-center">
-              <button onClick={handleSubmitForm} className="modal-btn">
-                update
+              <button
+                type="submit"
+                className={clsx("modal-btn", loader && "animate-pulse")}
+              >
+                {loader ? "updating..." : "update"}
               </button>
             </div>
           </form>

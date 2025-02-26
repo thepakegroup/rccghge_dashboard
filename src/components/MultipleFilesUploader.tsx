@@ -59,7 +59,7 @@ export const MultipleImageUploader = ({
     <div className="flex-center md:flex-col gap-2 relative cursor-pointer">
       <div className="flex justify-center">
         <Image
-          src="icons/upload.svg"
+          src="/icons/upload.svg" // Added leading slash
           alt=""
           width={32}
           height={32}
@@ -93,7 +93,7 @@ export const MultipleImageUploader = ({
     <div className="flex-center md:flex-col gap-3 relative cursor-pointer">
       <div className="flex justify-center h-10 w-10 rounded-full bg-warning-400">
         <Image
-          src="icons/warning.svg"
+          src="/icons/warning.svg" // Added leading slash
           alt=""
           width={24}
           height={24}
@@ -104,7 +104,14 @@ export const MultipleImageUploader = ({
         <div className="text-sm text-gray-600">
           {files
             ?.filter((c) => c?.size >= 10485760)
-            ?.map((x) => x?.name + ", ")}
+            ?.map((x, i) => (
+              <span key={i}>
+                {x?.name}
+                {i < files.filter((c) => c?.size >= 10485760).length - 1
+                  ? ", "
+                  : ""}
+              </span>
+            ))}
         </div>
         <div className="text-error-400 text-[0.6875rem]">
           These files are too large to upload
@@ -112,7 +119,7 @@ export const MultipleImageUploader = ({
       </div>
       <div className="flex-center justify-center gap-2 text-[#F56630] text-[0.6875rem]">
         <Image
-          src="icons/reload.svg"
+          src="/icons/reload.svg" // Added leading slash
           alt=""
           width={16}
           height={16}
@@ -128,7 +135,10 @@ export const MultipleImageUploader = ({
       {/* Header with add button */}
       <div className="flex justify-between items-center">
         <p className="text-sm font-medium text-gray-800">Selected Files</p>
-        <button className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md">
+        <button
+          className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md"
+          onClick={(e) => e.stopPropagation()} // Prevent triggering FileUploader
+        >
           Add
         </button>
       </div>
@@ -137,26 +147,32 @@ export const MultipleImageUploader = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {files?.map((file, index) => (
           <div
-            key={file.name}
+            key={`${file.name}-${index}`} // More unique key
             onClick={(event) => event.stopPropagation()}
             className="flex items-center gap-2 border p-2 rounded-md"
           >
             {file.type.startsWith("image/") ? (
-              <Image
-                src={URL.createObjectURL(file)}
-                alt={file.name}
-                width={40}
-                height={40}
-                className="rounded-md"
-              />
+              <div className="relative w-10 h-10">
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  fill
+                  className="rounded-md object-cover"
+                />
+              </div>
             ) : (
-              <div className="text-gray-600 text-sm">{file.name}</div>
+              <div className="text-gray-600 text-sm w-10 h-10 flex items-center justify-center bg-gray-100 rounded-md">
+                File
+              </div>
             )}
-            <span className="text-gray-400 text-xs">
-              {Math.ceil(file.size / 1024)} KB
-            </span>
+            <div className="flex-1 overflow-hidden">
+              <div className="text-gray-800 text-sm truncate">{file.name}</div>
+              <span className="text-gray-400 text-xs">
+                {Math.ceil(file.size / 1024)} KB
+              </span>
+            </div>
             <Image
-              src="icons/delete.svg"
+              src="/icons/delete.svg" // Added leading slash
               alt="Remove"
               width={20}
               height={20}
@@ -173,26 +189,24 @@ export const MultipleImageUploader = ({
     </div>
   );
 
-  const content = (file: File[]) => {
-    if (file?.length < 1) {
+  // Improved content rendering function
+  const renderContent = () => {
+    if (!files || files.length === 0) {
       return upload;
     }
 
-    const largeFiles = file.filter((c) => c?.size > 10485760);
-
-    if (largeFiles?.length > 0) {
+    const largeFiles = files.filter((file) => file?.size > 10485760);
+    if (largeFiles.length > 0) {
       return fileTooLarge;
     }
 
-    if (file?.length > 0) {
-      return fileAvailable;
-    }
+    return fileAvailable;
   };
 
   return (
     <DragDropFile handleChange={handleChange}>
       <div className="px-6 py-6 rounded-md bg-white border border-dashed border-[#D0D5DD] my-6 mx-6">
-        {content(files)}
+        {renderContent()}
       </div>
     </DragDropFile>
   );
