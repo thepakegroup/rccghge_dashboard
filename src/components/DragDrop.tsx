@@ -14,12 +14,12 @@ const fileTypes = [
   "SVG",
   "JPEG",
   "WEBP",
-  "HEIF",
-  "TIFF",
-  "mp4",
-  "mov",
-  "mkv",
-  "webm",
+  // "HEIF",
+  // "TIFF",
+  // "mp4",
+  // "mov",
+  // "mkv",
+  // "webm",
 ];
 
 function DragDrop({

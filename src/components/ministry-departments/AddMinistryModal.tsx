@@ -207,7 +207,7 @@ export const AddMinistryModal = ({
           className="input-field font-quicksand font-semibold"
         >
           <span className="!font-semibold font-quicksand text-[#101928]">
-            Ministry name
+            {tab === "Ministry" ? "Ministry name" : "Department name"}
           </span>
           <input
             type="text"
@@ -232,7 +232,7 @@ export const AddMinistryModal = ({
         </label>
         <label htmlFor="ministry_code" className="input-field font-quicksand">
           <span className="!font-semibold font-quicksand text-[#101928]">
-            Ministry Code
+            {tab === "Ministry" ? "Ministry code" : "Department code"}
           </span>
           <input
             type="text"
@@ -243,7 +243,11 @@ export const AddMinistryModal = ({
           <small className="text-red-400">
             {errors.ministry_code?.message}
           </small>
-          <small>NB: e.g for youth ministry, type youth_ministry</small>
+          <small>
+            {tab === "Ministry"
+              ? "NB: e.g for youth ministry, type youth_ministry"
+              : "NB: e.g for youth department, type youth_department"}
+          </small>
         </label>
         <label htmlFor="subtext" className="input-field font-quicksand">
           <span className="!font-semibold font-quicksand text-[#101928]">

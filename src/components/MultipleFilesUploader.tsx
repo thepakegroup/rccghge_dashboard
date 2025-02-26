@@ -11,9 +11,9 @@ const fileTypes = [
   "SVG",
   "JPEG",
   "WEBP",
-  "HEIF",
-  "TIFF",
-  "mp4",
+  // "HEIF",
+  // "TIFF",
+  // "mp4",
 ];
 
 function DragDropFile({
