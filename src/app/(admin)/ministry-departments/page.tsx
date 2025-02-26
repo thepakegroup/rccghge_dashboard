@@ -85,6 +85,7 @@ const MinistryDepartmentsPage = () => {
         )}
         {showEditMinistryModal && (
           <EditMinistryModal
+            tab={tab}
             selectedMinistry={selectedMinistry}
             setSelectedMinistry={setSelectedMinistry}
             setShowModal={setShowEditMinistryModal}
