@@ -3,6 +3,7 @@ import React from "react";
 import ImageUpload from "../ImageUpload";
 import Image from "next/image";
 import { useAppDispatch } from "@/store/hooks";
+import clsx from "clsx";
 
 export const AddLeaderModal = ({
   register,
@@ -11,6 +12,7 @@ export const AddLeaderModal = ({
   handleCreateLeader,
   handleImageChange,
   onClose,
+  loader,
 }: any) => {
   const dispatch = useAppDispatch();
 
@@ -83,9 +85,12 @@ export const AddLeaderModal = ({
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-center gap-2 bg-[#e77400] rounded-md max-w-max text-white text-sm px-4 py-2"
+              className={clsx(
+                "flex-center gap-2 bg-[#e77400] rounded-md max-w-max text-white text-sm px-4 py-2",
+                loader && "animate-pulse"
+              )}
             >
-              <span>Upload</span>
+              {loader ? <span>Uploading...</span> : <span>Upload</span>}
               <Image
                 src="/icons/upload-btn.svg"
                 alt=""

@@ -28,7 +28,7 @@ const MinistryDepartmentsPage = () => {
   } = useQuery({
     queryKey: ["groups", tab, page],
     queryFn: async () => {
-      const res = await get(`/groups?category=${tab}&page=${page}&perPage=10`);
+      const res = await get(`/groups?category=${tab}&page=${page}&perPage=9`);
       return res.data;
     },
     select: (data) => data.message,
