@@ -23,11 +23,14 @@ import { leaderSchema } from "@/helper/schema";
 import { AddLeaderModal } from "./AddLeaderModal";
 import { Button } from "../base-components/button";
 import { MotionPresence } from "@/util/motion-exports";
+import useCloseModal from "@/hooks/closeModal";
 
 const Leaders = ({ currentSection }: { currentSection: string }) => {
   const type = useGetTypeOfModal();
   const dispatch = useAppDispatch();
   const updateToast = useUpdateToast();
+  const handleCloseModal = useCloseModal();
+
   const { section } = useAppSelector((state) => state.content);
   const { id } = useAppSelector((state) => state.mediaItems);
   const {
@@ -108,6 +111,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
   // Create and Update
   const updateLeader = async (leaderInfo: any) => {
     setLoader(true);
+
     const form = new FormData();
 
     img && form.append("profile_picture", img as Blob, img?.name as string);
@@ -164,10 +168,15 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           leaderImgName: "",
         })
       );
+
       setShowAddLeaderModal(false);
       dispatch(setFileName(""));
 
       setLoader(false);
+      setCurrEditItemID(undefined);
+
+      setCurrEditItem(null);
+      handleCloseModal();
     } catch (error) {
       setLoader(false);
 
@@ -188,6 +197,8 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
       return;
     }
 
+    setLoader(true);
+
     const leaderInfo: leadersI = {
       name: data.name,
       title: data.title,
@@ -201,6 +212,7 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
 
     if (formState.isSubmitSuccessful) {
       reset();
+      setLoader(false);
     }
   };
 
@@ -223,10 +235,11 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
             handleCreateLeader={handleCreateLeader}
             handleImageChange={handleImageChange}
             onClose={toggleAddLeaderModal}
+            loader={loader}
           />
         )}
       </MotionPresence>
-      {loading || loader ? (
+      {loading ? (
         <Loader />
       ) : (
         <div className="flex flex-col gap-4">
@@ -260,15 +273,18 @@ const Leaders = ({ currentSection }: { currentSection: string }) => {
           />
         </div>
       )}
+
       {type == "delete" && section === "leader" && (
         <DeleteModal deleteFunc={removeLeader} />
       )}
+
       {type == "modify" && section === "leader" && (
         <ProfileModification
           onResetEditId={() => {
             setCurrEditItemID(undefined);
             setCurrEditItem(null);
           }}
+          loader={loader}
           editItemData={currEditItem}
           editItemId={currEditItemID}
           handleSubmit={updateLeader}
