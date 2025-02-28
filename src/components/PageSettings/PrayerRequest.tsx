@@ -169,7 +169,7 @@ const PrayerRequest = () => {
         </div>
 
         {/* select options */}
-        <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
+        {/* <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
           <h3 className="text-lg font-medium text-[#030229]">
             Cards display selection
           </h3>
@@ -188,7 +188,7 @@ const PrayerRequest = () => {
               Our upcoming events
             </label>
           </div>
-        </div>
+        </div> */}
 
         <button
           type="submit"

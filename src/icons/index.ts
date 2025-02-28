@@ -11,3 +11,5 @@ export { default as CalenderIcon } from "./calender";
 export { default as LogOut } from "./log-out-icon";
 export { default as SearchIcon } from "./search-icon";
 export { default as Trash } from "./trash";
+export { default as ChevronRight } from "./chevron-right";
+export { default as ChevronLeft } from "./chevron-left";
