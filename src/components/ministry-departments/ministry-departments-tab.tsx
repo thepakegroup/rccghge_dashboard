@@ -14,11 +14,13 @@ export const MinistryDepartmentsTab = ({
   // const handle ministry tab click
   const handleMinistryTab = () => {
     params.set("tab", "Ministry");
+    params.set("page", "1");
     router.push(`?${params}`);
   };
   // const handle department tab click
   const handleDepartmentTab = () => {
     params.set("tab", "Department");
+    params.set("page", "1");
     router.push(`?${params}`);
   };
   // two tab display
