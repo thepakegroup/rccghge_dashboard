@@ -59,8 +59,13 @@ const ContextModal = ({ isOpen, onClose, token, email }: ContextModalProps) => {
     Cookies.set("token", token, { expires: 2 });
     Cookies.set("email", email, { expires: 2 });
     setCtx(selectedCtx?.value as any);
-
-    router.push("/");
+    if (window !== undefined) {
+      if (selectedCtx?.value === "web_edit") {
+        window.location.href = "/home-web";
+      } else {
+        window.location.href = "/";
+      }
+    }
     onClose();
   };
 
