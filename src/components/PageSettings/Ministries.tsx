@@ -174,7 +174,7 @@ const Ministries = () => {
         </div>
 
         {/* select options */}
-        <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
+        {/* <div className="bg-white rounded-[10px] p-6 flex flex-col gap-7">
           <h3 className="text-lg font-medium text-[#030229]">
             Cards display selection
           </h3>
@@ -229,7 +229,7 @@ const Ministries = () => {
               Our ministries
             </label>
           </div>
-        </div>
+        </div> */}
         <div className="flex items-center gap-6">
           <button
             type="submit"

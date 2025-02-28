@@ -88,7 +88,7 @@
 }
 
 .ministry-departments-pagination li a {
-  @apply bg-white px-4 py-2 rounded-md text-secondary-02 text-sm;
+  @apply bg-white px-4 w-fit py-2 rounded-md text-secondary-02 text-sm;
 }
 
 .ministry-departments-pagination li a[aria-current="page"] {
@@ -181,4 +181,9 @@
       scrollbar-width: none; /* Firefox */
     }
   }
+}
+
+.stroke-text {
+  -webkit-text-stroke: 1.8px black;
+  -webkit-text-fill-color: transparent;
 }
