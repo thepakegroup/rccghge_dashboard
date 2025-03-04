@@ -94,8 +94,16 @@ const CommonOnePages = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    setEditing(true);
+    if (slidersPreview?.length < 1) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Image field is required`,
+      });
+      return;
+    }
     try {
+      setEditing(true);
       const formData = new FormData();
       formData.append("page_name", params.ministry_code as string);
       formData.append("heading_text", data.heading_text);

@@ -148,8 +148,16 @@ const ChildrenMinistryPage = () => {
   //
   // edit page function
   const editPage = async (data: any) => {
-    setEditing(true);
+    if (bgImgPreview?.length < 1) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Hero  Bg Image field is required`,
+      });
+      return;
+    }
     try {
+      setEditing(true);
       const formData = new FormData();
       formData.append("heading_text", data.heading_text);
       formData.append("heading_description", data.heading_description);
