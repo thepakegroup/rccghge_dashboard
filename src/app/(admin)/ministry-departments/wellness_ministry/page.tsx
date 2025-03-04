@@ -119,8 +119,16 @@ const WellnessMinistry = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    setEditing(true);
+    if (bgImgPreview?.length < 1) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Image field is required`,
+      });
+      return;
+    }
     try {
+      setEditing(true);
       const formData = new FormData();
       formData.append("heading_text", data.heading_text);
       formData.append("heading_description", data.heading_description);
@@ -143,18 +151,18 @@ const WellnessMinistry = () => {
       );
       if (res.statusText === "OK") {
         await getBackPageInfo();
-           updateToast({
-             title: `Success`,
-             type: "update",
-             info: `${res.data?.message}`,
-           });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-          title: `Error`,
-          type: "error",
-          info: `${error.response?.data?.message}`,
-        });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setEditing(false);
     }
@@ -166,18 +174,18 @@ const WellnessMinistry = () => {
       const res = await remove(`/ministry-page/image/${id}`);
       if (res.statusText === "OK") {
         await getBackPageInfo();
-           updateToast({
-             title: `Success`,
-             type: "update",
-             info: `${res.data?.message}`,
-           });
+        updateToast({
+          title: `Success`,
+          type: "update",
+          info: `${res.data?.message}`,
+        });
       }
     } catch (error: any) {
-       updateToast({
-          title: `Error`,
-          type: "error",
-          info: `${error.response?.data?.message}`,
-        });
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `${error.response?.data?.message}`,
+      });
     } finally {
       setDeleting(false);
     }

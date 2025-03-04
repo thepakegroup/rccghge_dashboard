@@ -35,7 +35,7 @@ const Toaster = () => {
             } rounded-lg w-[18rem] md:w-[29rem]`}
           >
             <Image
-              src={type === "delete" ? "icons/delete.svg" : "icons/toast.svg"}
+              src={type === "delete" ? "icons/delete.svg" : "/toast.svg"}
               alt=""
               width={24}
               height={24}

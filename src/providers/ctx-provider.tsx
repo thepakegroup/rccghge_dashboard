@@ -18,7 +18,6 @@ export const CtxProvider = ({ children }: { children: React.ReactNode }) => {
   const [ctx, setCtxState] = useState<CtxType>(null);
   //
   const router = useRouter();
-  const pathname = usePathname();
   // Load ctx from cookies when the app initializes
   useEffect(() => {
     const savedCtx = Cookies.get("ctx") as CtxType;
@@ -30,6 +29,11 @@ export const CtxProvider = ({ children }: { children: React.ReactNode }) => {
     setCtxState(value);
     if (value) {
       Cookies.set("ctx", value, { expires: 2 });
+      if (value === "mobile_edit") {
+        router.replace("/");
+      } else {
+        router.replace("/home-web");
+      }
     } else {
       Cookies.remove("ctx");
     }
