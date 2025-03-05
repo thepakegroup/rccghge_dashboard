@@ -94,8 +94,16 @@ const PrayerMinistryPage = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    setEditing(true);
+    if (slidersPreview?.length < 1) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Image field is required`,
+      });
+      return;
+    }
     try {
+      setEditing(true);
       const formData = new FormData();
       formData.append("heading_text", data.heading_text);
       formData.append("body[title]", data.body.title);

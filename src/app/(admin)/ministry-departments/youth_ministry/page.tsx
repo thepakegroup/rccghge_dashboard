@@ -114,8 +114,16 @@ const YouthMinistryPage = () => {
   };
   // edit Page function
   const editPage = async () => {
-    setEditing(true);
+    if (bgPreview?.length < 1) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Image field is required`,
+      });
+      return;
+    }
     try {
+      setEditing(true);
       const formData = new FormData();
       formData.append("heading_text", pageInfo?.heading_text);
       formData.append("heading_description", pageInfo?.heading_description);
