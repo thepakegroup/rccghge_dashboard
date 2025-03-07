@@ -65,7 +65,7 @@ export const MultipleImageUploader = ({
         img.onload = () => {
           // For pages, validate minimum dimensions (1400x600px)
           const isValid =
-            img.width >= 1400 && img.width <= 2000 && img.height === 600;
+            img.width >= 1600 && img.width <= 2600 && img.height === 600;
           resolve(isValid);
         };
         if (e.target && e.target.result) {
