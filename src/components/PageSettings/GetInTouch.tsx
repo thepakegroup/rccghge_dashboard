@@ -106,7 +106,7 @@ const GetInTouch = () => {
 
         <div className="flex flex-col md:flex-row gap-3 items-center">
           <div className="w-full md:max-w-[60%] mx-auto">
-            <ImageUpload handleImageChange={handleImageChange} />
+            <ImageUpload isPage handleImageChange={handleImageChange} />
           </div>
           {page_data?.slides?.[0]?.image_url && (
             <div className="md:max-w-[30%] relative max-h-[225px]">
