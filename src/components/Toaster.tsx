@@ -10,6 +10,7 @@ const Toaster = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    const time = info?.includes("dimensions") ? 3500 : 1500;
     const timeDisplay = setTimeout(() => {
       dispatch(
         setToast({
@@ -18,7 +19,7 @@ const Toaster = () => {
           info: "",
         })
       );
-    }, 1500);
+    }, time);
 
     return () => clearTimeout(timeDisplay);
   });
