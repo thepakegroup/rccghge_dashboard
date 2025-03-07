@@ -186,7 +186,7 @@ const LandingPage = () => {
 
         <div className="flex flex-col gap-3 items-center">
           <div className="md:max-w-[60%] mx-auto">
-            <MultipleImageUploader files={files} setFiles={setFiles} />
+            <MultipleImageUploader isPage files={files} setFiles={setFiles} />
           </div>
           <div className="flex flex-wrap gap-2 w-full">
             {page_data?.slides &&

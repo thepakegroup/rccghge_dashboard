@@ -29,12 +29,15 @@ const CommonOnePages = () => {
   // states
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
   const [slidersSelected, setSlidersSelected] = useState<any>([]);
+  const [invalidDimension, setInvalidDimension] = useState<boolean>(false); // State for invalid dimensions
 
   //
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
+
   //
   const updateToast = useUpdateToast();
+
   // get page data info
   const {
     data: common_one_data,
@@ -52,6 +55,7 @@ const CommonOnePages = () => {
     select: (data) => data.data,
     staleTime: 3000,
   });
+
   // form configs
   const {
     register,
@@ -67,28 +71,97 @@ const CommonOnePages = () => {
       },
     },
   });
-  // handles sliders image drop upload
-  const handleSliderDrop = (files: FileList) => {
-    setSlidersPreview(
-      common_one_data?.sliders.map((url: any) => url?.item_url)
-    );
-    const fileArray = Array.from(files);
-    fileArray.forEach((file: any) => {
-      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
+
+  // Function to check image dimensions
+  const checkImageDimensions = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith("image/")) {
+        resolve(true); // Skip validation for non-image files
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        const img = document.createElement("img");
+        img.onload = () => {
+          // Validate dimensions (min: 1400x600px, max: 2000x600px)
+          const isValid =
+            img.width >= 1400 && img.width <= 2000 && img.height === 600;
+          resolve(isValid);
+        };
+        if (e.target && e.target.result) {
+          img.src = e.target.result as string;
+        } else {
+          resolve(false);
+        }
+      };
+      reader.readAsDataURL(file);
     });
-    setSlidersSelected([...fileArray]);
   };
-  // handle sliders image upload
-  const uploadSliderImage = (event: any) => {
+
+  // Handle slider image drop
+  const handleSliderDrop = async (files: FileList) => {
+    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
+    const validFiles: File[] = [];
+
+    for (const file of fileArray) {
+      const isValid = await checkImageDimensions(file);
+      if (isValid) {
+        validFiles.push(file);
+      } else {
+        setInvalidDimension(true);
+        updateToast({
+          title: "Error",
+          type: "error",
+          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
+        });
+        return; // Stop further processing if any file is invalid
+      }
+    }
+
+    setInvalidDimension(false);
     setSlidersPreview(
       common_one_data?.sliders.map((url: any) => url?.item_url)
     );
-    const files = event.target.files;
-    const fileArray = Array.from(files);
-    fileArray.forEach((file: any) => {
+    validFiles.forEach((file: File) => {
       setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
     });
-    setSlidersSelected([...fileArray]);
+    setSlidersSelected([...validFiles]);
+  };
+
+  // Handle slider image upload
+  const uploadSliderImage = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
+    const validFiles: File[] = [];
+
+    for (const file of fileArray) {
+      const isValid = await checkImageDimensions(file);
+      if (isValid) {
+        validFiles.push(file);
+      } else {
+        setInvalidDimension(true);
+        updateToast({
+          title: "Error",
+          type: "error",
+          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
+        });
+        return; // Stop further processing if any file is invalid
+      }
+    }
+
+    setInvalidDimension(false);
+    setSlidersPreview(
+      common_one_data?.sliders.map((url: any) => url?.item_url)
+    );
+    validFiles.forEach((file: File) => {
+      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
+    });
+    setSlidersSelected([...validFiles]);
   };
 
   //
