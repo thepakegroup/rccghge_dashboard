@@ -65,10 +65,15 @@ export const MinistryDepartmentLists = ({
                     {isPageSettings ? (
                       <Link
                         className="flex items-center gap-1 text-orange text-xs"
+                        // href={`${
+                        //   group?.ministry_code === "mens_ministry"
+                        //     ? "https://admin.rccghge.ministries.kouakoudomagni.com/men/settings"
+                        //     : group?.ministry_code === "young-adult-ministry"
+                        //     ? "https://admin.rccghge.ministries.kouakoudomagni.com/youth/settings"
+                        //     : redirectLink && redirectLink(group)
+                        // }`}
                         href={`${
-                          group?.ministry_code === "mens_ministry"
-                            ? "https://admin.rccghge.ministries.kouakoudomagni.com/men/settings"
-                            : group?.ministry_code === "young-adult-ministry"
+                          group?.ministry_code === "young-adult-ministry"
                             ? "https://admin.rccghge.ministries.kouakoudomagni.com/youth/settings"
                             : redirectLink && redirectLink(group)
                         }`}
