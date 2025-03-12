@@ -5,11 +5,11 @@ import { Button } from "@/components/base-components/button";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
+import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
 import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
-import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -26,12 +26,10 @@ const QuillEditor = dynamic(() => import("react-quill"), {
 const WellnessMinistry = () => {
   const updateToast = useUpdateToast();
   // states
-  // states
-  const [selectedBgImages, setSelectedBgImages] = useState<any>([]);
   const [bgImgPreview, setBgImgPreview] = useState<any>([]);
-  const [slidersSelected, setSlidersSelected] = useState<any>([]);
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
-  const [invalidDimension, setInvalidDimension] = useState<boolean>(false); // State for invalid dimensions
+  const [bgImages, setBgImages] = useState<File[]>([]);
+  const [sliderImages, setSliderImages] = useState<File[]>([]);
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
 
@@ -74,158 +72,6 @@ const WellnessMinistry = () => {
     },
   });
 
-  // Function to check image dimensions
-  const checkImageDimensions = (file: File): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith("image/")) {
-        resolve(true); // Skip validation for non-image files
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const img = document.createElement("img");
-        img.onload = () => {
-          // Validate dimensions (min: 1400x600px, max: 2000x600px)
-          const isValid =
-            img.width >= 1600 && img.width <= 2600 && img.height === 600;
-          resolve(isValid);
-        };
-        if (e.target && e.target.result) {
-          img.src = e.target.result as string;
-        } else {
-          resolve(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Handle background image drop
-  const handleBgImageDrop = async (files: FileList) => {
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setBgImgPreview(wellness_ministry?.sliders.map((url: any) => url.item_url));
-    validFiles.forEach((file: File) => {
-      setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSelectedBgImages([...validFiles]);
-  };
-
-  // Handle background image upload
-  const uploadBgImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setBgImgPreview(wellness_ministry?.sliders.map((url: any) => url.item_url));
-    validFiles.forEach((file: File) => {
-      setBgImgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSelectedBgImages([...validFiles]);
-  };
-
-  // Handle slider image drop
-  const handleSliderDrop = async (files: FileList) => {
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setSlidersPreview(
-      wellness_ministry?.carousel.map((url: any) => url?.item_url)
-    );
-    validFiles.forEach((file: File) => {
-      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSlidersSelected([...validFiles]);
-  };
-
-  // Handle slider image upload
-  const uploadSliderImage = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setSlidersPreview(
-      wellness_ministry?.carousel.map((url: any) => url?.item_url)
-    );
-    validFiles.forEach((file: File) => {
-      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSlidersSelected([...validFiles]);
-  };
-
-  //
   // edit page function here...
   const editPage = async (data: any) => {
     if (bgImgPreview?.length < 1) {
@@ -243,16 +89,12 @@ const WellnessMinistry = () => {
       formData.append("heading_description", data.heading_description);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
-      if (selectedBgImages.length > 0) {
-        selectedBgImages.forEach((file: any) => {
-          formData.append("background_images", file);
-        });
-      }
-      if (slidersSelected.length > 0) {
-        slidersSelected.forEach((file: any) => {
-          formData.append("carousel_images", file);
-        });
-      }
+      bgImages.forEach((file: any) => {
+        formData.append("background_images", file);
+      });
+      sliderImages.forEach((file: any) => {
+        formData.append("carousel_images", file);
+      });
       const res = await post(
         "/ministry-page/wellness/compose",
         formData,
@@ -276,6 +118,7 @@ const WellnessMinistry = () => {
       setEditing(false);
     }
   };
+
   // handle remove (delete) image
   const removeImage = async (id: number) => {
     setDeleting(true);
@@ -300,7 +143,6 @@ const WellnessMinistry = () => {
     }
   };
 
-  //
   return (
     <section className="relative px-4 mb-8 mt-8">
       <GoBack header="HGE Wellness Ministry" />
@@ -321,34 +163,13 @@ const WellnessMinistry = () => {
               <h4 className="font-play-fair-display font-semibold mb-3">
                 Add Background Image
               </h4>
-              <label
-                className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-                htmlFor="bg_image"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  handleBgImageDrop(e.dataTransfer.files);
-                }}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  id="bg_image"
-                  multiple
-                  onChange={uploadBgImage}
+              <div className="md:max-w-[60%] mx-auto">
+                <MultipleImageUploader
+                  isPage
+                  files={bgImages}
+                  setFiles={setBgImages}
                 />
-                <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-                  <UploadImgIcon />
-                  <div className="flex items-center gap-1">
-                    <p className="text-orange">Click to upload</p>
-                    <p>or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-fade-ash">
-                    SVG, PNG, JPG or GIF (max. 800x400px)
-                  </p>
-                </div>
-              </label>
+              </div>
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                 {bgImgPreview?.map((url: any) => (
                   <div key={url} className="relative w-[150px] h-[90px]">
@@ -446,36 +267,13 @@ const WellnessMinistry = () => {
                 <h4 className="font-play-fair-display font-semibold mb-1">
                   Add Image
                 </h4>
-                <label
-                  className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-                  htmlFor="img_carousel"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    handleSliderDrop(e.dataTransfer.files);
-                  }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    id="img_carousel"
-                    onChange={uploadSliderImage}
-                    multiple
+                <div className="md:max-w-[60%] mx-auto">
+                  <MultipleImageUploader
+                    isPage
+                    files={sliderImages}
+                    setFiles={setSliderImages}
                   />
-                  <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-                    <UploadImgIcon />
-                    <div className="flex items-center gap-1">
-                      <p className="text-orange">Click to upload</p>
-                      <p>or drag and drop</p>
-                    </div>
-                    <p className="text-xs text-fade-ash">
-                      SVG, PNG, JPG or GIF (max. 800x400px)
-                    </p>
-                  </div>
-                </label>
+                </div>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                   {slidersPreview?.map((url: any) => (
                     <div key={url} className="relative w-[150px] h-[90px]">
