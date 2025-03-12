@@ -4,11 +4,11 @@ import { Button } from "@/components/base-components/button";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
+import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
 import { formats, modules } from "@/components/quill-config/confiig";
 import { get, post, remove } from "@/helper/apiFetch";
 import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
-import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -28,8 +28,7 @@ const CommonOnePages = () => {
   const params = useParams();
   // states
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
-  const [slidersSelected, setSlidersSelected] = useState<any>([]);
-  const [invalidDimension, setInvalidDimension] = useState<boolean>(false); // State for invalid dimensions
+  const [sliderImages, setSliderImages] = useState<File[]>([]);
 
   //
   const [editing, setEditing] = useState<boolean>(false);
@@ -71,99 +70,6 @@ const CommonOnePages = () => {
       },
     },
   });
-
-  // Function to check image dimensions
-  const checkImageDimensions = (file: File): Promise<boolean> => {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith("image/")) {
-        resolve(true); // Skip validation for non-image files
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        const img = document.createElement("img");
-        img.onload = () => {
-          // Validate dimensions (min: 1400x600px, max: 2000x600px)
-          const isValid =
-            img.width >= 1600 && img.width <= 2600 && img.height === 600;
-          resolve(isValid);
-        };
-        if (e.target && e.target.result) {
-          img.src = e.target.result as string;
-        } else {
-          resolve(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Handle slider image drop
-  const handleSliderDrop = async (files: FileList) => {
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setSlidersPreview(
-      common_one_data?.sliders.map((url: any) => url?.item_url)
-    );
-    validFiles.forEach((file: File) => {
-      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSlidersSelected([...validFiles]);
-  };
-
-  // Handle slider image upload
-  const uploadSliderImage = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const fileArray = Array.from(files) as File[]; // Explicitly type as File[]
-    const validFiles: File[] = [];
-
-    for (const file of fileArray) {
-      const isValid = await checkImageDimensions(file);
-      if (isValid) {
-        validFiles.push(file);
-      } else {
-        setInvalidDimension(true);
-        updateToast({
-          title: "Error",
-          type: "error",
-          info: `Invalid dimensions for ${file.name}. Required: 1400x600px to 2000x600px.`,
-        });
-        return; // Stop further processing if any file is invalid
-      }
-    }
-
-    setInvalidDimension(false);
-    setSlidersPreview(
-      common_one_data?.sliders.map((url: any) => url?.item_url)
-    );
-    validFiles.forEach((file: File) => {
-      setSlidersPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSlidersSelected([...validFiles]);
-  };
-
   //
   // edit page function here...
   const editPage = async (data: any) => {
@@ -182,11 +88,10 @@ const CommonOnePages = () => {
       formData.append("heading_text", data.heading_text);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
-      if (slidersSelected.length > 0) {
-        slidersSelected.forEach((file: any) => {
-          formData.append("background_images", file);
-        });
-      }
+      sliderImages.forEach((file: any) => {
+        formData.append("background_images", file);
+      });
+
       const res = await post(
         "/ministry-page/common-1",
         formData,
@@ -259,36 +164,13 @@ const CommonOnePages = () => {
                 <h4 className="font-play-fair-display font-semibold mb-1">
                   Add Background Image
                 </h4>
-                <label
-                  className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-                  htmlFor="img_carousel"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    handleSliderDrop(e.dataTransfer.files);
-                  }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    id="img_carousel"
-                    onChange={uploadSliderImage}
-                    multiple
+                <div className="md:max-w-[60%] mx-auto">
+                  <MultipleImageUploader
+                    isPage
+                    files={sliderImages}
+                    setFiles={setSliderImages}
                   />
-                  <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-                    <UploadImgIcon />
-                    <div className="flex items-center gap-1">
-                      <p className="text-orange">Click to upload</p>
-                      <p>or drag and drop</p>
-                    </div>
-                    <p className="text-xs text-fade-ash">
-                      SVG, PNG, JPG or GIF (max. 800x400px)
-                    </p>
-                  </div>
-                </label>
+                </div>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                   {slidersPreview?.map((url: any) => (
                     <div key={url} className="relative w-[150px] h-[90px]">
