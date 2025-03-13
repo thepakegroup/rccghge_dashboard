@@ -9,11 +9,10 @@ import { Galleries } from "@/components/ministry-departments/youth-ministry-comp
 import { OurMission } from "@/components/ministry-departments/youth-ministry-components/our-mission";
 import { OurPrograms } from "@/components/ministry-departments/youth-ministry-components/our-programs";
 import { OurTeams } from "@/components/ministry-departments/youth-ministry-components/our-teams";
-import { formats, modules } from "@/components/quill-config/confiig";
+import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
 import { get, post, remove } from "@/helper/apiFetch";
 import useUpdateToast from "@/hooks/updateToast";
 import { CancelIcon } from "@/icons/cancel-icon";
-import { UploadImgIcon } from "@/icons/upload-img-icon";
 import { MotionDiv, MotionPresence } from "@/util/motion-exports";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
@@ -37,7 +36,7 @@ const YouthMinistryPage = () => {
   const updateToast = useUpdateToast();
   //states
   const [bgPreview, setBgPreview] = useState<any[]>([]);
-  const [selectedBgImg, setSelectedBgImg] = useState<any[]>([]);
+  const [bgImages, setBgImages] = useState<any[]>([]);
   const [pageInfo, setPageInfo] = useState<pageInfo>({
     heading_text: "",
     heading_description: "",
@@ -74,22 +73,6 @@ const YouthMinistryPage = () => {
     },
     select: (data) => data.data,
   });
-  // drag and drop function
-  const handleBgImageDrop = (files: FileList) => {
-    const filesArray = Array.from(files);
-    filesArray.forEach((file: any) => {
-      setBgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSelectedBgImg([...filesArray]);
-  };
-  // upload image function
-  const uploadBgImage = (e: any) => {
-    const files = Array.from(e.target.files);
-    files.forEach((file: any) => {
-      setBgPreview((prev: any) => [...prev, URL.createObjectURL(file)]);
-    });
-    setSelectedBgImg([...files]);
-  };
   // remove image function
   const removeImage = async (id: string) => {
     setDeleting(true);
@@ -132,11 +115,9 @@ const YouthMinistryPage = () => {
         "subheading_description",
         pageInfo?.subheading_description
       );
-      if (selectedBgImg.length > 0) {
-        selectedBgImg.forEach((file: any) => {
-          formData.append("background_images", file);
-        });
-      }
+      bgImages.forEach((file: any) => {
+        formData.append("background_images", file);
+      });
       const res = await post(
         `/ministry-page/youth/compose`,
         formData,
@@ -182,34 +163,13 @@ const YouthMinistryPage = () => {
               <h4 className="font-play-fair-display font-semibold mb-3">
                 Add Background Image
               </h4>
-              <label
-                className="flex flex-col gap-1 cursor-pointer justify-center items-center"
-                htmlFor="bg_image"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  handleBgImageDrop(e.dataTransfer.files);
-                }}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  id="bg_image"
-                  multiple
-                  onChange={uploadBgImage}
+              <div className="md:max-w-[60%] mx-auto">
+                <MultipleImageUploader
+                  isPage
+                  files={bgImages}
+                  setFiles={setBgImages}
                 />
-                <div className="flex flex-col gap-2 items-center border-[1.5px] border-dashed p-3 rounded-lg">
-                  <UploadImgIcon />
-                  <div className="flex items-center gap-1">
-                    <p className="text-orange">Click to upload</p>
-                    <p>or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-fade-ash">
-                    SVG, PNG, JPG or GIF (max. 800x400px)
-                  </p>
-                </div>
-              </label>
+              </div>
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
                 {bgPreview?.map((url: any) => (
                   <div key={url} className="relative w-[150px] h-[90px]">

@@ -38,7 +38,7 @@ const ImageUpload = ({
       : fileName;
 
   const kb = currentFile && currentFile?.size / 1024; // Fixed size calculation
-
+  const [dimensionErrorMsg, setDimensionErrorMsg] = useState<string>("");
   const checkImageDimensions = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
       if (!isPage || !file.type.startsWith("image/")) {
@@ -51,9 +51,34 @@ const ImageUpload = ({
       reader.onload = (e: ProgressEvent<FileReader>) => {
         const img = document.createElement("img");
         img.onload = () => {
-          // For pages, validate minimum dimensions (1400x600px) and maximum (2000x600px)
+          // For pages, validate minimum dimensions (2000x600px)
+          if (img.width < 2000) {
+            setDimensionErrorMsg(
+              "Image width uploaded is too small, please minimum Image width should be at least 2000px"
+            );
+          } else if (img.width > 2600) {
+            setDimensionErrorMsg(
+              "Image width uploaded is too large, please maximum Image width should be 2600px"
+            );
+          } else if (
+            img.width >= 2000 &&
+            img.width <= 2600 &&
+            img.height < 600
+          ) {
+            setDimensionErrorMsg(
+              "Image height uploaded is too small, please minimum Image height should be 600px"
+            );
+          } else if (
+            img.width >= 2000 &&
+            img.width <= 2600 &&
+            img.height > 600
+          ) {
+            setDimensionErrorMsg(
+              "Image height uploaded is too large, please maximum Image height should be 600px"
+            );
+          }
           const isValid =
-            img.width >= 1600 && img.width <= 2600 && img.height === 600;
+            img.width >= 2000 && img.width <= 2600 && img.height === 600;
           resolve(isValid);
         };
         if (e.target && e.target.result) {
@@ -96,7 +121,7 @@ const ImageUpload = ({
         </p>
         <p className="text-xs text-gray-400">
           SVG, PNG, JPG or GIF{" "}
-          {isPage ? "(min. 1400x600px, max. 2000x600px)" : "(max. 800x400px)"}
+          {isPage ? "(min. 2000x600px, max. 2600x600px)" : "(max. 800x400px)"}
         </p>
       </div>
       <div className="md:hidden mt-4 ">
@@ -105,10 +130,13 @@ const ImageUpload = ({
         </p>
         <p className="text-[11px] text-gray-400 w-full">
           SVG, PNG, JPG, GIF | 10MB max.{" "}
-          {isPage && "| min 1400x600px, max 2000x600px"}
+          {isPage && "| min 2000x600px, max 2600x600px"}
         </p>
       </div>
-      <button className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md">
+      <button
+        type="button"
+        className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md"
+      >
         Upload
       </button>
     </div>
@@ -159,9 +187,7 @@ const ImageUpload = ({
         <div className="text-sm text-gray-600">{currentFile?.name}</div>
         <div className="text-error-400 text-[0.6875rem]">
           The image dimensions are invalid.{" "}
-          {isPage
-            ? "Minimum dimensions required: 1400x600px, and Maximum dimensions required: 2000x600px"
-            : "Maximum dimensions allowed: 800x400px"}
+          {isPage ? dimensionErrorMsg : "Maximum dimensions allowed: 800x400px"}
         </div>
       </div>
       <div className="flex-center justify-center gap-2 text-[#F56630] text-[0.6875rem]">

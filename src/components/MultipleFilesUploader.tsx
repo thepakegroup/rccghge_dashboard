@@ -49,7 +49,7 @@ export const MultipleImageUploader = ({
   const [invalidDimensionFiles, setInvalidDimensionFiles] = useState<string[]>(
     []
   );
-
+  const [dimensionErrorMsg, setDimensionErrorMsg] = useState<string>("");
   const checkImageDimensions = (file: File): Promise<boolean> => {
     return new Promise((resolve) => {
       if (!isPage || !file.type.startsWith("image/")) {
@@ -63,9 +63,34 @@ export const MultipleImageUploader = ({
         // Use HTMLImageElement constructor instead of Image
         const img = document.createElement("img");
         img.onload = () => {
-          // For pages, validate minimum dimensions (1400x600px)
+          // For pages, validate minimum dimensions (2000x600px)
+          if (img.width < 2000) {
+            setDimensionErrorMsg(
+              "Image width uploaded are too small, please minimum Image width should be at least 2000px"
+            );
+          } else if (img.width > 2600) {
+            setDimensionErrorMsg(
+              "Image width uploaded are too large, please maximum Image width should be 2600px"
+            );
+          } else if (
+            img.width >= 2000 &&
+            img.width <= 2600 &&
+            img.height < 600
+          ) {
+            setDimensionErrorMsg(
+              "Image height uploaded are too small, please minimum Image height should be 600px"
+            );
+          } else if (
+            img.width >= 2000 &&
+            img.width <= 2600 &&
+            img.height > 600
+          ) {
+            setDimensionErrorMsg(
+              "Image height uploaded are too large, please maximum Image height should be 600px"
+            );
+          }
           const isValid =
-            img.width >= 1600 && img.width <= 2600 && img.height === 600;
+            img.width >= 2000 && img.width <= 2600 && img.height === 600;
           resolve(isValid);
         };
         if (e.target && e.target.result) {
@@ -127,7 +152,7 @@ export const MultipleImageUploader = ({
         </p>
         <p className="text-xs text-gray-400">
           SVG, PNG, JPG or GIF{" "}
-          {isPage ? "(min. 1400x800px)" : "(max. 800x400px)"}
+          {isPage ? "(min. 2000x600px, max. 2600x600)" : "(max. 800x400px)"}
         </p>
       </div>
       <div className="md:hidden mt-4 ">
@@ -135,10 +160,13 @@ export const MultipleImageUploader = ({
           <span className="text-gray-1 font-medium">Tap to Upload</span>
         </p>
         <p className="text-[11px] text-gray-400 w-full">
-          SVG, PNG, JPG, GIF | 10MB max. {isPage && "| min 1400x800px"}
+          SVG, PNG, JPG, GIF | 10MB max. {isPage && "| min 2600x600px"}
         </p>
       </div>
-      <button className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md">
+      <button
+        type="button"
+        className="md:hidden bg-[#EB5017] px-4 py-2 text-white text-sm font-semibold rounded-md"
+      >
         Upload
       </button>
     </div>
@@ -206,8 +234,9 @@ export const MultipleImageUploader = ({
           ))}
         </div>
         <div className="text-error-400 text-[0.6875rem]">
-          These images are too small. Minimum dimensions required: 1400x600px,
-          and Maximum dimensions required: 2000x600px
+          {/* These images are too small. Minimum dimensions required: 2000x600px,
+          and Maximum dimensions required: 2600x600px */}
+          {dimensionErrorMsg}
         </div>
       </div>
       <div className="flex-center justify-center gap-2 text-[#F56630] text-[0.6875rem]">
@@ -235,6 +264,7 @@ export const MultipleImageUploader = ({
       <div className="flex justify-between items-center">
         <p className="text-sm font-medium text-gray-800">Selected Files</p>
         <button
+          type="button"
           className="bg-[#E77400] py-[10px] px-10 w-fit text-white rounded-md"
           onClick={(e) => e.stopPropagation()} // Prevent triggering FileUploader
         >
