@@ -1,0 +1,24 @@
+name: RCCGHGE PRODUCTION DASHBOARD
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to DROPLET
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/apps/rccghge-dashboard-prod
+            git pull origin main --no-ff
+            docker compose -f compose-prod.yaml up --build --force-recreate -d
