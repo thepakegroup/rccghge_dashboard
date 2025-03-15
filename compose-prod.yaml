@@ -1,0 +1,17 @@
+services:
+  rccghge_dashboad_prod:
+    container_name: rccghge_dashboad_prod
+    image: rccghge_dashboad_prod:latest
+    build:
+      context: .
+    ports:
+      - "3007:3000"
+    env_file:
+      - .env
+    networks:
+      - rccghge_dashboad_prod_network
+    restart: always
+
+networks:
+  rccghge_dashboad_prod_network:
+    name: rccghge_dashboad_prod_network
