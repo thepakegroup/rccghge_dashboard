@@ -1,0 +1,17 @@
+services:
+  rccghge_dashboard_dev:
+    container_name: rccghge_dashboard_dev
+    image: rccghge-dashboard-dev:latest
+    build:
+      context: .
+    ports:
+      - "3008:3000"
+    env_file:
+      - .env
+    networks:
+      - rccghge_dashboard_dev_network
+    restart: always
+
+networks:
+  rccghge_dashboard_dev_network:
+    name: rccghge_dashboard_dev_network
