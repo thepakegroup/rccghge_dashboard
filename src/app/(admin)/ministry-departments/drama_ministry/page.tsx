@@ -77,7 +77,7 @@ const DramaMinistryPage = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    if (bgImgPreview?.length < 1) {
+    if (bgImgPreview?.length < 1 && bgImages?.length < 1) {
       updateToast({
         title: `Error`,
         type: "error",

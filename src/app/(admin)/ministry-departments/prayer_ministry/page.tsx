@@ -72,7 +72,7 @@ const PrayerMinistryPage = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    if (slidersPreview?.length < 1) {
+    if (slidersPreview?.length < 1 && sliderImages?.length < 1) {
       updateToast({
         title: `Error`,
         type: "error",

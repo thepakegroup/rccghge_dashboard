@@ -97,7 +97,7 @@ const YouthMinistryPage = () => {
   };
   // edit Page function
   const editPage = async () => {
-    if (bgPreview?.length < 1) {
+    if (bgPreview?.length < 1 && bgImages?.length < 1) {
       updateToast({
         title: `Error`,
         type: "error",
