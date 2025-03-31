@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/base-components/button";
 import { AddMinistryModal } from "@/components/ministry-departments/AddMinistryModal";
 import { EditMinistryModal } from "@/components/ministry-departments/EditMinistryModal";
 import { MinistryDepartmentLists } from "@/components/ministry-departments/ministry-department-lists";
@@ -99,11 +100,11 @@ const MinistryDepartmentsPage = () => {
         }}
       />
       {/*  */}
-      {/* <Button
+      <Button
         label={tab === "Ministry" ? "Add Ministry" : "Add Department"}
         className="!h-[44px] !rounded-[6px] !w-[192px] flex justify-center items-center text-center !py-4 !px-6 font-quicksand !my-12"
         onClick={() => setShowCreateMinistryModal(true)}
-      /> */}
+      />
       {/*  */}
       <MotionPresence>
         {showCreateMinistryModal && (
