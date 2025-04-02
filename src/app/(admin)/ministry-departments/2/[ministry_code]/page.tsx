@@ -84,7 +84,7 @@ const CommonTwoPages = () => {
   };
   // edit page function
   const editPage = async () => {
-    if (bgPreview?.length < 1) {
+    if (bgPreview?.length < 1 && sliderImages?.length < 1) {
       updateToast({
         title: `Error`,
         type: "error",

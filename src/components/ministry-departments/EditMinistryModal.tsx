@@ -3,7 +3,7 @@ import { Button } from "../base-components/button";
 import { MForm, MotionDiv } from "@/util/motion-exports";
 import Image from "next/image";
 import { BtnLoader } from "../base-components/btn-loader";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { CancelIcon } from "@/icons/cancel-icon";
 import { UploadImgIcon } from "@/icons/upload-img-icon";
 import * as yup from "yup";
@@ -12,12 +12,14 @@ import useUpdateToast from "@/hooks/updateToast";
 import { post } from "@/helper/apiFetch";
 import { baseUrl } from "@/util/constants";
 import { QueryObserverResult } from "@tanstack/react-query";
+import { Select } from "../base-components/Select";
 //
 const schema = yup.object().shape({
   name: yup.string().required("Ministry name is required"),
   category: yup.string().required("Category is required"),
   ministry_code: yup.string().required("Ministry code is required"),
   description: yup.string().required("Description is required"),
+  group_template: yup.string(),
 });
 //
 export const EditMinistryModal = ({
@@ -49,12 +51,14 @@ export const EditMinistryModal = ({
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm({
     values: {
       name: selectedMinistry?.name || "",
       category: selectedMinistry?.category || "",
       description: selectedMinistry?.description || "",
       ministry_code: selectedMinistry?.ministry_code || "",
+      group_template: selectedMinistry?.group_template || "",
     },
     resolver: yupResolver(schema),
   });
@@ -86,6 +90,7 @@ export const EditMinistryModal = ({
       formData.append("category", data?.category);
       formData.append("description", data?.description);
       formData.append("ministry_code", data?.ministry_code);
+      formData.append("group_template", data?.group_template);
       formData.append("id", `${selectedMinistry?.id}`);
       if (sliderSelected) {
         formData.append("banner", sliderSelected as any);
@@ -127,7 +132,7 @@ export const EditMinistryModal = ({
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
-        className="bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
+        className="z-30 bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
       >
         {/* header */}
         <div
@@ -241,6 +246,7 @@ export const EditMinistryModal = ({
             {tab === "Ministry" ? "Ministry code" : "Department code"}
           </span>
           <input
+            disabled
             type="text"
             id="ministry_code"
             className="input font-quicksand focus-within:ring-transparent"
@@ -255,6 +261,39 @@ export const EditMinistryModal = ({
               ? "NB: e.g for youth ministry, type youth_ministry"
               : "NB: e.g for youth department, type youth_department"}
           </small>
+        </label>
+        <label
+          htmlFor="ministry_template"
+          className="input-field font-quicksand"
+        >
+          <span className="!font-semibold font-quicksand text-[#101928]">
+            {tab === "Ministry" ? "Ministry Template" : "Department Template"}
+          </span>
+          <Controller
+            name="group_template"
+            control={control}
+            render={({ field }) => (
+              <Select
+                id="ministry_template"
+                value={field.value || ""}
+                options={[
+                  { label: "Common 1", value: "common-1" },
+                  { label: "Common 2", value: "common-2" },
+                  { label: "Standalone", value: "standalone" },
+                ]}
+                onChange={field.onChange}
+                className="!w-full"
+                btnClass="py-4"
+                // disabled
+              />
+            )}
+          />
+          {errors.group_template &&
+            typeof errors.group_template.message === "string" && (
+              <small className="text-red-400">
+                {errors.group_template?.message}
+              </small>
+            )}
         </label>
         <label htmlFor="subtext" className="input-field font-quicksand">
           <span className="!font-semibold font-quicksand text-[#101928]">
