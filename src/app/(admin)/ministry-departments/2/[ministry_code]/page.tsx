@@ -29,6 +29,7 @@ const CommonTwoPages = () => {
   const updateToast = useUpdateToast();
   // states
   const [heading_text, setHeadingText] = useState<string>("");
+  const [noHeadingText, setNoHeadingText] = useState<boolean>(false);
   const [bgPreview, setBgPreview] = useState<any[]>([]);
   const [sliderImages, setSliderImages] = useState<File[]>([]);
 
@@ -84,6 +85,10 @@ const CommonTwoPages = () => {
   };
   // edit page function
   const editPage = async () => {
+    if (!heading_text) {
+      setNoHeadingText(true);
+      return;
+    }
     if (bgPreview?.length < 1 && sliderImages?.length < 1) {
       updateToast({
         title: `Error`,
@@ -215,8 +220,15 @@ const CommonTwoPages = () => {
                 type="text"
                 className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                 defaultValue={heading_text}
-                onChange={(e) => setHeadingText(e.target.value)}
+                onChange={(e) => {
+                  setNoHeadingText(false), setHeadingText(e.target.value);
+                }}
               />
+              {noHeadingText && (
+                <small className="text-sm text-red-400">
+                  Heading text field is required
+                </small>
+              )}
             </label>
           </div>
         </form>

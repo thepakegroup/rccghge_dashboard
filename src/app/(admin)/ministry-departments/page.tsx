@@ -98,6 +98,7 @@ const MinistryDepartmentsPage = () => {
           setSelectedMinistry,
           setShowEditMinistryModal,
         }}
+        getGroups={getGroups}
       />
       {/*  */}
       <Button
