@@ -271,7 +271,7 @@ export const AddMinistryModal = ({
                 options={[
                   { label: "Common 1", value: "common-1" },
                   { label: "Common 2", value: "common-2" },
-                  { label: "Standalone", value: "standalone" },
+                  // { label: "Standalone", value: "standalone" },
                 ]}
                 onChange={field.onChange}
                 className="!w-full"

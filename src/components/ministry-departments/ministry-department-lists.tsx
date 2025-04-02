@@ -5,6 +5,8 @@ import Link from "next/link";
 import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { MinistryCardLoader } from "./ministry-card-loader";
 import { useSearchParams } from "next/navigation";
+import { MinistryDepartmentListCard } from "./ministry-department-list-card";
+import { QueryObserverResult } from "@tanstack/react-query";
 
 export const MinistryDepartmentLists = ({
   loadingGroups,
@@ -13,6 +15,7 @@ export const MinistryDepartmentLists = ({
   setSelectedMinistry,
   setShowEditMinistryModal,
   isPageSettings = false,
+  getGroups,
 }: {
   loadingGroups?: boolean;
   groups?: any;
@@ -20,6 +23,7 @@ export const MinistryDepartmentLists = ({
   setShowEditMinistryModal?: Dispatch<SetStateAction<boolean>>;
   setSelectedMinistry?: Dispatch<SetStateAction<any>>;
   isPageSettings?: boolean;
+  getGroups: () => Promise<QueryObserverResult<any, Error>>;
 }) => {
   //
   const searchParams = useSearchParams();
@@ -35,69 +39,14 @@ export const MinistryDepartmentLists = ({
         {groups &&
           groups.data?.map((group: any) => {
             return (
-              <div
-                className="rounded-lg overflow-hidden bg-white"
+              <MinistryDepartmentListCard
                 key={group?.id}
-              >
-                <div className="w-full h-[250px]">
-                  <Image
-                    className="w-full h-full object-cover"
-                    src={`${baseUrl}load-media/${group?.banner}`}
-                    alt={group?.name}
-                    width={200}
-                    height={200}
-                  />
-                </div>
-                <div className="py-5 px-2 flex flex-col gap-1">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-[10px] w-[10px] rounded-full bg-black" />
-                      <h3 className="text-sm font-bold font-play-fair-display">
-                        {group?.name}
-                      </h3>
-                    </div>
-                    <p className="line-clamp-2 my-1 text-[#454545] font-quicksand text-xs pl-4">
-                      {group?.description}
-                    </p>
-                  </div>
-                  {/*  */}
-                  <div className="flex justify-end items-center gap-2 my-2 px-4">
-                    {isPageSettings ? (
-                      <Link
-                        className="flex items-center gap-1 text-orange text-xs"
-                        // href={`${
-                        //   group?.ministry_code === "mens_ministry"
-                        //     ? "https://admin.rccghge.ministries.kouakoudomagni.com/men/settings"
-                        //     : group?.ministry_code === "young-adult-ministry"
-                        //     ? "https://admin.rccghge.ministries.kouakoudomagni.com/youth/settings"
-                        //     : redirectLink && redirectLink(group)
-                        // }`}
-                        href={`${
-                          group?.ministry_code === "young-adult-ministry"
-                            ? "https://admin.rccghge.ministries.kouakoudomagni.com/youth/settings"
-                            : redirectLink && redirectLink(group)
-                        }`}
-                      >
-                        <PenIcon />
-                        <span>Edit Page</span>
-                      </Link>
-                    ) : (
-                      <div
-                        className="cursor-pointer select-none flex items-center gap-1 text-orange text-xs"
-                        onClick={() => {
-                          setSelectedMinistry && setSelectedMinistry(group);
-                          setShowEditMinistryModal &&
-                            setShowEditMinistryModal(true);
-                        }}
-                      >
-                        <PenIcon />
-                        <span>Edit</span>
-                      </div>
-                    )}
-                    {/*  */}
-                  </div>
-                </div>
-              </div>
+                group={group}
+                isPageSettings={isPageSettings}
+                setSelectedMinistry={setSelectedMinistry}
+                setShowEditMinistryModal={setShowEditMinistryModal}
+                getGroups={getGroups}
+              />
             );
           })}
       </div>

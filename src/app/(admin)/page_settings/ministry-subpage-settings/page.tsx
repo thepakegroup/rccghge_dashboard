@@ -20,7 +20,11 @@ const MinistrySubPageSettingsPage = () => {
   const page = searchParams.get("page") || 1;
   const perPage = searchParams.get("perPage") || 21;
   // get all groups
-  const { data: groups, isLoading: loadingGroups } = useQuery({
+  const {
+    data: groups,
+    isLoading: loadingGroups,
+    refetch: getGroups,
+  } = useQuery({
     queryKey: ["groups", tab, page, perPage],
     queryFn: async () => {
       const res = await get(
@@ -77,6 +81,7 @@ const MinistrySubPageSettingsPage = () => {
       {/* Groups Display */}
       <MinistryDepartmentLists
         {...{ groups, loadingGroups, redirectLink, isPageSettings: true }}
+        getGroups={getGroups}
       />
       {/*  */}
       {groups && (
