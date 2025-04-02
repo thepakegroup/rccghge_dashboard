@@ -29,7 +29,7 @@ export function Select({
   return (
     <div
       className={`relative w-64 ${className} ${
-        disabled && "pointer-events-none"
+        disabled && "cursor-not-allowed"
       }`}
       id={id}
     >
