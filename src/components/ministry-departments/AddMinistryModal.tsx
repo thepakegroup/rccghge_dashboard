@@ -123,14 +123,20 @@ export const AddMinistryModal = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-black z-50 fixed top-0 w-full h-full left-0 flex flex-col justify-center items-center bg-opacity-30"
+      className="bg-black z-50 fixed inset-0 top-0 w-full h-full left-0 flex flex-col justify-center items-center bg-opacity-30"
     >
+      <div
+        className="absolute top-0 left-0 right-0 bottom-0 z-30"
+        onClick={() => {
+          setShowModal(false);
+        }}
+      />
       <MForm
         onSubmit={handleSubmit(createMinistry)}
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
-        className="bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
+        className="z-50 relative bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
       >
         {/* header */}
         <div
@@ -271,7 +277,7 @@ export const AddMinistryModal = ({
                 options={[
                   { label: "Common 1", value: "common-1" },
                   { label: "Common 2", value: "common-2" },
-                  { label: "Standalone", value: "standalone" },
+                  // { label: "Standalone", value: "standalone" },
                 ]}
                 onChange={field.onChange}
                 className="!w-full"

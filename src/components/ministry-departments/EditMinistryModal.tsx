@@ -125,14 +125,20 @@ export const EditMinistryModal = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-black z-50 fixed top-0 w-full h-full left-0 flex flex-col justify-center items-center bg-opacity-30"
+      className="bg-black z-50 fixed inset-0 top-0 w-full h-full left-0 flex flex-col justify-center items-center bg-opacity-30"
     >
+      <div
+        className="absolute top-0 left-0 right-0 bottom-0 z-30"
+        onClick={() => {
+          setShowModal(false);
+        }}
+      />
       <MForm
         onSubmit={handleSubmit(createMinistry)}
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.98 }}
-        className="z-30 bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
+        className="z-50 relative bg-white px-[27px] flex flex-col gap-[18px] py-6 w-full max-w-[60%] lg:max-w-[40%] m-auto rounded-lg max-h-[500px] overflow-y-auto"
       >
         {/* header */}
         <div
@@ -249,7 +255,7 @@ export const EditMinistryModal = ({
             disabled
             type="text"
             id="ministry_code"
-            className="input font-quicksand focus-within:ring-transparent"
+            className="input font-quicksand focus-within:ring-transparent cursor-not-allowed"
             {...register("ministry_code")}
           />
           <small className="text-red-400">
@@ -283,8 +289,8 @@ export const EditMinistryModal = ({
                 ]}
                 onChange={field.onChange}
                 className="!w-full"
-                btnClass="py-4"
-                // disabled
+                btnClass="py-4 pointer-events-none !cursor-not-allowed"
+                disabled
               />
             )}
           />
