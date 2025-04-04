@@ -34,6 +34,9 @@ export const NewCategoryForm = ({
   const [selectedImg, setSelectedImg] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
   const [name, setName] = useState<string>("");
+  //no state tracks
+  const [noName, setNoName] = useState<boolean>(false);
+  const [noDescription, setNoDescription] = useState<boolean>(false);
   //
   const [creating, setCreating] = useState<boolean>(false);
   //
@@ -52,8 +55,18 @@ export const NewCategoryForm = ({
   };
   //
   const createCategory = async () => {
-    setCreating(true);
+    if (!name) return setNoName(true);
+    if (!description) return setNoDescription(true);
+    if (!selectedImg) {
+      updateToast({
+        title: `Error`,
+        type: "error",
+        info: `Please upload an image`,
+      });
+      return;
+    }
     try {
+      setCreating(true);
       const formData = new FormData();
       formData.append("page_name", page_name);
       if (selectedImg) formData.append("image", selectedImg);
@@ -112,8 +125,16 @@ export const NewCategoryForm = ({
             id="category_name"
             type="text"
             className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-            onChange={(event: any) => setName(event.target.value)}
+            onChange={(event: any) => {
+              setNoName(false);
+              setName(event.target.value);
+            }}
           />
+          {noName && (
+            <small className="text-sm text-red-400">
+              Name field is required
+            </small>
+          )}
         </label>
         {/*  */}
         <label className="flex flex-col gap-1" htmlFor="description">
@@ -122,8 +143,16 @@ export const NewCategoryForm = ({
             className="write-editor"
             formats={formats}
             modules={modules}
-            onChange={(event: any) => setDescription(event)}
+            onChange={(event: any) => {
+              setNoDescription(false);
+              setDescription(event);
+            }}
           />
+          {noDescription && (
+            <small className="text-sm text-red-400">
+              Description field is required
+            </small>
+          )}
         </label>
         {/*  */}
         <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">

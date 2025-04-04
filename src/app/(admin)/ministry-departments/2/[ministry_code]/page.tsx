@@ -22,6 +22,7 @@ import { MdDelete } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import useUpdateToast from "@/hooks/updateToast";
 import { MultipleImageUploader } from "@/components/MultipleFilesUploader";
+import ImageUpload from "@/components/ImageUpload";
 
 const CommonTwoPages = () => {
   const params = useParams();
@@ -30,8 +31,14 @@ const CommonTwoPages = () => {
   // states
   const [heading_text, setHeadingText] = useState<string>("");
   const [noHeadingText, setNoHeadingText] = useState<boolean>(false);
-  const [bgPreview, setBgPreview] = useState<any[]>([]);
-  const [sliderImages, setSliderImages] = useState<File[]>([]);
+  // const [bgPreview, setBgPreview] = useState<any[]>([]);
+  // const [sliderImages, setSliderImages] = useState<File[]>([]);
+  //
+  const [sliderImage, setSliderImage] = useState<File | any>("");
+  const [sliderPreview, setSliderPreview] = useState<string>("");
+  const handleImageChange = (file: File) => {
+    setSliderImage(file);
+  };
 
   //
   const [toEdit, setToEdit] = useState<boolean>(false);
@@ -51,8 +58,10 @@ const CommonTwoPages = () => {
     queryKey: [`${params.ministry_code}`],
     queryFn: async () => {
       const res = await get(`/ministry-page/common-2/${params.ministry_code}`);
-      const bgImgs = res.data?.data?.sliders?.map((url: any) => url?.item_url);
-      setBgPreview(bgImgs);
+      // const bgImgs = res.data?.data?.sliders?.map((url: any) => url?.item_url);
+      // setBgPreview(bgImgs);
+      const bgImgs = res.data?.data?.sliders[0]?.item_url;
+      setSliderPreview(bgImgs);
       setHeadingText(res.data?.data?.settings?.settings?.heading_text);
       return res.data;
     },
@@ -89,7 +98,15 @@ const CommonTwoPages = () => {
       setNoHeadingText(true);
       return;
     }
-    if (bgPreview?.length < 1 && sliderImages?.length < 1) {
+    // if (bgPreview?.length < 1 && sliderImages?.length < 1) {
+    //   updateToast({
+    //     title: `Error`,
+    //     type: "error",
+    //     info: `Image field is required`,
+    //   });
+    //   return;
+    // }
+    if (!sliderPreview && !sliderImage) {
       updateToast({
         title: `Error`,
         type: "error",
@@ -102,9 +119,10 @@ const CommonTwoPages = () => {
       const formData = new FormData();
       formData.append("page_name", params.ministry_code as string);
       formData.append("heading_text", heading_text);
-      sliderImages.forEach((file: any) => {
-        formData.append("background_images", file);
-      });
+      if (sliderImage) formData.append("background_images", sliderImage);
+      // sliderImages.forEach((file: any) => {
+      //   formData.append("background_images", file);
+      // });
 
       const res = await post(
         "/ministry-page/common-2/compose",
@@ -118,6 +136,7 @@ const CommonTwoPages = () => {
           type: "update",
           info: `${res.data?.message}`,
         });
+        setSliderImage("");
       }
     } catch (error: any) {
       updateToast({
@@ -178,14 +197,15 @@ const CommonTwoPages = () => {
               Add Background Image
             </h4>
             <div className="md:max-w-[60%] mx-auto">
-              <MultipleImageUploader
+              {/* <MultipleImageUploader
                 isPage
                 files={sliderImages}
                 setFiles={setSliderImages}
-              />
+              /> */}
+              <ImageUpload isPage handleImageChange={handleImageChange} />
             </div>
             <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
-              {bgPreview?.map((url: any) => (
+              {/* {bgPreview?.map((url: any) => (
                 <div key={url} className="relative w-[150px] h-[90px]">
                   <Image
                     src={url}
@@ -206,7 +226,29 @@ const CommonTwoPages = () => {
                     <CancelIcon />
                   </div>
                 </div>
-              ))}
+              ))} */}
+              {sliderPreview && (
+                <div className="relative w-[150px] h-[90px]">
+                  <Image
+                    src={sliderPreview}
+                    alt={sliderPreview}
+                    width={200}
+                    height={200}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                  <div
+                    className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                    onClick={(event: any) => {
+                      const imgId = common_two_data?.sliders?.find(
+                        (item: any) => item.item_url === sliderPreview
+                      );
+                      removeImage(imgId?.id);
+                    }}
+                  >
+                    <CancelIcon />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           {/*  */}

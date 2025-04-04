@@ -2,6 +2,7 @@
 
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
+import ImageUpload from "@/components/ImageUpload";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
@@ -35,13 +36,25 @@ interface pageInfo {
 const YouthMinistryPage = () => {
   const updateToast = useUpdateToast();
   //states
-  const [bgPreview, setBgPreview] = useState<any[]>([]);
-  const [bgImages, setBgImages] = useState<any[]>([]);
+  //
+  const [bgImage, setBgImage] = useState<File | any>("");
+  const [bgPreview, setBgPreview] = useState<string>("");
+  const handleImageChange = (file: File) => {
+    setBgImage(file);
+  };
+
+  //
   const [pageInfo, setPageInfo] = useState<pageInfo>({
     heading_text: "",
     heading_description: "",
     subheading_text: "",
     subheading_description: "",
+  });
+  const [errorState, setErrorState] = useState({
+    heading_text: false,
+    heading_description: false,
+    subheading_text: false,
+    subheading_description: false,
   });
   //
   const [deleting, setDeleting] = useState<boolean>(false);
@@ -68,7 +81,7 @@ const YouthMinistryPage = () => {
         subheading_description:
           data?.settings?.settings?.subheading_description,
       });
-      setBgPreview(res.data.data?.sliders.map((url: any) => url?.item_url));
+      setBgPreview(res.data?.data.sliders[0]?.item_url);
       return res.data;
     },
     select: (data) => data.data,
@@ -97,7 +110,23 @@ const YouthMinistryPage = () => {
   };
   // edit Page function
   const editPage = async () => {
-    if (bgPreview?.length < 1 && bgImages?.length < 1) {
+    if (!errorState?.heading_text)
+      return setErrorState({ ...errorState, heading_text: false });
+    if (!errorState?.heading_description)
+      return setErrorState({ ...errorState, heading_description: false });
+    if (!errorState?.subheading_text)
+      return setErrorState({ ...errorState, subheading_text: false });
+    if (!errorState?.subheading_description)
+      return setErrorState({ ...errorState, subheading_description: false });
+    // if (bgImgPreview?.length < 1 && bgImages?.length < 1) {
+    //   updateToast({
+    //     title: `Error`,
+    //     type: "error",
+    //     info: `Hero  Bg Image field is required`,
+    //   });
+    //   return;
+    // }
+    if (!bgPreview && !bgImage) {
       updateToast({
         title: `Error`,
         type: "error",
@@ -115,9 +144,10 @@ const YouthMinistryPage = () => {
         "subheading_description",
         pageInfo?.subheading_description
       );
-      bgImages.forEach((file: any) => {
-        formData.append("background_images", file);
-      });
+      if (bgImage) formData.append("background_images", bgImage);
+      // bgImages.forEach((file: any) => {
+      //   formData.append("background_images", file);
+      // });
       const res = await post(
         `/ministry-page/youth/compose`,
         formData,
@@ -164,14 +194,15 @@ const YouthMinistryPage = () => {
                 Add Background Image
               </h4>
               <div className="md:max-w-[60%] mx-auto">
-                <MultipleImageUploader
+                {/* <MultipleImageUploader
                   isPage
                   files={bgImages}
                   setFiles={setBgImages}
-                />
+                /> */}
+                <ImageUpload isPage handleImageChange={handleImageChange} />
               </div>
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
-                {bgPreview?.map((url: any) => (
+                {/* {bgImgPreview?.map((url: any) => (
                   <div key={url} className="relative w-[150px] h-[90px]">
                     <Image
                       src={url}
@@ -183,7 +214,7 @@ const YouthMinistryPage = () => {
                     <div
                       className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                       onClick={(event: any) => {
-                        const imgId = youth_ministry?.sliders?.find(
+                        const imgId = children_ministry?.sliders?.find(
                           (item: any) => item.item_url === url
                         );
                         removeImage(imgId?.id);
@@ -192,7 +223,29 @@ const YouthMinistryPage = () => {
                       <CancelIcon />
                     </div>
                   </div>
-                ))}
+                ))} */}
+                {bgPreview && (
+                  <div className="relative w-[150px] h-[90px]">
+                    <Image
+                      src={bgPreview}
+                      alt={bgPreview}
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                    <div
+                      className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                      onClick={(event: any) => {
+                        const imgId = youth_ministry?.sliders?.find(
+                          (item: any) => item.item_url === bgPreview
+                        );
+                        removeImage(imgId?.id);
+                      }}
+                    >
+                      <CancelIcon />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             {/*  */}
@@ -207,13 +260,19 @@ const YouthMinistryPage = () => {
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                   defaultValue={pageInfo?.heading_text}
-                  onChange={(event: any) =>
+                  onChange={(event: any) => {
+                    setErrorState({ ...errorState, heading_text: false });
                     setPageInfo((prev) => ({
                       ...prev,
                       heading_text: event.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                 />
+                {errorState?.heading_text && (
+                  <small className="text-sm text-red-400">
+                    Heading text field is required
+                  </small>
+                )}
               </label>
               {/*  */}
               <label className="flex flex-col gap-1" htmlFor="headingDesc">
@@ -225,13 +284,22 @@ const YouthMinistryPage = () => {
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                   defaultValue={pageInfo?.heading_description}
-                  onChange={(event: any) =>
+                  onChange={(event: any) => {
+                    setErrorState({
+                      ...errorState,
+                      subheading_description: false,
+                    });
                     setPageInfo((prev) => ({
                       ...prev,
                       heading_description: event.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                 />
+                {errorState?.heading_description && (
+                  <small className="text-sm text-red-400">
+                    Heading description field is required
+                  </small>
+                )}
               </label>
               {/*  */}
             </div>
@@ -250,13 +318,19 @@ const YouthMinistryPage = () => {
                     type="text"
                     className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
                     defaultValue={pageInfo?.subheading_text}
-                    onChange={(event: any) =>
+                    onChange={(event: any) => {
+                      setErrorState({ ...errorState, subheading_text: false });
                       setPageInfo((prev) => ({
                         ...prev,
                         subheading_text: event.target.value,
-                      }))
-                    }
+                      }));
+                    }}
                   />
+                  {errorState?.subheading_text && (
+                    <small className="text-sm text-red-400">
+                      Subheading text field is required
+                    </small>
+                  )}
                 </label>
                 {/*  */}
                 <label className="flex flex-col gap-1" htmlFor="headingDesc">
@@ -268,13 +342,22 @@ const YouthMinistryPage = () => {
                     rows={4}
                     className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3 resize-none"
                     defaultValue={pageInfo?.subheading_description}
-                    onChange={(event: any) =>
+                    onChange={(event: any) => {
+                      setErrorState({
+                        ...errorState,
+                        subheading_description: false,
+                      });
                       setPageInfo((prev) => ({
                         ...prev,
                         subheading_description: event.target.value,
-                      }))
-                    }
+                      }));
+                    }}
                   />
+                  {errorState?.subheading_description && (
+                    <small className="text-sm text-red-400">
+                      Subheading description field is required
+                    </small>
+                  )}
                 </label>
                 {/*  */}
               </div>

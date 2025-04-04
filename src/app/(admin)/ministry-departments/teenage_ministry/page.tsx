@@ -2,6 +2,7 @@
 
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
+import ImageUpload from "@/components/ImageUpload";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
@@ -26,10 +27,18 @@ const QuillEditor = dynamic(() => import("react-quill"), {
 const TeenageMinistryPage = () => {
   const updateToast = useUpdateToast();
   // states
-  const [bgImages, setBgImages] = useState<File[]>([]);
+  // const [bgImages, setBgImages] = useState<File[]>([]);
   const [sliderImages, setSliderImages] = useState<File[]>([]);
-  const [bgImgPreview, setBgImgPreview] = useState<any>([]);
+  // const [bgImgPreview, setBgImgPreview] = useState<any>([]);
   const [slidersPreview, setSlidersPreview] = useState<any>([]);
+  //
+  const [bgImage, setBgImage] = useState<File | any>("");
+  const [bgPreview, setBgPreview] = useState<string>("");
+  const handleImageChange = (file: File) => {
+    setBgImage(file);
+  };
+
+  //
   const [editing, setEditing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   //
@@ -41,12 +50,13 @@ const TeenageMinistryPage = () => {
     queryKey: ["teenage_ministry"],
     queryFn: async () => {
       const res = await get(`/ministry-page/teenage-page`);
-      const bgImages = res.data?.data.sliders.map((url: any) => url?.item_url);
+      // const bgImages = res.data?.data.sliders.map((url: any) => url?.item_url);
+      setBgPreview(res.data?.data.sliders[0]?.item_url);
       const carousels = res.data?.data.carousel.map(
         (url: any) => url?.item_url
       );
       setSlidersPreview(carousels);
-      setBgImgPreview(bgImages);
+      // setBgImgPreview(bgImages);
       return res.data;
     },
     select: (data) => data.data,
@@ -72,7 +82,15 @@ const TeenageMinistryPage = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    if (bgImgPreview?.length < 1 && bgImages?.length < 1) {
+    // if (bgImgPreview?.length < 1 && bgImages?.length < 1) {
+    //   updateToast({
+    //     title: `Error`,
+    //     type: "error",
+    //     info: `Hero  Bg Image field is required`,
+    //   });
+    //   return;
+    // }
+    if (!bgPreview && !bgImage) {
       updateToast({
         title: `Error`,
         type: "error",
@@ -87,9 +105,10 @@ const TeenageMinistryPage = () => {
       formData.append("heading_description", data.heading_description);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
-      bgImages.forEach((file: any) => {
-        formData.append("background_images", file);
-      });
+      if (bgImage) formData.append("background_images", bgImage);
+      // bgImages.forEach((file: any) => {
+      //   formData.append("background_images", file);
+      // });
       sliderImages.forEach((file: any) => {
         formData.append("carousel_images", file);
       });
@@ -161,14 +180,15 @@ const TeenageMinistryPage = () => {
                 Add Background Image
               </h4>
               <div className="md:max-w-[60%] mx-auto">
-                <MultipleImageUploader
+                {/* <MultipleImageUploader
                   isPage
                   files={bgImages}
                   setFiles={setBgImages}
-                />
+                /> */}
+                <ImageUpload isPage handleImageChange={handleImageChange} />
               </div>
               <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
-                {bgImgPreview?.map((url: any) => (
+                {/* {bgImgPreview?.map((url: any) => (
                   <div key={url} className="relative w-[150px] h-[90px]">
                     <Image
                       src={url}
@@ -180,7 +200,7 @@ const TeenageMinistryPage = () => {
                     <div
                       className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
                       onClick={(event: any) => {
-                        const imgId = teenage_ministry?.sliders?.find(
+                        const imgId = children_ministry?.sliders?.find(
                           (item: any) => item.item_url === url
                         );
                         removeImage(imgId?.id);
@@ -189,7 +209,29 @@ const TeenageMinistryPage = () => {
                       <CancelIcon />
                     </div>
                   </div>
-                ))}
+                ))} */}
+                {bgPreview && (
+                  <div className="relative w-[150px] h-[90px]">
+                    <Image
+                      src={bgPreview}
+                      alt={bgPreview}
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                    <div
+                      className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                      onClick={(event: any) => {
+                        const imgId = teenage_ministry?.sliders?.find(
+                          (item: any) => item.item_url === bgPreview
+                        );
+                        removeImage(imgId?.id);
+                      }}
+                    >
+                      <CancelIcon />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             {/* Header text */}
@@ -202,8 +244,14 @@ const TeenageMinistryPage = () => {
                   id="headerText"
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                  {...register("heading_text", { required: true })}
+                  {...register("heading_text", {
+                    required: "Heading text field is required",
+                  })}
                 />
+                <small className="text-sm text-red-400">
+                  {typeof errors.heading_text?.message === "string" &&
+                    errors.heading_text?.message}
+                </small>
               </label>
               <label
                 className="flex flex-col gap-1"
@@ -216,8 +264,14 @@ const TeenageMinistryPage = () => {
                   id="heading_description"
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                  {...register("heading_description")}
+                  {...register("heading_description", {
+                    required: "Heading description field is required",
+                  })}
                 />
+                <small className="text-sm text-red-400">
+                  {typeof errors.heading_description?.message === "string" &&
+                    errors.heading_description?.message}
+                </small>
               </label>
             </div>
             {/* Body texts */}
@@ -234,8 +288,14 @@ const TeenageMinistryPage = () => {
                     id="bodyTitle"
                     type="text"
                     className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                    {...register("body.title", { required: true })}
+                    {...register("body.title", {
+                      required: "Body title field is required",
+                    })}
                   />
+                  <small className="text-sm text-red-400">
+                    {typeof errors.body?.title?.message === "string" &&
+                      errors.body?.title?.message}
+                  </small>
                 </label>
                 {/*  */}
                 <label className="flex flex-col gap-1" htmlFor="description">
