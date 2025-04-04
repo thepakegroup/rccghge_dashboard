@@ -38,7 +38,9 @@ export const UpdateCategoryForm = ({
   const [updating, setUpdating] = useState<boolean>(false);
   const [bgPreview, setBgPreview] = useState<any>(selectedCategory?.image_url);
   const [selectedImg, setSelectedImg] = useState<any>(null);
-
+  //no state tracks
+  const [noName, setNoName] = useState<boolean>(false);
+  const [noDescription, setNoDescription] = useState<boolean>(false);
   //
   const {
     register,
@@ -67,8 +69,8 @@ export const UpdateCategoryForm = ({
   };
   //
   const updateCategory = async (data: any) => {
-    setUpdating(true);
     try {
+      setUpdating(true);
       const formData = new FormData();
       formData.append("id", selectedCategory?.id);
       formData.append("page_name", page_name);
@@ -126,8 +128,12 @@ export const UpdateCategoryForm = ({
             id="category_name"
             type="text"
             className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-            {...register("name", { required: true })}
+            {...register("name", { required: "Please Name field is required" })}
           />
+
+          <small className="text-sm text-red-400">
+            {typeof errors.name?.message === "string" && errors.name?.message}
+          </small>
         </label>
         {/*  */}
         <label className="flex flex-col gap-1" htmlFor="description">
@@ -139,6 +145,10 @@ export const UpdateCategoryForm = ({
             onChange={(event: any) => setValue("description", event)}
             defaultValue={selectedCategory?.description}
           />
+          <small className="text-sm text-red-400">
+            {typeof errors.description?.message === "string" &&
+              errors.description?.message}
+          </small>
         </label>
         {/*  */}
         <div className="px-4 py-5 rounded-lg bg-white overflow-y-auto">
