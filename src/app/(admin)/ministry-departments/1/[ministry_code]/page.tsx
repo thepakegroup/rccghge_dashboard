@@ -1,6 +1,7 @@
 "use client";
 import { BtnLoader } from "@/components/base-components/btn-loader";
 import { Button } from "@/components/base-components/button";
+import ImageUpload from "@/components/ImageUpload";
 import { DeletingImageLoader } from "@/components/ministry-departments/deleting-image-loader";
 import { GoBack } from "@/components/ministry-departments/go-back";
 import { PageLoader } from "@/components/ministry-departments/page-loader";
@@ -27,8 +28,14 @@ const QuillEditor = dynamic(() => import("react-quill"), {
 const CommonOnePages = () => {
   const params = useParams();
   // states
-  const [slidersPreview, setSlidersPreview] = useState<any>([]);
-  const [sliderImages, setSliderImages] = useState<File[]>([]);
+  // const [slidersPreview, setSlidersPreview] = useState<any>([]);
+  // const [sliderImages, setSliderImages] = useState<File[]>([]);
+  //
+  const [sliderImage, setSliderImage] = useState<File | any>("");
+  const [sliderPreview, setSliderPreview] = useState<string>("");
+  const handleImageChange = (file: File) => {
+    setSliderImage(file);
+  };
 
   //
   const [editing, setEditing] = useState<boolean>(false);
@@ -46,9 +53,10 @@ const CommonOnePages = () => {
     queryKey: [`${params.ministry_code}`],
     queryFn: async () => {
       const res = await get(`/ministry-page/common-1/${params.ministry_code}`);
-      setSlidersPreview(
-        res.data.data?.sliders.map((url: any) => url?.item_url)
-      );
+      // setSlidersPreview(
+      //   res.data.data?.sliders.map((url: any) => url?.item_url)
+      // );
+      setSliderPreview(res.data.data?.sliders[0]?.item_url);
       return res.data;
     },
     select: (data) => data.data,
@@ -73,7 +81,15 @@ const CommonOnePages = () => {
   //
   // edit page function here...
   const editPage = async (data: any) => {
-    if (sliderImages?.length < 1 && slidersPreview?.length < 1) {
+    // if (sliderImages?.length < 1 && slidersPreview?.length < 1) {
+    //   updateToast({
+    //     title: `Error`,
+    //     type: "error",
+    //     info: `Image field is required`,
+    //   });
+    //   return;
+    // }
+    if (!sliderPreview && !sliderImage) {
       updateToast({
         title: `Error`,
         type: "error",
@@ -88,9 +104,10 @@ const CommonOnePages = () => {
       formData.append("heading_text", data.heading_text);
       formData.append("body[title]", data.body.title);
       formData.append("body[content]", data.body.content);
-      sliderImages.forEach((file: any) => {
-        formData.append("background_images", file);
-      });
+      if (sliderImage) formData.append("background_images", sliderImage);
+      // sliderImages.forEach((file: any) => {
+      //   formData.append("background_images", file);
+      // });
 
       const res = await post(
         "/ministry-page/common-1",
@@ -165,14 +182,15 @@ const CommonOnePages = () => {
                   Add Background Image
                 </h4>
                 <div className="md:max-w-[60%] mx-auto">
-                  <MultipleImageUploader
+                  {/* <MultipleImageUploader
                     isPage
                     files={sliderImages}
                     setFiles={setSliderImages}
-                  />
+                  /> */}
+                  <ImageUpload isPage handleImageChange={handleImageChange} />
                 </div>
                 <div className="flex flex-wrap items-center gap-2 mt-2 justify-center mb-3">
-                  {slidersPreview?.map((url: any) => (
+                  {/* {slidersPreview?.map((url: any) => (
                     <div key={url} className="relative w-[150px] h-[90px]">
                       <Image
                         src={url}
@@ -193,7 +211,29 @@ const CommonOnePages = () => {
                         <CancelIcon />
                       </div>
                     </div>
-                  ))}
+                  ))} */}
+                  {sliderPreview && (
+                    <div className="relative w-[150px] h-[90px]">
+                      <Image
+                        src={sliderPreview}
+                        alt={sliderPreview}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                      <div
+                        className="absolute top-[5px] right-[5px] flex items-center h-[26px] w-[26px] justify-center cursor-pointer bg-black/20 backdrop-blur-sm rounded-full"
+                        onClick={(event: any) => {
+                          const imgId = common_one_data?.sliders?.find(
+                            (item: any) => item.item_url === sliderPreview
+                          );
+                          removeImage(imgId?.id);
+                        }}
+                      >
+                        <CancelIcon />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -207,8 +247,14 @@ const CommonOnePages = () => {
                   id="headerText"
                   type="text"
                   className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                  {...register("heading_text", { required: true })}
+                  {...register("heading_text", {
+                    required: "Heading text field is required",
+                  })}
                 />
+                <small className="text-sm text-red-400">
+                  {typeof errors.heading_text?.message === "string" &&
+                    errors.heading_text?.message}
+                </small>
               </label>
             </div>
             {/* Body texts */}
@@ -225,8 +271,14 @@ const CommonOnePages = () => {
                     id="bodyTitle"
                     type="text"
                     className="focus:ring-0 outline-none border text-stone-500 border-stone-300 focus:border-stone-300 rounded-md p-3"
-                    {...register("body.title", { required: true })}
+                    {...register("body.title", {
+                      required: "Body title field is required",
+                    })}
                   />
+                  <small className="text-sm text-red-400">
+                    {typeof errors.body?.title?.message === "string" &&
+                      errors.body?.title?.message}
+                  </small>
                 </label>
                 {/*  */}
                 <label className="flex flex-col gap-1" htmlFor="description">
@@ -242,6 +294,10 @@ const CommonOnePages = () => {
                     }
                     onChange={(event: any) => setValue("body.content", event)}
                   />
+                  <small className="text-sm text-red-400">
+                    {typeof errors.body?.content?.message === "string" &&
+                      errors.body?.content?.message}
+                  </small>
                 </label>
                 {/*  */}
               </div>
